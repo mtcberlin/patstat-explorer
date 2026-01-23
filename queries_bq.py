@@ -9,6 +9,10 @@ Key syntax differences from PostgreSQL:
 - VALUES clause → UNNEST([STRUCT(...)])
 - TO_CHAR() → FORMAT() or CAST()
 - SUBSTR → SUBSTR (same)
+
+Timing fields:
+- estimated_seconds_first_run: Expected time for cold/uncached query execution
+- estimated_seconds_cached: Expected time when BigQuery cache is warm (~0.3-0.5s typical)
 """
 
 QUERIES = {
@@ -31,7 +35,8 @@ Essential for understanding the scope and coverage of the database.""",
                 "Unique applicants/inventors count",
                 "Countries covered"
             ],
-            "estimated_seconds": 15,
+            "estimated_seconds_first_run": 1,
+            "estimated_seconds_cached": 1,
             "sql": """
                 SELECT 'Total Applications' AS metric, CAST(COUNT(*) AS STRING) AS value FROM `tls201_appln`
                 UNION ALL
@@ -57,7 +62,8 @@ EP = European Patent Office, US = USPTO, CN = CNIPA, etc.""",
                 "Application counts per office",
                 "Percentage of total applications"
             ],
-            "estimated_seconds": 2,
+            "estimated_seconds_first_run": 1,
+            "estimated_seconds_cached": 1,
             "sql": """
                 SELECT
                     appln_auth AS filing_authority,
@@ -81,7 +87,8 @@ Note: Recent years may show lower counts due to publication delays (18 months fr
                 "Year-over-year changes",
                 "Grant rates per year"
             ],
-            "estimated_seconds": 2,
+            "estimated_seconds_first_run": 1,
+            "estimated_seconds_cached": 1,
             "sql": """
                 SELECT
                     appln_filing_year,
@@ -112,7 +119,8 @@ IPC classes indicate the technology area of a patent:
                 "Application counts per class",
                 "Technology distribution"
             ],
-            "estimated_seconds": 10,
+            "estimated_seconds_first_run": 8,
+            "estimated_seconds_cached": 1,
             "sql": """
                 SELECT
                     SUBSTR(ipc_class_symbol, 1, 4) AS ipc_class,
@@ -137,7 +145,8 @@ This is the central table in PATSTAT - most queries start here.""",
                 "Grant status",
                 "Family information"
             ],
-            "estimated_seconds": 2,
+            "estimated_seconds_first_run": 1,
+            "estimated_seconds_cached": 1,
             "sql": """
                 SELECT
                     appln_id,
@@ -174,7 +183,8 @@ Minimum threshold of 100 patents ensures statistical relevance.""",
                 "Grant rates by country (quality indicator)",
                 "Total vs. granted patent counts"
             ],
-            "estimated_seconds": 5,
+            "estimated_seconds_first_run": 5,
+            "estimated_seconds_cached": 1,
             "sql": """
                 SELECT
                     p.person_ctry_code,
@@ -207,7 +217,8 @@ Tracks both total applications and the proportion dedicated to green tech.""",
                 "Green technology patent counts (Y02 class)",
                 "Green tech percentage (sustainability commitment indicator)"
             ],
-            "estimated_seconds": 6,
+            "estimated_seconds_first_run": 5,
+            "estimated_seconds_cached": 1,
             "sql": """
                 SELECT
                     a.appln_filing_year,
@@ -247,7 +258,8 @@ breadth (patent importance), while citation counts measure technical influence."
                 "Average family size (geographic reach indicator)",
                 "Average citations (impact/importance indicator)"
             ],
-            "estimated_seconds": 15,
+            "estimated_seconds_first_run": 14,
+            "estimated_seconds_cached": 1,
             "sql": """
                 SELECT
                     tf.techn_sector,
@@ -281,7 +293,8 @@ Identifies top applicants to monitor in this emerging technology intersection.""
                 "Active years (innovation consistency)",
                 "First and latest filing dates"
             ],
-            "estimated_seconds": 5,
+            "estimated_seconds_first_run": 4,
+            "estimated_seconds_cached": 1,
             "sql": """
                 WITH ai_erp_patents AS (
                     SELECT DISTINCT
@@ -346,7 +359,8 @@ established players in this field.""",
                 "Average time-to-grant in days and years",
                 "Focus on granted patents only"
             ],
-            "estimated_seconds": 5,
+            "estimated_seconds_first_run": 5,
+            "estimated_seconds_cached": 1,
             "sql": """
                 WITH ai_diagnostics_patents AS (
                     SELECT DISTINCT
@@ -430,7 +444,8 @@ Minimum threshold of 50 patents ensures focus on significant players.""",
                 "Innovation timeline (first to last filing)",
                 "Unique patent families (true innovation count)"
             ],
-            "estimated_seconds": 15,
+            "estimated_seconds_first_run": 12,
+            "estimated_seconds_cached": 1,
             "sql": """
                 SELECT
                     p.doc_std_name,
@@ -466,7 +481,8 @@ Stryker, Zimmer, Smith & Nephew, Edwards, Baxter, Fresenius, and B. Braun itself
                 "Percentage breakdown per competitor",
                 "Patent counts per authority"
             ],
-            "estimated_seconds": 5,
+            "estimated_seconds_first_run": 4,
+            "estimated_seconds_cached": 1,
             "sql": """
                 WITH medical_tech_applications AS (
                     SELECT DISTINCT
@@ -534,7 +550,8 @@ Minimum threshold of 10 citations ensures significance.""",
                 "Citation lag in years (knowledge diffusion speed)",
                 "Cited patent filing year"
             ],
-            "estimated_seconds": 12,
+            "estimated_seconds_first_run": 10,
+            "estimated_seconds_cached": 1,
             "sql": """
                 WITH citation_network AS (
                     SELECT
@@ -577,7 +594,8 @@ Helps inform international filing strategy by showing office-specific grant succ
                 "Total applications vs. granted patents",
                 "Office comparison for filing strategy"
             ],
-            "estimated_seconds": 2,
+            "estimated_seconds_first_run": 2,
+            "estimated_seconds_cached": 1,
             "sql": """
                 WITH diagnostic_imaging_patents AS (
                     SELECT DISTINCT
@@ -630,7 +648,8 @@ Uses main class A61B% - covers all medical diagnosis/surgery subclasses.""",
                 "Grant rates per region",
                 "Unique applicants and patent families"
             ],
-            "estimated_seconds": 4,
+            "estimated_seconds_first_run": 4,
+            "estimated_seconds_cached": 1,
             "sql": """
                 SELECT
                     n.nuts AS bundesland_code,
@@ -670,7 +689,8 @@ states of different sizes.""",
                 "Percentage of total German patents",
                 "Rank by total vs. rank per capita"
             ],
-            "estimated_seconds": 6,
+            "estimated_seconds_first_run": 6,
+            "estimated_seconds_cached": 1,
             "sql": """
                 WITH population_2023 AS (
                     SELECT * FROM UNNEST([
@@ -744,7 +764,8 @@ technology categorization across all patents.""",
                 "Technology relevance weights for accuracy",
                 "Temporal span of innovation activity"
             ],
-            "estimated_seconds": 3,
+            "estimated_seconds_first_run": 3,
+            "estimated_seconds_cached": 1,
             "sql": """
                 WITH regional_patents AS (
                     SELECT
@@ -814,7 +835,8 @@ Uses SUBSTR to extract subclass - handles variable whitespace correctly.""",
                 "Year-over-year comparison (2021 vs 2023)",
                 "Top 3 applicants per growing subclass"
             ],
-            "estimated_seconds": 5,
+            "estimated_seconds_first_run": 5,
+            "estimated_seconds_cached": 1,
             "sql": """
                 WITH g06q_subclasses AS (
                     SELECT

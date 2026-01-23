@@ -54,11 +54,12 @@ def test_all_queries(verbose: bool = True):
         for query_name, query_info in queries.items():
             total += 1
             sql = query_info["sql"]
-            estimated = query_info.get("estimated_seconds", 0)
+            est_first = query_info.get("estimated_seconds_first_run", query_info.get("estimated_seconds", 0))
+            est_cached = query_info.get("estimated_seconds_cached", 0)
 
             if verbose:
                 print(f"\n  [{total}] {query_name}")
-                print(f"      Estimated: ~{format_time(estimated)}")
+                print(f"      Expected: first run ~{format_time(est_first)}, cached ~{format_time(est_cached)}")
                 print(f"      Running...", end=" ", flush=True)
 
             try:
@@ -69,16 +70,12 @@ def test_all_queries(verbose: bool = True):
 
                 row_count = len(result) if result is not None else 0
 
-                # Compare to estimate
-                if estimated > 0:
-                    diff = elapsed - estimated
-                    diff_pct = (diff / estimated) * 100
-                    comparison = f"({'+' if diff > 0 else ''}{diff_pct:.0f}% vs estimate)"
-                else:
-                    comparison = "(no estimate)"
+                # Determine if this was likely cached (< 2x cached estimate)
+                is_cached = elapsed < (est_cached * 2 + 0.5) if est_cached > 0 else elapsed < 1
+                cache_status = "cached" if is_cached else "first run"
 
                 if verbose:
-                    print(f"✓ {row_count} rows in {format_time(elapsed)} {comparison}")
+                    print(f"✓ {row_count} rows in {format_time(elapsed)} ({cache_status})")
 
                 passed += 1
                 results.append({
@@ -87,8 +84,9 @@ def test_all_queries(verbose: bool = True):
                     "status": "PASS",
                     "rows": row_count,
                     "actual_seconds": round(elapsed, 2),
-                    "estimated_seconds": estimated,
-                    "diff_seconds": round(elapsed - estimated, 2) if estimated else None,
+                    "estimated_seconds_first_run": est_first,
+                    "estimated_seconds_cached": est_cached,
+                    "likely_cached": is_cached,
                     "error": None
                 })
 
@@ -108,8 +106,9 @@ def test_all_queries(verbose: bool = True):
                     "status": "FAIL",
                     "rows": 0,
                     "actual_seconds": round(elapsed, 2),
-                    "estimated_seconds": estimated,
-                    "diff_seconds": None,
+                    "estimated_seconds_first_run": est_first,
+                    "estimated_seconds_cached": est_cached,
+                    "likely_cached": False,
                     "error": error_msg
                 })
 
@@ -127,19 +126,17 @@ def test_all_queries(verbose: bool = True):
     print(f"\n\n{'='*70}")
     print(f"  TIMING RESULTS (BigQuery)")
     print('='*70)
-    print(f"  {'Query':<45} {'Actual':>10} {'Est.':>10} {'Diff':>10}")
-    print(f"  {'-'*45} {'-'*10} {'-'*10} {'-'*10}")
+    print(f"  {'Query':<40} {'Actual':>8} {'1st Run':>8} {'Cached':>8} {'Status':>8}")
+    print(f"  {'-'*40} {'-'*8} {'-'*8} {'-'*8} {'-'*8}")
 
     for r in results:
-        status = "✓" if r["status"] == "PASS" else "✗"
-        name = f"{status} {r['query'][:42]}"
+        status_icon = "✓" if r["status"] == "PASS" else "✗"
+        name = f"{status_icon} {r['query'][:37]}"
         actual = format_time(r["actual_seconds"])
-        est = format_time(r["estimated_seconds"]) if r["estimated_seconds"] else "-"
-        if r["diff_seconds"] is not None:
-            diff = f"{'+' if r['diff_seconds'] > 0 else ''}{format_time(abs(r['diff_seconds']))}"
-        else:
-            diff = "-"
-        print(f"  {name:<45} {actual:>10} {est:>10} {diff:>10}")
+        est_first = format_time(r["estimated_seconds_first_run"]) if r["estimated_seconds_first_run"] else "-"
+        est_cached = format_time(r["estimated_seconds_cached"]) if r["estimated_seconds_cached"] else "-"
+        cache_status = "cached" if r.get("likely_cached") else "cold"
+        print(f"  {name:<40} {actual:>8} {est_first:>8} {est_cached:>8} {cache_status:>8}")
 
     # Failed queries detail
     if failed > 0:
@@ -166,18 +163,22 @@ def test_all_queries(verbose: bool = True):
         }, f, indent=2)
     print(f"\n\nResults saved to: {output_file}")
 
-    # Generate estimated_seconds update suggestions
-    if passed > 0:
-        print(f"\n\n{'='*70}")
-        print(f"  SUGGESTED estimated_seconds UPDATES (for queries_bq.py)")
-        print('='*70)
-        print("  Copy these values to queries_bq.py:\n")
-        for r in results:
-            if r["status"] == "PASS":
-                # Round up to nearest 5 seconds for estimates, minimum 1
-                suggested = max(1, int((r["actual_seconds"] + 4) // 5) * 5)
-                if r["estimated_seconds"] != suggested:
-                    print(f'  "{r["query"]}": estimated_seconds = {suggested}  # actual: {r["actual_seconds"]:.1f}s')
+    # Cache statistics
+    cached_count = sum(1 for r in results if r.get("likely_cached"))
+    cold_count = passed - cached_count
+    print(f"\n\n{'='*70}")
+    print(f"  CACHE ANALYSIS")
+    print('='*70)
+    print(f"  Queries from cache:  {cached_count}")
+    print(f"  Cold queries:        {cold_count}")
+    if cached_count > 0:
+        cached_avg = sum(r["actual_seconds"] for r in results if r.get("likely_cached")) / cached_count
+        print(f"  Avg cached time:     {format_time(cached_avg)}")
+    if cold_count > 0:
+        cold_results = [r for r in results if r["status"] == "PASS" and not r.get("likely_cached")]
+        if cold_results:
+            cold_avg = sum(r["actual_seconds"] for r in cold_results) / len(cold_results)
+            print(f"  Avg cold time:       {format_time(cold_avg)}")
 
     return results
 
