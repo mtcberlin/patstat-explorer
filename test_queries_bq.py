@@ -1,16 +1,20 @@
 #!/usr/bin/env python3
-"""Test all PATSTAT queries, measure execution times, and report errors."""
+"""Test all PATSTAT BigQuery queries, measure execution times, and report errors."""
 
-import os
 import sys
 import time
 import json
 from datetime import datetime
-from dotenv import load_dotenv
-from sqlalchemy import create_engine, text
-from queries import QUERIES
 
-load_dotenv()
+try:
+    from epo.tipdata.patstat import PatstatClient
+except ImportError:
+    print("ERROR: epo.tipdata.patstat module not found.")
+    print("This script requires the EPO PATSTAT BigQuery client.")
+    print("Please ensure you have access to the EPO environment.")
+    sys.exit(1)
+
+from queries_bq import QUERIES
 
 
 def format_time(seconds: float) -> str:
@@ -27,21 +31,13 @@ def format_time(seconds: float) -> str:
 
 def test_all_queries(verbose: bool = True):
     """Test all queries and return results with timing."""
-    database_url = os.getenv("DATABASE_URL")
-    if not database_url:
-        print("ERROR: DATABASE_URL not set in .env")
-        sys.exit(1)
+    print("Connecting to BigQuery via PatstatClient...")
 
-    print(f"Connecting to database...")
-    engine = create_engine(database_url)
-
-    # Test connection first
     try:
-        with engine.connect() as conn:
-            conn.execute(text("SELECT 1"))
-        print("✓ Database connection successful\n")
+        patstat = PatstatClient(env='PROD')
+        print("✓ PatstatClient connection successful\n")
     except Exception as e:
-        print(f"✗ Database connection failed: {e}")
+        print(f"✗ PatstatClient connection failed: {e}")
         sys.exit(1)
 
     results = []
@@ -67,11 +63,11 @@ def test_all_queries(verbose: bool = True):
 
             try:
                 start = time.time()
-                with engine.connect() as conn:
-                    result = conn.execute(text(sql))
-                    rows = result.fetchall()
+                result = patstat.sql_query(sql, use_legacy_sql=False)
                 elapsed = time.time() - start
                 total_time += elapsed
+
+                row_count = len(result) if result is not None else 0
 
                 # Compare to estimate
                 if estimated > 0:
@@ -82,14 +78,14 @@ def test_all_queries(verbose: bool = True):
                     comparison = "(no estimate)"
 
                 if verbose:
-                    print(f"✓ {len(rows)} rows in {format_time(elapsed)} {comparison}")
+                    print(f"✓ {row_count} rows in {format_time(elapsed)} {comparison}")
 
                 passed += 1
                 results.append({
                     "stakeholder": stakeholder,
                     "query": query_name,
                     "status": "PASS",
-                    "rows": len(rows),
+                    "rows": row_count,
                     "actual_seconds": round(elapsed, 2),
                     "estimated_seconds": estimated,
                     "diff_seconds": round(elapsed - estimated, 2) if estimated else None,
@@ -119,7 +115,7 @@ def test_all_queries(verbose: bool = True):
 
     # Print Summary
     print(f"\n\n{'='*70}")
-    print(f"  SUMMARY")
+    print(f"  SUMMARY (BigQuery)")
     print('='*70)
     print(f"  Total queries:  {total}")
     print(f"  Passed:         {passed} ✓")
@@ -129,7 +125,7 @@ def test_all_queries(verbose: bool = True):
 
     # Timing Table
     print(f"\n\n{'='*70}")
-    print(f"  TIMING RESULTS")
+    print(f"  TIMING RESULTS (BigQuery)")
     print('='*70)
     print(f"  {'Query':<45} {'Actual':>10} {'Est.':>10} {'Diff':>10}")
     print(f"  {'-'*45} {'-'*10} {'-'*10} {'-'*10}")
@@ -157,9 +153,10 @@ def test_all_queries(verbose: bool = True):
 
     # Save results to JSON
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    output_file = f"test_results_{timestamp}.json"
+    output_file = f"test_results_bq_{timestamp}.json"
     with open(output_file, "w") as f:
         json.dump({
+            "database": "BigQuery",
             "timestamp": timestamp,
             "total": total,
             "passed": passed,
@@ -172,9 +169,9 @@ def test_all_queries(verbose: bool = True):
     # Generate estimated_seconds update suggestions
     if passed > 0:
         print(f"\n\n{'='*70}")
-        print(f"  SUGGESTED estimated_seconds UPDATES")
+        print(f"  SUGGESTED estimated_seconds UPDATES (for queries_bq.py)")
         print('='*70)
-        print("  Copy these values to queries.py:\n")
+        print("  Copy these values to queries_bq.py:\n")
         for r in results:
             if r["status"] == "PASS":
                 # Round up to nearest 5 seconds for estimates, minimum 1
@@ -187,11 +184,6 @@ def test_all_queries(verbose: bool = True):
 
 def test_single_query(stakeholder: str, query_name: str):
     """Test a single query by name."""
-    database_url = os.getenv("DATABASE_URL")
-    if not database_url:
-        print("ERROR: DATABASE_URL not set")
-        sys.exit(1)
-
     if stakeholder not in QUERIES:
         print(f"Unknown stakeholder: {stakeholder}")
         print(f"Available: {list(QUERIES.keys())}")
@@ -208,18 +200,19 @@ def test_single_query(stakeholder: str, query_name: str):
     print(f"Testing: [{stakeholder}] {query_name}")
     print(f"SQL:\n{sql}\n")
 
-    engine = create_engine(database_url)
+    print("Connecting to BigQuery via PatstatClient...")
+    patstat = PatstatClient(env='PROD')
 
     try:
         start = time.time()
-        with engine.connect() as conn:
-            result = conn.execute(text(sql))
-            rows = result.fetchall()
+        result = patstat.sql_query(sql, use_legacy_sql=False)
         elapsed = time.time() - start
 
-        print(f"✓ SUCCESS: {len(rows)} rows in {format_time(elapsed)}")
-        if rows:
-            print(f"\nFirst row: {rows[0]}")
+        row_count = len(result) if result is not None else 0
+
+        print(f"✓ SUCCESS: {row_count} rows in {format_time(elapsed)}")
+        if result is not None and len(result) > 0:
+            print(f"\nFirst row: {result.iloc[0].to_dict()}")
     except Exception as e:
         print(f"✗ ERROR: {e}")
 
@@ -229,9 +222,9 @@ if __name__ == "__main__":
         # Run all tests
         test_all_queries()
     elif len(sys.argv) == 3:
-        # Test single query: python test_queries.py "Stakeholder" "Query Name"
+        # Test single query: python test_queries_bq.py "Stakeholder" "Query Name"
         test_single_query(sys.argv[1], sys.argv[2])
     else:
         print("Usage:")
-        print("  python test_queries.py                          # Test all queries")
-        print('  python test_queries.py "Overview" "Database Tables (detailed)"  # Test single query')
+        print("  python test_queries_bq.py                          # Test all queries")
+        print('  python test_queries_bq.py "Overview" "Query Name"  # Test single query')

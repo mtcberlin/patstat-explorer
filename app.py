@@ -4,7 +4,7 @@ from sqlalchemy import create_engine, text
 import os
 from dotenv import load_dotenv
 import time
-from queries import QUERIES
+from queries_pg import QUERIES
 
 # Load environment variables
 load_dotenv()
