@@ -4,6 +4,10 @@
 import os
 import sys
 import time
+
+# Ensure UTF-8 output for international characters in patent data
+if sys.stdout.encoding != 'utf-8':
+    sys.stdout.reconfigure(encoding='utf-8')
 import json
 from datetime import datetime
 from dotenv import load_dotenv
@@ -32,8 +36,14 @@ def test_all_queries(verbose: bool = True):
         print("ERROR: DATABASE_URL not set in .env")
         sys.exit(1)
 
+    # Ensure UTF-8 encoding for international characters in patent data
+    if "?" not in database_url:
+        database_url += "?client_encoding=utf8"
+    elif "client_encoding" not in database_url:
+        database_url += "&client_encoding=utf8"
+
     print(f"Connecting to database...")
-    engine = create_engine(database_url)
+    engine = create_engine(database_url, echo=False)
 
     # Test connection first
     try:
