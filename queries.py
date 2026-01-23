@@ -17,6 +17,13 @@ QUERIES = {
     "Overview": {
         "Database Tables": {
             "description": "List all tables in the PATSTAT database",
+            "explanation": """This query shows all available tables in the PATSTAT database schema.
+Use this to explore what data is available before running specific analyses.""",
+            "key_outputs": [
+                "Table names",
+                "Table types (BASE TABLE, VIEW)"
+            ],
+            "estimated_seconds": 1,
             "sql": """
                 SELECT table_name, table_type
                 FROM information_schema.tables
@@ -26,6 +33,15 @@ QUERIES = {
         },
         "Sample Patents (tls201_appln)": {
             "description": "Get a sample of 100 patents from tls201_appln",
+            "explanation": """Returns a sample of patent applications to understand the data structure
+and available fields in the main application table.""",
+            "key_outputs": [
+                "Application IDs and dates",
+                "Filing authority codes",
+                "Grant status",
+                "Family information"
+            ],
+            "estimated_seconds": 2,
             "sql": """
                 SELECT *
                 FROM tls201_appln
@@ -39,8 +55,19 @@ QUERIES = {
     # =========================================================================
     "Strategic Planning": {
         "Country Patent Activity and Grant Rates": {
-            "description": """Which countries have the highest patent application activity since 2015,
-and what are their grant rates? Identifies leading innovation hubs and their success rates.""",
+            "description": "Which countries have the highest patent application activity since 2015, and what are their grant rates?",
+            "explanation": """This query analyzes patent filing activity by applicant country since 2015,
+calculating both total applications and grant rates. It identifies which countries are most active
+in patenting and how successful their applications are. The grant_rate metric helps assess the
+quality/success of applications from different regions.
+
+Minimum threshold of 100 patents ensures statistical relevance.""",
+            "key_outputs": [
+                "Country ranking by patent volume",
+                "Grant rates by country (quality indicator)",
+                "Total vs. granted patent counts"
+            ],
+            "estimated_seconds": 30,
             "sql": """
                 SELECT
                     p.person_ctry_code,
@@ -61,8 +88,19 @@ and what are their grant rates? Identifies leading innovation hubs and their suc
             """
         },
         "Green Technology Trends by Country": {
-            "description": """Patent activity in G7+China+Korea from 2015-2022 with green technology
-(CPC Y02) percentage. Useful for ESG reporting and sustainability assessments.""",
+            "description": "Patent activity in G7+China+Korea from 2015-2022 with green technology (CPC Y02) focus",
+            "explanation": """This query tracks patent activity trends in the G7+China+Korea economies,
+with a special focus on green/environmental technologies (CPC Y02 class).
+The Y02 class covers climate change mitigation technologies, making this
+useful for ESG reporting and sustainability assessments.
+
+Tracks both total applications and the proportion dedicated to green tech.""",
+            "key_outputs": [
+                "Yearly patent trends by country",
+                "Green technology patent counts (Y02 class)",
+                "Green tech percentage (sustainability commitment indicator)"
+            ],
+            "estimated_seconds": 45,
             "sql": """
                 SELECT
                     a.appln_filing_year,
@@ -92,8 +130,17 @@ and what are their grant rates? Identifies leading innovation hubs and their suc
     # =========================================================================
     "Technology Scouting": {
         "Most Active Technology Fields": {
-            "description": """Most active technology fields (2018-2022) with family size and citation
-impact. Reveals trending technology areas and their relative importance.""",
+            "description": "Most active technology fields (2018-2022) with family size and citation impact",
+            "explanation": """This query uses WIPO technology field classifications to identify the most
+active technology sectors. The weight filter (>0.5) ensures only primary
+technology assignments are counted. Family size indicates geographic filing
+breadth (patent importance), while citation counts measure technical influence.""",
+            "key_outputs": [
+                "Technology fields ranked by activity",
+                "Average family size (geographic reach indicator)",
+                "Average citations (impact/importance indicator)"
+            ],
+            "estimated_seconds": 20,
             "sql": """
                 SELECT
                     tf.techn_sector,
@@ -112,8 +159,22 @@ impact. Reveals trending technology areas and their relative importance.""",
             """
         },
         "AI-based ERP Patent Landscape": {
-            "description": """AI-based enterprise resource planning (G06Q10 + G06N) landscape since 2018.
-Shows yearly trends and top 10 applicants to monitor.""",
+            "description": "AI-based enterprise resource planning (G06Q10 + G06N) landscape since 2018",
+            "explanation": """This query analyzes the patent landscape for AI-based ERP by identifying
+applications with both G06Q10 (ERP/business methods) and G06N (AI/machine learning)
+CPC classifications since 2018.
+
+G06Q 10/ = ERP/administration/management
+G06N = AI/Machine Learning
+
+Identifies top applicants to monitor in this emerging technology intersection.""",
+            "key_outputs": [
+                "Top 10 applicants in AI+ERP space",
+                "Patent counts per applicant",
+                "Active years (innovation consistency)",
+                "First and latest filing dates"
+            ],
+            "estimated_seconds": 25,
             "sql": """
                 WITH ai_erp_patents AS (
                     SELECT DISTINCT
@@ -165,8 +226,20 @@ Shows yearly trends and top 10 applicants to monitor.""",
             """
         },
         "AI-Assisted Diagnostics Companies": {
-            "description": """Companies building patent portfolios in AI-assisted diagnostics
-(A61B + G06N intersection) with average time-to-grant.""",
+            "description": "Companies building patent portfolios in AI-assisted diagnostics (A61B + G06N)",
+            "explanation": """This query identifies companies active in AI-assisted diagnostics by finding
+patents at the intersection of medical diagnosis (A61B) and artificial
+intelligence (G06N) classifications. It calculates time-to-grant using the
+first grant publication date.
+
+Focuses on granted patents from companies (psn_sector = 'COMPANY') to show
+established players in this field.""",
+            "key_outputs": [
+                "Companies ranked by AI diagnostics patent portfolio size",
+                "Average time-to-grant in days and years",
+                "Focus on granted patents only"
+            ],
+            "estimated_seconds": 35,
             "sql": """
                 WITH ai_diagnostics_patents AS (
                     SELECT DISTINCT
@@ -237,8 +310,20 @@ Shows yearly trends and top 10 applicants to monitor.""",
     # =========================================================================
     "Competitive Intelligence": {
         "Top Patent Applicants": {
-            "description": """Top patent applicants since 2010 with portfolio profile.
-Identifies key players and their innovation activity over time.""",
+            "description": "Top patent applicants since 2010 with portfolio profile",
+            "explanation": """This query identifies the most prolific patent applicants by standardized
+name (doc_std_name), showing their filing activity, grant success, and
+temporal span of innovation. The unique_patent_families count helps
+distinguish genuine innovation from defensive filing strategies.
+
+Minimum threshold of 50 patents ensures focus on significant players.""",
+            "key_outputs": [
+                "Top applicants ranked by volume",
+                "Grant success rate per applicant",
+                "Innovation timeline (first to last filing)",
+                "Unique patent families (true innovation count)"
+            ],
+            "estimated_seconds": 40,
             "sql": """
                 SELECT
                     p.doc_std_name,
@@ -261,8 +346,20 @@ Identifies key players and their innovation activity over time.""",
             """
         },
         "Competitor Geographic Filing Strategy (MedTech)": {
-            "description": """Where are B. Braun's main competitors filing their medical technology
-patents geographically? Focus on EP, US, CN filings.""",
+            "description": "Where are B. Braun's main competitors filing their medical technology patents?",
+            "explanation": """This query analyzes the geographic filing patterns of B. Braun's main competitors
+in medical technology, focusing on EP (European Patent Office), US (USPTO), and
+CN (CNIPA) filings.
+
+Uses WIPO technology sector classification (Instruments) instead of direct IPC patterns.
+Competitor list includes: Medtronic, Johnson & Johnson, Abbott, Boston Scientific,
+Stryker, Zimmer, Smith & Nephew, Edwards, Baxter, Fresenius, and B. Braun itself.""",
+            "key_outputs": [
+                "Filing distribution by patent office (EP/US/CN)",
+                "Percentage breakdown per competitor",
+                "Patent counts per authority"
+            ],
+            "estimated_seconds": 50,
             "sql": """
                 WITH medical_tech_applications AS (
                     SELECT DISTINCT
@@ -318,8 +415,19 @@ patents geographically? Focus on EP, US, CN filings.""",
     # =========================================================================
     "Patent Prosecution": {
         "Most Cited Patents (2020)": {
-            "description": """Which patents were most frequently cited by applications filed in 2020?
-Identifies influential prior art and citation patterns.""",
+            "description": "Which patents were most frequently cited by applications filed in 2020?",
+            "explanation": """This query builds a citation network to identify the most influential prior
+art patents. By focusing on 2020 citing applications, it shows which older
+patents remain technically relevant. The citation lag metric reveals how
+quickly innovations become foundational knowledge in the field.
+
+Minimum threshold of 10 citations ensures significance.""",
+            "key_outputs": [
+                "Most cited patents (influence indicator)",
+                "Citation lag in years (knowledge diffusion speed)",
+                "Cited patent filing year"
+            ],
+            "estimated_seconds": 60,
             "sql": """
                 WITH citation_network AS (
                     SELECT
@@ -350,8 +458,19 @@ Identifies influential prior art and citation patterns.""",
             """
         },
         "Diagnostic Imaging Grant Rates by Office": {
-            "description": """Grant rates for diagnostic imaging patents (A61B 6/) at EPO vs USPTO vs CNIPA.
-Helps inform international filing strategy.""",
+            "description": "Grant rates for diagnostic imaging patents (A61B 6/) at EPO vs USPTO vs CNIPA",
+            "explanation": """This query analyzes grant rates for diagnostic imaging patents (IPC subclass A61B 6/)
+across three major patent offices. A61B 6/ covers diagnostic imaging technologies
+including X-ray, ultrasound, MRI, and other medical imaging devices.
+
+Uses combined LIKE patterns to handle variable whitespace in IPC codes.
+Helps inform international filing strategy by showing office-specific grant success.""",
+            "key_outputs": [
+                "Grant rates by patent office",
+                "Total applications vs. granted patents",
+                "Office comparison for filing strategy"
+            ],
+            "estimated_seconds": 30,
             "sql": """
                 WITH diagnostic_imaging_patents AS (
                     SELECT DISTINCT
@@ -392,8 +511,19 @@ Helps inform international filing strategy.""",
     # =========================================================================
     "Regional Analysis (Germany)": {
         "German Federal States - Medical Tech (A61B)": {
-            "description": """Which German Federal states show highest patent activity in A61B
-(Diagnosis/Surgery) over the last 5 years?""",
+            "description": "Which German Federal states show highest patent activity in A61B (Diagnosis/Surgery)?",
+            "explanation": """This query provides analysis of medical technology patent activity
+across German federal states using NUTS codes. It identifies regional
+innovation hubs in the medical diagnosis/surgery field (IPC A61B) and
+calculates grant rates as a quality indicator.
+
+Uses main class A61B% - covers all medical diagnosis/surgery subclasses.""",
+            "key_outputs": [
+                "Federal states ranked by patent activity",
+                "Grant rates per region",
+                "Unique applicants and patent families"
+            ],
+            "estimated_seconds": 25,
             "sql": """
                 SELECT
                     n.nuts AS bundesland_code,
@@ -420,8 +550,20 @@ Helps inform international filing strategy.""",
             """
         },
         "German Federal States - Per Capita Analysis": {
-            "description": """A61B patent activity by German federal state with per-capita comparison
-(patents per million inhabitants).""",
+            "description": "A61B patent activity by German federal state with per-capita comparison",
+            "explanation": """This query analyzes patent activity in IPC class A61B (medical diagnosis/surgery)
+over the last 5 years, focusing on German federal states with per-capita comparison.
+
+Population data from Statistisches Bundesamt (destatis.de), Stand 31.12.2023.
+Normalizes patent counts by population to enable fair comparison between
+states of different sizes.""",
+            "key_outputs": [
+                "German federal states ranked by patent count",
+                "Patents per million inhabitants (normalized comparison)",
+                "Percentage of total German patents",
+                "Rank by total vs. rank per capita"
+            ],
+            "estimated_seconds": 30,
             "sql": """
                 WITH population_2023 AS (
                     SELECT * FROM (
@@ -483,8 +625,20 @@ Helps inform international filing strategy.""",
             """
         },
         "Regional Comparison by Tech Sector": {
-            "description": """Compare Sachsen, Bayern, Baden-Württemberg patent activity
-broken down by WIPO technology sectors.""",
+            "description": "Compare Sachsen, Bayern, Baden-Württemberg patent activity by WIPO technology sectors",
+            "explanation": """This query compares patent activity across German federal states (Sachsen, Bayern,
+Baden-Württemberg) broken down by WIPO technology sectors. It helps regional
+development agencies understand their innovation strengths relative to peer regions.
+
+Uses WIPO technology sector classification via tls901 - provides standardized
+technology categorization across all patents.""",
+            "key_outputs": [
+                "Patent counts by region and technology sector",
+                "Recent activity (2018+) highlighted separately",
+                "Technology relevance weights for accuracy",
+                "Temporal span of innovation activity"
+            ],
+            "estimated_seconds": 45,
             "sql": """
                 WITH regional_patents AS (
                     SELECT
@@ -542,8 +696,19 @@ broken down by WIPO technology sectors.""",
     # =========================================================================
     "Technology Transfer": {
         "Fastest-Growing G06Q Subclasses": {
-            "description": """Fastest-growing sub-classes within G06Q (IT methods for management)
-in the last 3 years with top 3 applicants driving growth.""",
+            "description": "Fastest-growing sub-classes within G06Q (IT methods for management) in 3 years",
+            "explanation": """This query identifies the fastest-growing G06Q sub-classes by comparing
+filing activity between the base year (2021) and the most recent year (2023).
+It also identifies the top 3 applicants driving growth in each subclass.
+
+G06Q covers IT methods for management, administration, commerce, etc.
+Uses SUBSTR to extract subclass - handles variable whitespace correctly.""",
+            "key_outputs": [
+                "Fastest-growing G06Q subclasses by growth rate",
+                "Year-over-year comparison (2021 vs 2023)",
+                "Top 3 applicants per growing subclass"
+            ],
+            "estimated_seconds": 40,
             "sql": """
                 WITH g06q_subclasses AS (
                     SELECT
