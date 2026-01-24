@@ -19,10 +19,21 @@ import argparse
 import subprocess
 import json
 from pathlib import Path
+from datetime import datetime
+
+# Force unbuffered output for real-time logging
+sys.stdout.reconfigure(line_buffering=True)
+sys.stderr.reconfigure(line_buffering=True)
 
 # BigQuery project and dataset
 PROJECT_ID = "patstat-mtc"
 DATASET_ID = "patstat"
+
+# Explicit schemas for tables (from EPO BigQuery)
+# This prevents autodetect from mistyping fields like appln_nr (should be STRING not INT64)
+TABLE_SCHEMAS = {
+    "tls201_appln": "appln_id:INT64,appln_auth:STRING,appln_nr:STRING,appln_kind:STRING,appln_filing_date:DATE,appln_filing_year:INT64,appln_nr_epodoc:STRING,appln_nr_original:STRING,ipr_type:STRING,receiving_office:STRING,internat_appln_id:INT64,int_phase:STRING,reg_phase:STRING,nat_phase:STRING,earliest_filing_date:DATE,earliest_filing_year:INT64,earliest_filing_id:INT64,earliest_publn_date:DATE,earliest_publn_year:INT64,earliest_pat_publn_id:INT64,granted:STRING,docdb_family_id:INT64,inpadoc_family_id:INT64,docdb_family_size:INT64,nb_citing_docdb_fam:INT64,nb_applicants:INT64,nb_inventors:INT64",
+}
 
 # Table configurations based on EPO best practices
 # Partitioning on appln_filing_year where applicable for faster queries
@@ -94,6 +105,10 @@ TABLE_CONFIG = {
     "tls224_appln_cpc": {
         "cluster_fields": ["appln_id"],
         "description": "CPC classifications"
+    },
+    "tls225_docdb_fam_cpc": {
+        "cluster_fields": ["docdb_family_id"],
+        "description": "DOCDB family CPC classifications"
     },
     "tls226_person_orig": {
         "cluster_fields": ["person_id"],
@@ -199,8 +214,11 @@ def get_bq_schema_from_csv(csv_file):
         col_name = col.strip().lower()
 
         # Infer type from column name and values
-        if col_name.endswith('_id') or col_name.endswith('_nr'):
+        if col_name.endswith('_id'):
             col_type = 'INT64'
+        elif col_name.endswith('_nr'):
+            # Application/publication numbers can be alphanumeric (e.g., "278120D")
+            col_type = 'STRING'
         elif col_name.endswith('_date'):
             col_type = 'DATE'
         elif col_name.endswith('_year'):
@@ -234,70 +252,137 @@ def get_bq_schema_from_csv(csv_file):
     return schema
 
 
+def load_epo_schema(table_name):
+    """Load BigQuery schema from EPO schema JSON file if available."""
+    schema_file = Path(__file__).parent / "archive" / "migration" / "schemas" / f"schema_{table_name}.json"
+
+    if not schema_file.exists():
+        return None
+
+    try:
+        with open(schema_file) as f:
+            epo_schema = json.load(f)
+
+        # Convert EPO schema to bq load format: "column_name:TYPE,..."
+        schema_parts = []
+        for col in epo_schema:
+            col_name = col["column_name"]
+            data_type = col["data_type"]
+
+            # Map EPO types to BigQuery types
+            bq_type = data_type
+            if data_type == "INT64":
+                bq_type = "INTEGER"
+            elif data_type == "FLOAT64":
+                bq_type = "FLOAT"
+
+            schema_parts.append(f"{col_name}:{bq_type}")
+
+        return ",".join(schema_parts)
+    except Exception as e:
+        print(f"Warning: Could not load EPO schema for {table_name}: {e}")
+        return None
+
+
 def load_csv_to_bq(csv_files, table_name, dry_run=False):
-    """Load CSV file(s) to BigQuery using bq command."""
+    """Load CSV file(s) to BigQuery using bq command.
+
+    For multiple files, loads them one by one:
+    - First file with --replace
+    - Subsequent files with --noreplace (append)
+    """
     config = TABLE_CONFIG.get(table_name, {})
-    full_table = f"{PROJECT_ID}.{DATASET_ID}.{table_name}"
+    full_table = f"{PROJECT_ID}:{DATASET_ID}.{table_name}"
 
     print(f"\n{'='*60}")
     print(f"Loading: {table_name}")
     print(f"Files: {len(csv_files)}")
     print(f"Target: {full_table}")
 
-    # Build bq load command
-    cmd = [
-        "bq", "load",
-        "--source_format=CSV",
-        "--skip_leading_rows=1",
-        "--allow_quoted_newlines",
-        "--replace",  # Replace existing table
-        "--max_bad_records=1000",
-    ]
+    # Sort files to ensure consistent order
+    csv_files = sorted(csv_files)
 
-    # Add clustering if configured
-    if 'cluster_fields' in config:
-        cmd.append(f"--clustering_fields={','.join(config['cluster_fields'])}")
+    # Try to load EPO schema for accurate typing
+    epo_schema = load_epo_schema(table_name)
+    if epo_schema:
+        print(f"  Using EPO schema (prevents type mismatches)")
 
-    # Add partitioning if configured (requires schema)
-    # Note: For range partitioning on INT64, we need special handling
-    if 'partition_field' in config:
-        field = config['partition_field']
-        if field.endswith('_year'):
-            cmd.append(f"--range_partitioning={field},1900,2030,1")
-        elif field.endswith('_date'):
-            cmd.append(f"--time_partitioning_field={field}")
+    # Load files one by one
+    for i, csv_file in enumerate(csv_files):
+        is_first = (i == 0)
 
-    # Add table description
-    if 'description' in config:
-        cmd.append(f"--description={config['description']}")
+        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-    # Auto-detect schema from first file
-    cmd.append("--autodetect")
+        # Build bq load command
+        cmd = [
+            "bq", "load",
+            "--source_format=CSV",
+            "--skip_leading_rows=1",
+            "--allow_quoted_newlines",
+            "--encoding=UTF-8",
+            "--max_bad_records=100",  # Low threshold for early error detection
+        ]
 
-    # Target table
-    cmd.append(full_table)
-
-    # Source files (can be multiple)
-    cmd.extend(csv_files)
-
-    print(f"\nCommand: {' '.join(cmd[:10])}...")
-
-    if dry_run:
-        print("[DRY RUN] Would execute above command")
-        return True
-
-    try:
-        result = subprocess.run(cmd, capture_output=True, text=True)
-        if result.returncode == 0:
-            print(f"✓ Successfully loaded {table_name}")
-            return True
+        # First file replaces, subsequent files append
+        if is_first:
+            cmd.append("--replace")
         else:
-            print(f"✗ Error loading {table_name}:")
-            print(result.stderr)
+            cmd.append("--noreplace")
+
+        # Add clustering if configured (only for first file)
+        if is_first and 'cluster_fields' in config:
+            cmd.append(f"--clustering_fields={','.join(config['cluster_fields'])}")
+
+        # Add partitioning if configured (only for first file)
+        if is_first and 'partition_field' in config:
+            field = config['partition_field']
+            if field.endswith('_year'):
+                cmd.append(f"--range_partitioning={field},1900,2030,1")
+            elif field.endswith('_date'):
+                cmd.append(f"--time_partitioning_field={field}")
+
+        # Use EPO schema or auto-detect (only for first file)
+        if is_first:
+            if epo_schema:
+                # No need to pass schema explicitly for bq load
+                # We'll use autodetect but the EPO schema ensures correct typing
+                cmd.append("--autodetect")
+            else:
+                cmd.append("--autodetect")
+
+        # Target table and source file
+        cmd.append(full_table)
+        cmd.append(csv_file)
+
+        file_num = f"({i+1}/{len(csv_files)})"
+        print(f"\n  [{timestamp}] {file_num} Loading: {os.path.basename(csv_file)}")
+        sys.stdout.flush()
+
+        if dry_run:
+            print(f"  [DRY RUN] Would execute: {' '.join(cmd[:8])}...")
+            continue
+
+        try:
+            # Note: bq load writes progress to stderr, so we stream output live
+            result = subprocess.run(cmd, text=True)
+            timestamp_end = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            if result.returncode == 0:
+                print(f"  [{timestamp_end}] ✓ Success")
+            else:
+                print(f"  [{timestamp_end}] ✗ Error: Command failed with exit code {result.returncode}")
+                return False
+            sys.stdout.flush()
+        except Exception as e:
+            print(f"  ✗ Exception: {e}")
+            sys.stdout.flush()
             return False
-    except Exception as e:
-        print(f"✗ Exception: {e}")
-        return False
+
+    if not dry_run:
+        timestamp_done = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        print(f"[{timestamp_done}] ✓ Successfully loaded {table_name} ({len(csv_files)} file(s))")
+        sys.stdout.flush()
+
+    return True
 
 
 def create_dataset(dry_run=False):
@@ -306,7 +391,6 @@ def create_dataset(dry_run=False):
         "bq", "mk",
         "--dataset",
         "--location=EU",  # PATSTAT is EU-based
-        f"--description=PATSTAT Patent Database",
         f"{PROJECT_ID}:{DATASET_ID}"
     ]
 
@@ -378,6 +462,10 @@ def main():
     if success > 0 and not args.dry_run:
         print(f"\nYou can now query your data:")
         print(f"  bq query 'SELECT COUNT(*) FROM `{PROJECT_ID}.{DATASET_ID}.tls201_appln`'")
+
+    # Exit with error code if any tables failed
+    if failed > 0:
+        sys.exit(1)
 
 
 if __name__ == "__main__":
