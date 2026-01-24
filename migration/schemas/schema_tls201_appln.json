@@ -1,0 +1,204 @@
+{
+  "table_name": "tls201_appln",
+  "columns": [
+    {
+      "column_name": "appln_id",
+      "data_type": "INT64",
+      "is_nullable": "YES",
+      "ordinal_position": 1,
+      "column_default": "NULL"
+    },
+    {
+      "column_name": "appln_auth",
+      "data_type": "STRING",
+      "is_nullable": "YES",
+      "ordinal_position": 2,
+      "column_default": "NULL"
+    },
+    {
+      "column_name": "appln_nr",
+      "data_type": "STRING",
+      "is_nullable": "YES",
+      "ordinal_position": 3,
+      "column_default": "NULL"
+    },
+    {
+      "column_name": "appln_kind",
+      "data_type": "STRING",
+      "is_nullable": "YES",
+      "ordinal_position": 4,
+      "column_default": "NULL"
+    },
+    {
+      "column_name": "appln_filing_date",
+      "data_type": "DATE",
+      "is_nullable": "YES",
+      "ordinal_position": 5,
+      "column_default": "NULL"
+    },
+    {
+      "column_name": "appln_filing_year",
+      "data_type": "INT64",
+      "is_nullable": "YES",
+      "ordinal_position": 6,
+      "column_default": "NULL"
+    },
+    {
+      "column_name": "appln_nr_epodoc",
+      "data_type": "STRING",
+      "is_nullable": "YES",
+      "ordinal_position": 7,
+      "column_default": "NULL"
+    },
+    {
+      "column_name": "appln_nr_original",
+      "data_type": "STRING",
+      "is_nullable": "YES",
+      "ordinal_position": 8,
+      "column_default": "NULL"
+    },
+    {
+      "column_name": "ipr_type",
+      "data_type": "STRING",
+      "is_nullable": "YES",
+      "ordinal_position": 9,
+      "column_default": "NULL"
+    },
+    {
+      "column_name": "receiving_office",
+      "data_type": "STRING",
+      "is_nullable": "YES",
+      "ordinal_position": 10,
+      "column_default": "NULL"
+    },
+    {
+      "column_name": "internat_appln_id",
+      "data_type": "INT64",
+      "is_nullable": "YES",
+      "ordinal_position": 11,
+      "column_default": "NULL"
+    },
+    {
+      "column_name": "int_phase",
+      "data_type": "STRING",
+      "is_nullable": "YES",
+      "ordinal_position": 12,
+      "column_default": "NULL"
+    },
+    {
+      "column_name": "reg_phase",
+      "data_type": "STRING",
+      "is_nullable": "YES",
+      "ordinal_position": 13,
+      "column_default": "NULL"
+    },
+    {
+      "column_name": "nat_phase",
+      "data_type": "STRING",
+      "is_nullable": "YES",
+      "ordinal_position": 14,
+      "column_default": "NULL"
+    },
+    {
+      "column_name": "earliest_filing_date",
+      "data_type": "DATE",
+      "is_nullable": "YES",
+      "ordinal_position": 15,
+      "column_default": "NULL"
+    },
+    {
+      "column_name": "earliest_filing_year",
+      "data_type": "INT64",
+      "is_nullable": "YES",
+      "ordinal_position": 16,
+      "column_default": "NULL"
+    },
+    {
+      "column_name": "earliest_filing_id",
+      "data_type": "INT64",
+      "is_nullable": "YES",
+      "ordinal_position": 17,
+      "column_default": "NULL"
+    },
+    {
+      "column_name": "earliest_publn_date",
+      "data_type": "DATE",
+      "is_nullable": "YES",
+      "ordinal_position": 18,
+      "column_default": "NULL"
+    },
+    {
+      "column_name": "earliest_publn_year",
+      "data_type": "INT64",
+      "is_nullable": "YES",
+      "ordinal_position": 19,
+      "column_default": "NULL"
+    },
+    {
+      "column_name": "earliest_pat_publn_id",
+      "data_type": "INT64",
+      "is_nullable": "YES",
+      "ordinal_position": 20,
+      "column_default": "NULL"
+    },
+    {
+      "column_name": "granted",
+      "data_type": "STRING",
+      "is_nullable": "YES",
+      "ordinal_position": 21,
+      "column_default": "NULL"
+    },
+    {
+      "column_name": "docdb_family_id",
+      "data_type": "INT64",
+      "is_nullable": "YES",
+      "ordinal_position": 22,
+      "column_default": "NULL"
+    },
+    {
+      "column_name": "inpadoc_family_id",
+      "data_type": "INT64",
+      "is_nullable": "YES",
+      "ordinal_position": 23,
+      "column_default": "NULL"
+    },
+    {
+      "column_name": "docdb_family_size",
+      "data_type": "INT64",
+      "is_nullable": "YES",
+      "ordinal_position": 24,
+      "column_default": "NULL"
+    },
+    {
+      "column_name": "nb_citing_docdb_fam",
+      "data_type": "INT64",
+      "is_nullable": "YES",
+      "ordinal_position": 25,
+      "column_default": "NULL"
+    },
+    {
+      "column_name": "nb_applicants",
+      "data_type": "INT64",
+      "is_nullable": "YES",
+      "ordinal_position": 26,
+      "column_default": "NULL"
+    },
+    {
+      "column_name": "nb_inventors",
+      "data_type": "INT64",
+      "is_nullable": "YES",
+      "ordinal_position": 27,
+      "column_default": "NULL"
+    }
+  ],
+  "options": [],
+  "partitions": [
+    {
+      "table_name": "tls201_appln",
+      "partition_id": null,
+      "total_rows": 140525582,
+      "total_logical_bytes": 27088841325,
+      "last_modified_time": "2025-12-19 15:55:17.379000+00:00"
+    }
+  ]
+}
