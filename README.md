@@ -136,9 +136,11 @@ DATE_DIFF(date1, date2, DAY)
 
 ## Zugriff
 
-- **Admin:** arne.krueger@mtc.berlin
-- **Service Account:** patstat-reader@patstat-mtc.iam.gserviceaccount.com
-- **Berechtigungen:** BigQuery Data Viewer, BigQuery Job User
+Für lokale Entwicklung werden Google Cloud Credentials benötigt.
+
+**Credentials anfragen bei:** arne.krueger@mtc.berlin
+
+Du erhältst eine JSON-Datei mit dem Service Account, die du in der `.env` als `GOOGLE_APPLICATION_CREDENTIALS_JSON` einträgst (siehe Konfiguration oben).
 
 ---
 
