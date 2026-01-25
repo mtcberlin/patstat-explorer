@@ -772,23 +772,18 @@ technology categorization across all patents.""",
                         a.appln_id,
                         a.appln_filing_year,
                         p.nuts,
-                        n.nuts_label,
                         CASE
-                            WHEN LOWER(n.nuts_label) LIKE '%sachsen%' OR LOWER(n.nuts_label) LIKE '%saxony%' THEN 'Sachsen'
-                            WHEN LOWER(n.nuts_label) LIKE '%bayern%' OR LOWER(n.nuts_label) LIKE '%bavaria%' THEN 'Bayern'
-                            WHEN LOWER(n.nuts_label) LIKE '%baden%württemberg%' OR LOWER(n.nuts_label) LIKE '%baden-württemberg%' THEN 'Baden-Württemberg'
-                            ELSE 'Other'
+                            WHEN p.nuts LIKE 'DED%' THEN 'Sachsen'
+                            WHEN p.nuts LIKE 'DE2%' THEN 'Bayern'
+                            WHEN p.nuts LIKE 'DE1%' THEN 'Baden-Württemberg'
                         END AS region_group
                     FROM tls201_appln a
                     JOIN tls207_pers_appln pa ON a.appln_id = pa.appln_id
                     JOIN tls206_person p ON pa.person_id = p.person_id
-                    JOIN tls904_nuts n ON p.nuts = n.nuts
                     WHERE pa.applt_seq_nr > 0
                       AND a.appln_filing_year >= 2010
-                      AND n.nuts_level = 1
-                      AND (LOWER(n.nuts_label) LIKE '%sachsen%' OR LOWER(n.nuts_label) LIKE '%saxony%'
-                           OR LOWER(n.nuts_label) LIKE '%bayern%' OR LOWER(n.nuts_label) LIKE '%bavaria%'
-                           OR LOWER(n.nuts_label) LIKE '%baden%württemberg%' OR LOWER(n.nuts_label) LIKE '%baden-württemberg%')
+                      AND p.nuts IS NOT NULL
+                      AND (p.nuts LIKE 'DED%' OR p.nuts LIKE 'DE2%' OR p.nuts LIKE 'DE1%')
                 ),
                 technology_sectors AS (
                     SELECT
@@ -801,7 +796,6 @@ technology categorization across all patents.""",
                     FROM regional_patents rp
                     JOIN tls230_appln_techn_field atf ON rp.appln_id = atf.appln_id
                     JOIN tls901_techn_field_ipc tf ON atf.techn_field_nr = tf.techn_field_nr
-                    WHERE rp.region_group != 'Other'
                 )
                 SELECT
                     region_group,
