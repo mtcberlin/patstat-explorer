@@ -6,7 +6,7 @@ import os
 from dotenv import load_dotenv
 import time
 import json
-from queries_bq import QUERIES
+from queries_bq import QUERIES, STAKEHOLDERS
 
 # Load environment variables
 load_dotenv()
@@ -19,7 +19,7 @@ st.set_page_config(
 )
 
 st.title("📊 PATSTAT Explorer")
-st.caption("Technology Intelligence Platform - Patent Analysis Queries")
+st.caption("Patent Analysis Platform - EPO PATSTAT 2024 Autumn on BigQuery")
 
 
 @st.cache_resource
@@ -77,116 +77,160 @@ def format_time(seconds: float) -> str:
         return f"{minutes}m {secs:.0f}s"
 
 
+def get_filtered_queries(stakeholder_filter: str) -> dict:
+    """Filter queries by stakeholder tag."""
+    if stakeholder_filter == "Alle":
+        return QUERIES
+    return {
+        qid: qinfo for qid, qinfo in QUERIES.items()
+        if stakeholder_filter in qinfo.get("tags", [])
+    }
+
+
+def render_query_panel(filtered_queries: dict, client, tab_key: str):
+    """Render the query selection and execution panel."""
+    if not filtered_queries:
+        st.info("No queries in this category.")
+        return
+
+    # Query selection
+    query_options = {
+        qid: f"{qid} - {qinfo['title']}"
+        for qid, qinfo in filtered_queries.items()
+    }
+
+    selected_query_id = st.selectbox(
+        "Select Query",
+        options=list(query_options.keys()),
+        format_func=lambda x: query_options[x],
+        key=f"query_select_{tab_key}"
+    )
+
+    if selected_query_id:
+        query_info = QUERIES[selected_query_id]
+
+        st.divider()
+
+        # Header with ID and title
+        st.header(f"{selected_query_id}: {query_info['title']}")
+
+        # Tags as pills
+        tag_colors = {"PATLIB": "#1f77b4", "BUSINESS": "#2ca02c", "UNIVERSITY": "#9467bd"}
+        tags_html = " ".join([
+            f'<span style="background-color: {tag_colors.get(t, "#666")}; '
+            f'color: white; padding: 2px 10px; border-radius: 12px; font-size: 0.85em; margin-right: 6px;">{t}</span>'
+            for t in query_info.get("tags", [])
+        ])
+        st.markdown(tags_html, unsafe_allow_html=True)
+        st.markdown("")
+
+        # Query description
+        st.markdown(f"**{query_info.get('description', '')}**")
+
+        # Show explanation in an expander
+        if "explanation" in query_info:
+            with st.expander("Details", expanded=False):
+                st.markdown(query_info["explanation"])
+
+                if "key_outputs" in query_info:
+                    st.markdown("**Key Outputs:**")
+                    for output in query_info["key_outputs"]:
+                        st.markdown(f"- {output}")
+
+        # Show estimated time
+        estimated_cached = query_info.get("estimated_seconds_cached", 0)
+        estimated_first = query_info.get("estimated_seconds_first_run", estimated_cached)
+        estimated_seconds = estimated_cached
+        if estimated_first > 0:
+            if estimated_first != estimated_cached:
+                st.caption(f"Estimated: ~{format_time(estimated_cached)} (cached) / ~{format_time(estimated_first)} (first run)")
+            else:
+                st.caption(f"Estimated: ~{format_time(estimated_cached)}")
+
+        # Show the SQL query in an expander
+        with st.expander("View SQL Query", expanded=False):
+            st.code(query_info["sql"], language="sql")
+
+        st.divider()
+
+        # Execute button
+        col1, col2 = st.columns([1, 5])
+        with col1:
+            execute_button = st.button("Run Query", type="primary", key=f"exec_{tab_key}")
+
+        if execute_button:
+            with st.spinner(f"Running query... (~{format_time(estimated_seconds)})"):
+                try:
+                    df, execution_time = run_query(client, query_info["sql"])
+
+                    # Show results metrics
+                    col1, col2, col3 = st.columns(3)
+                    with col1:
+                        st.metric("Rows", f"{len(df):,}")
+                    with col2:
+                        st.metric("Execution time", format_time(execution_time))
+                    with col3:
+                        if estimated_seconds > 0:
+                            diff = execution_time - estimated_seconds
+                            delta_str = f"{'+' if diff > 0 else ''}{format_time(abs(diff))}"
+                            st.metric("vs. Estimate", delta_str,
+                                     delta=f"{'slower' if diff > 0 else 'faster'}",
+                                     delta_color="inverse")
+
+                    st.divider()
+
+                    # Display dataframe
+                    st.dataframe(df, use_container_width=True, height=400)
+
+                    # Download button
+                    csv = df.to_csv(index=False)
+                    filename = f"{selected_query_id}_{query_info['title'].lower().replace(' ', '_').replace('-', '_')}.csv"
+                    st.download_button(
+                        label="Download CSV",
+                        data=csv,
+                        file_name=filename,
+                        mime="text/csv",
+                        key=f"download_{tab_key}"
+                    )
+
+                except Exception as e:
+                    st.error(f"Error: {str(e)}")
+
+
 def main():
     client = get_bigquery_client()
 
     if client is None:
         st.stop()
 
-    # Sidebar for navigation
-    st.sidebar.header("Navigation")
+    # Create tabs
+    tab_labels = [
+        f"Alle ({len(QUERIES)})",
+        f"PATLIB ({len(get_filtered_queries('PATLIB'))})",
+        f"BUSINESS ({len(get_filtered_queries('BUSINESS'))})",
+        f"UNIVERSITY ({len(get_filtered_queries('UNIVERSITY'))})"
+    ]
 
-    # Stakeholder selection
-    stakeholders = list(QUERIES.keys())
-    selected_stakeholder = st.sidebar.selectbox(
-        "Select Stakeholder",
-        stakeholders,
-        index=0 if stakeholders else None
-    )
+    tabs = st.tabs(tab_labels)
 
-    if selected_stakeholder:
-        st.header(f"📁 {selected_stakeholder}")
+    # Tab: Alle
+    with tabs[0]:
+        render_query_panel(QUERIES, client, "alle")
 
-        # Get queries for selected stakeholder
-        stakeholder_queries = QUERIES[selected_stakeholder]
-        query_names = list(stakeholder_queries.keys())
+    # Tab: PATLIB
+    with tabs[1]:
+        st.caption(STAKEHOLDERS["PATLIB"])
+        render_query_panel(get_filtered_queries("PATLIB"), client, "patlib")
 
-        # Query selection
-        selected_query = st.selectbox(
-            "Select Query",
-            query_names,
-            index=0 if query_names else None
-        )
+    # Tab: BUSINESS
+    with tabs[2]:
+        st.caption(STAKEHOLDERS["BUSINESS"])
+        render_query_panel(get_filtered_queries("BUSINESS"), client, "business")
 
-        if selected_query:
-            query_info = stakeholder_queries[selected_query]
-
-            # Query description
-            st.subheader(query_info.get("description", selected_query))
-
-            # Show explanation in an info box
-            if "explanation" in query_info:
-                st.info(query_info["explanation"])
-
-            # Show key outputs
-            if "key_outputs" in query_info:
-                st.markdown("**Key Outputs:**")
-                for output in query_info["key_outputs"]:
-                    st.markdown(f"- {output}")
-
-            # Show estimated time (use cached estimate, show first-run estimate too if different)
-            estimated_cached = query_info.get("estimated_seconds_cached", 0)
-            estimated_first = query_info.get("estimated_seconds_first_run", estimated_cached)
-            estimated_seconds = estimated_cached  # Use cached for comparison
-            if estimated_first > 0:
-                if estimated_first != estimated_cached:
-                    st.markdown(f"**Estimated time:** ~{format_time(estimated_cached)} (cached) / ~{format_time(estimated_first)} (first run)")
-                else:
-                    st.markdown(f"**Estimated execution time:** ~{format_time(estimated_cached)}")
-
-            st.divider()
-
-            # Show the SQL query in an expander
-            with st.expander("View SQL Query", expanded=False):
-                st.code(query_info["sql"], language="sql")
-
-            # Execute button
-            col1, col2 = st.columns([1, 4])
-            with col1:
-                execute_button = st.button("Execute Query", type="primary")
-
-            if execute_button:
-                with st.spinner(f"Running query... (estimated ~{format_time(estimated_seconds)})"):
-                    try:
-                        df, execution_time = run_query(client, query_info["sql"])
-
-                        # Show results metrics
-                        col1, col2, col3 = st.columns(3)
-                        with col1:
-                            st.metric("Rows returned", f"{len(df):,}")
-                        with col2:
-                            st.metric("Execution time", format_time(execution_time))
-                        with col3:
-                            if estimated_seconds > 0:
-                                diff = execution_time - estimated_seconds
-                                delta_str = f"{'+' if diff > 0 else ''}{format_time(abs(diff))}"
-                                st.metric("vs. Estimate", delta_str,
-                                         delta=f"{'slower' if diff > 0 else 'faster'}",
-                                         delta_color="inverse")
-
-                        st.divider()
-
-                        # Display dataframe
-                        st.dataframe(df, use_container_width=True, height=400)
-
-                        # Download button
-                        csv = df.to_csv(index=False)
-                        st.download_button(
-                            label="📥 Download CSV",
-                            data=csv,
-                            file_name=f"{selected_query.lower().replace(' ', '_')}.csv",
-                            mime="text/csv"
-                        )
-
-                    except Exception as e:
-                        st.error(f"Error executing query: {str(e)}")
-    else:
-        st.info("Please select a stakeholder from the sidebar.")
-
-    # Footer
-    st.sidebar.divider()
-    st.sidebar.caption("PATSTAT Explorer v1.0")
-    st.sidebar.caption("Data: EPO PATSTAT Database")
+    # Tab: UNIVERSITY
+    with tabs[3]:
+        st.caption(STAKEHOLDERS["UNIVERSITY"])
+        render_query_panel(get_filtered_queries("UNIVERSITY"), client, "university")
 
 
 if __name__ == "__main__":
