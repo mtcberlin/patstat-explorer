@@ -1,10 +1,12 @@
 import streamlit as st
 import pandas as pd
-from sqlalchemy import create_engine, text
+from google.cloud import bigquery
+from google.oauth2 import service_account
 import os
 from dotenv import load_dotenv
 import time
-from queries_pg import QUERIES
+import json
+from queries_bq import QUERIES
 
 # Load environment variables
 load_dotenv()
@@ -21,20 +23,44 @@ st.caption("Technology Intelligence Platform - Patent Analysis Queries")
 
 
 @st.cache_resource
-def get_database_connection():
-    """Create and cache database connection."""
-    database_url = os.getenv("DATABASE_URL")
-    if not database_url:
-        st.error("DATABASE_URL not configured. Please check your .env file.")
-        return None
-    return create_engine(database_url)
+def get_bigquery_client():
+    """Create and cache BigQuery client."""
+    project = os.getenv("BIGQUERY_PROJECT", "patstat-mtc")
+
+    # Check for Streamlit Cloud secrets first
+    try:
+        if "gcp_service_account" in st.secrets:
+            credentials = service_account.Credentials.from_service_account_info(
+                st.secrets["gcp_service_account"]
+            )
+            return bigquery.Client(credentials=credentials, project=project)
+    except FileNotFoundError:
+        pass  # No secrets.toml file, try other methods
+
+    # Check for service account JSON in environment (local dev or Streamlit Cloud)
+    service_account_json = os.getenv("GOOGLE_APPLICATION_CREDENTIALS_JSON")
+    if service_account_json:
+        credentials = service_account.Credentials.from_service_account_info(
+            json.loads(service_account_json)
+        )
+        return bigquery.Client(credentials=credentials, project=project)
+
+    # Fall back to Application Default Credentials
+    return bigquery.Client(project=project)
 
 
-def run_query(engine, query: str) -> tuple[pd.DataFrame, float]:
+def run_query(client: bigquery.Client, query: str) -> tuple[pd.DataFrame, float]:
     """Execute a query and return results as DataFrame with execution time."""
+    project = os.getenv("BIGQUERY_PROJECT", "patstat-mtc")
+    dataset = os.getenv("BIGQUERY_DATASET", "patstat")
+
+    # Set default dataset so queries don't need fully qualified table names
+    job_config = bigquery.QueryJobConfig(
+        default_dataset=f"{project}.{dataset}"
+    )
+
     start_time = time.time()
-    with engine.connect() as conn:
-        result = pd.read_sql(text(query), conn)
+    result = client.query(query, job_config=job_config).to_dataframe()
     execution_time = time.time() - start_time
     return result, execution_time
 
@@ -52,9 +78,9 @@ def format_time(seconds: float) -> str:
 
 
 def main():
-    engine = get_database_connection()
+    client = get_bigquery_client()
 
-    if engine is None:
+    if client is None:
         st.stop()
 
     # Sidebar for navigation
@@ -98,10 +124,15 @@ def main():
                 for output in query_info["key_outputs"]:
                     st.markdown(f"- {output}")
 
-            # Show estimated time
-            estimated_seconds = query_info.get("estimated_seconds", 0)
-            if estimated_seconds > 0:
-                st.markdown(f"**Estimated execution time:** ~{format_time(estimated_seconds)}")
+            # Show estimated time (use cached estimate, show first-run estimate too if different)
+            estimated_cached = query_info.get("estimated_seconds_cached", 0)
+            estimated_first = query_info.get("estimated_seconds_first_run", estimated_cached)
+            estimated_seconds = estimated_cached  # Use cached for comparison
+            if estimated_first > 0:
+                if estimated_first != estimated_cached:
+                    st.markdown(f"**Estimated time:** ~{format_time(estimated_cached)} (cached) / ~{format_time(estimated_first)} (first run)")
+                else:
+                    st.markdown(f"**Estimated execution time:** ~{format_time(estimated_cached)}")
 
             st.divider()
 
@@ -117,7 +148,7 @@ def main():
             if execute_button:
                 with st.spinner(f"Running query... (estimated ~{format_time(estimated_seconds)})"):
                     try:
-                        df, execution_time = run_query(engine, query_info["sql"])
+                        df, execution_time = run_query(client, query_info["sql"])
 
                         # Show results metrics
                         col1, col2, col3 = st.columns(3)

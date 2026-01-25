@@ -1,0 +1,91 @@
+Content of the data packages 04.12.2024:
+
+data_PATSTAT_Global_2024_Autumn_01.zip contains:
+tls201_part01.zip
+tls201_part02.zip
+tls201_part03.zip
+tls202_part01.zip
+
+data_PATSTAT_Global_2024_Autumn_02.zip contains:
+tls203_part01.zip
+tls203_part02.zip
+tls203_part03.zip
+
+data_PATSTAT_Global_2024_Autumn_03.zip contains:
+tls203_part04.zip
+tls203_part05.zip
+tls203_part06.zip
+tls203_part07.zip
+
+data_PATSTAT_Global_2024_Autumn_04.zip contains:
+tls203_part08.zip
+tls203_part09.zip
+tls203_part10.zip
+
+data_PATSTAT_Global_2024_Autumn_05.zip contains:
+tls203_part11.zip
+tls203_part12.zip
+tls204_part01.zip
+tls205_part01.zip
+tls206_part01.zip
+
+data_PATSTAT_Global_2024_Autumn_06.zip contains:
+tls206_part02.zip
+tls207_part01.zip
+tls209_part01.zip
+tls209_part02.zip
+tls209_part03.zip
+tls210_part01.zip
+
+data_PATSTAT_Global_2024_Autumn_07.zip contains:
+tls211_part01.zip
+tls211_part02.zip
+tls212_part01.zip
+tls212_part02.zip
+
+data_PATSTAT_Global_2024_Autumn_08.zip contains:
+tls212_part03.zip
+tls214_part01.zip
+tls214_part02.zip
+tls215_part01.zip
+
+data_PATSTAT_Global_2024_Autumn_09.zip contains:
+tls215_part02.zip
+tls215_part03.zip
+tls216_part01.zip
+tls222_part01.zip
+tls222_part02.zip
+tls224_part01.zip
+tls224_part02.zip
+tls224_part03.zip
+tls225_part01.zip
+
+data_PATSTAT_Global_2024_Autumn_10.zip contains:
+tls225_part02.zip
+tls226_part01.zip
+tls226_part02.zip
+tls227_part01.zip
+tls227_part02.zip
+tls228_part01.zip
+
+data_PATSTAT_Global_2024_Autumn_11.zip contains:
+tls229_part01.zip
+tls230_part01.zip
+tls231_part01.zip
+tls231_part02.zip
+tls231_part03.zip
+tls231_part04.zip
+tls231_part05.zip
+tls231_part06.zip
+tls231_part07.zip
+tls231_part08.zip
+tls231_part09.zip
+tls231_part10.zip
+tls231_part11.zip
+tls231_part12.zip
+tls231_part13.zip
+tls801_part01.zip
+tls803_part01.zip
+tls901_part01.zip
+tls902_part01.zip
+tls904_part01.zip
