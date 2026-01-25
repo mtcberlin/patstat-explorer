@@ -15,7 +15,11 @@ patstat/
 ### Prerequisites
 
 1. **Google Cloud Access**
-   via patstat-reader-credentials.json
+   Admin account: via arne.krueger@mtc.berlin
+   Service account created for sharing:
+  - Email: patstat-reader@patstat-mtc.iam.gserviceaccount.com
+  - Credentials: /Users/arnekrueger/patstat-reader-credentials.json
+  - Permissions: Read-only access (dataViewer + jobUser)
 
 2. **Python Dependencies**
    ```bash
