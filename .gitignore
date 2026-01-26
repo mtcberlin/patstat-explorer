@@ -91,6 +91,12 @@ cython_debug/
 *.swo
 *~
 
+# Claude Code
+.claude/
+
+# BMAD Framework
+_bmad/
+
 # Jupyter Notebook
 .ipynb_checkpoints
 

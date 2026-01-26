@@ -151,9 +151,12 @@ def render_interactive_panel(client: bigquery.Client):
     # Get query info
     query_info = DYNAMIC_QUERIES["DQ01"]
 
-    # Header
-    st.header(f"🔍 {query_info['title']}")
-    st.markdown(f"**{query_info['description']}**")
+    # Header with clean divider style
+    st.header(query_info['title'], divider='gray')
+
+    st.markdown(f"*{query_info['description']}*")
+
+    ''  # Spacing
 
     # Parameter widgets in columns
     col1, col2 = st.columns(2)
@@ -165,7 +168,7 @@ def render_interactive_panel(client: bigquery.Client):
             for _, row in jurisdictions_df.iterrows()
         }
         selected_jurisdiction_label = st.selectbox(
-            "📍 Filing Jurisdiction",
+            "Filing Jurisdiction",
             options=list(jurisdiction_options.keys()),
             index=list(jurisdiction_options.values()).index("EP") if "EP" in jurisdiction_options.values() else 0,
             help=query_info["parameters"]["jurisdiction"]["description"]
@@ -186,41 +189,44 @@ def render_interactive_panel(client: bigquery.Client):
                 break
 
         selected_tech_label = st.selectbox(
-            "🔬 Technology Field",
+            "Technology Field",
             options=list(tech_field_options.keys()),
             index=default_idx,
             help=query_info["parameters"]["tech_field"]["description"]
         )
         selected_tech_field = tech_field_options[selected_tech_label]
 
+    ''  # Spacing
+
     # Year range slider
     year_params = query_info["parameters"]["year_range"]
     year_start, year_end = st.slider(
-        "📅 Filing Years",
+        "Which years are you interested in?",
         min_value=year_params["min"],
         max_value=year_params["max"],
         value=tuple(year_params["default"]),
         help=year_params["description"]
     )
 
+    ''  # Spacing
+
     # Show explanation
-    with st.expander("ℹ️ About this analysis", expanded=False):
+    with st.expander("About this analysis", expanded=False):
         st.markdown(query_info["explanation"])
         if "key_outputs" in query_info:
             st.markdown("**Key Outputs:**")
             for output in query_info["key_outputs"]:
                 st.markdown(f"- {output}")
 
-    st.divider()
+    ''
+    ''
 
-    # Execute button
+    # Execute button with estimated time
+    estimated = query_info.get("estimated_seconds_cached", 2)
     col1, col2 = st.columns([1, 5])
     with col1:
-        execute_button = st.button("▶️ Run Analysis", type="primary", key="run_interactive")
-
-    # Show estimated time
+        execute_button = st.button("Run Analysis", type="primary", key="run_interactive")
     with col2:
-        estimated = query_info.get("estimated_seconds_cached", 2)
         st.caption(f"Estimated: ~{format_time(estimated)}")
 
     if execute_button:
@@ -239,19 +245,26 @@ def render_interactive_panel(client: bigquery.Client):
                     st.warning("No data found for the selected parameters.")
                     return
 
+                ''
+                ''
+
                 # Metrics row
-                col1, col2, col3 = st.columns(3)
-                with col1:
+                cols = st.columns(3)
+                with cols[0]:
                     st.metric("Total Applications", f"{df['application_count'].sum():,}")
-                with col2:
+                with cols[1]:
                     st.metric("Unique Inventions", f"{df['invention_count'].sum():,}")
-                with col3:
+                with cols[2]:
                     st.metric("Execution Time", format_time(execution_time))
 
-                st.divider()
+                ''
+                ''
 
                 # Line chart
-                st.subheader("📈 Trend Over Time")
+                st.header("Trend over time", divider='gray')
+
+                ''
+
                 st.line_chart(
                     df,
                     x="year",
@@ -259,14 +272,22 @@ def render_interactive_panel(client: bigquery.Client):
                     color=["#1f77b4", "#2ca02c"]
                 )
 
+                ''
+                ''
+
                 # Data table
-                st.subheader("📊 Data")
+                st.header("Data", divider='gray')
+
+                ''
+
                 st.dataframe(df, use_container_width=True)
+
+                ''
 
                 # Download button
                 csv = df.to_csv(index=False)
                 st.download_button(
-                    label="📥 Download CSV",
+                    label="Download CSV",
                     data=csv,
                     file_name=f"trend_{selected_jurisdiction}_{selected_tech_field}_{year_start}-{year_end}.csv",
                     mime="text/csv"
