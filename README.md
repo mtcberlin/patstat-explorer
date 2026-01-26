@@ -6,7 +6,7 @@ A Streamlit application for analyzing the EPO PATSTAT patent database on Google 
 
 ## Overview
 
-PATSTAT Explorer provides 18 predefined SQL queries for patent analysis, filterable by three stakeholder perspectives:
+PATSTAT Explorer provides **19 predefined SQL queries** (18 static + 1 dynamic/interactive) for patent analysis, filterable by three stakeholder perspectives:
 
 | Stakeholder | Description | Queries |
 |-------------|-------------|---------|
@@ -36,12 +36,14 @@ PATSTAT Explorer provides 18 predefined SQL queries for patent analysis, filtera
 | Q16 | German States - Per Capita Analysis | PATLIB | A61B activity with per-capita comparison |
 | Q17 | Regional Tech Sector Comparison | PATLIB | Sachsen, Bayern, Baden-Württemberg by WIPO sectors |
 | Q18 | Fastest-Growing G06Q Subclasses | BUSINESS, UNIVERSITY | Growth trends in IT methods for management |
+| **DQ01** | **Technology Trend Analysis** | ALL | **Interactive** analysis with customizable parameters |
 
 ## Features
 
-- **Interactive Query Execution**: Run predefined queries with a single click
+- **Interactive Analysis Panel**: Dynamic query with customizable jurisdiction, technology field, and year range
+- **Predefined Query Library**: 18 static queries covering database exploration, market intelligence, technology scouting, competitive analysis, citations, and regional analysis
 - **Stakeholder Filtering**: Filter queries by PATLIB, BUSINESS, or UNIVERSITY perspective
-- **Result Visualization**: Tables with metrics (row count, execution time)
+- **Result Visualization**: Tables with metrics, line charts for trends
 - **Export Options**: Download results as CSV
 - **Query Documentation**: Each query includes explanation and key outputs
 - **Performance Estimates**: Cached vs. first-run timing displayed per query
@@ -50,11 +52,21 @@ PATSTAT Explorer provides 18 predefined SQL queries for patent analysis, filtera
 
 ```
 patstat/
-├── app.py              # Streamlit web application
-├── queries_bq.py       # 18 BigQuery queries with metadata
-├── requirements.txt    # Python dependencies
-├── .env.example        # Environment variables template
-└── context/            # Documentation & helper scripts
+├── app.py                  # Streamlit web application (entry point)
+├── queries_bq.py           # 19 BigQuery queries with metadata
+├── test_queries.py         # Query validation and timing tests
+├── requirements.txt        # Python dependencies
+├── .env.example            # Environment variables template
+├── docs/                   # Generated documentation
+│   ├── index.md           # Documentation index
+│   ├── project-overview.md # Architecture and tech stack
+│   ├── query-catalog.md   # Complete query reference
+│   ├── bigquery-schema.md # PATSTAT table definitions
+│   └── data-loading.md    # BigQuery loading guide
+└── context/                # Reference materials
+    ├── load_patstat_local.py      # BigQuery data loading utility
+    ├── create_patstat_tables.sql  # PostgreSQL schema (reference)
+    └── Documentation_Scripts/     # EPO PATSTAT reference docs
 ```
 
 ## Local Development
@@ -67,8 +79,10 @@ patstat/
 ### Installation
 
 ```bash
-git clone https://github.com/your-repo/patstat.git
+git clone https://github.com/herrkrueger/patstat.git
 cd patstat
+python -m venv .venv
+source .venv/bin/activate  # or .venv\Scripts\activate on Windows
 pip install -r requirements.txt
 ```
 
@@ -92,6 +106,13 @@ streamlit run app.py
 ```
 
 The app will be available at `http://localhost:8501`
+
+### Testing
+
+```bash
+# Run all query tests with timing report
+python test_queries.py
+```
 
 ## Streamlit Cloud Deployment
 
@@ -118,25 +139,27 @@ universe_domain = "googleapis.com"
 
 ## BigQuery Database
 
-| Project | Dataset | Region |
-|---------|---------|--------|
-| `patstat-mtc` | `patstat` | EU |
+| Project | Dataset | Region | Size |
+|---------|---------|--------|------|
+| `patstat-mtc` | `patstat` | EU | ~450 GB |
 
-### Key Tables (~450 GB total)
+### Key Tables (27 total)
 
-| Table | Rows | Size | Description |
-|-------|------|------|-------------|
-| tls201_appln | 140M | ~25 GB | Patent applications |
-| tls206_person | 98M | ~16 GB | Applicants/Inventors |
-| tls207_pers_appln | 408M | ~12 GB | Person-application links |
-| tls209_appln_ipc | 375M | ~15 GB | IPC classifications |
-| tls211_pat_publn | 168M | ~10 GB | Publications |
-| tls212_citation | 597M | ~40 GB | Citation data |
-| tls224_appln_cpc | 436M | ~9 GB | CPC classifications |
-| tls230_appln_techn_field | - | - | WIPO technology field assignments |
-| tls801_country | - | - | Country reference data |
-| tls901_techn_field_ipc | - | - | WIPO technology field definitions |
-| tls904_nuts | - | - | NUTS regional codes |
+| Table | Rows | Description |
+|-------|------|-------------|
+| tls201_appln | 140M | Patent applications (central table) |
+| tls206_person | 98M | Applicants/Inventors |
+| tls207_pers_appln | 408M | Person-application links |
+| tls209_appln_ipc | 375M | IPC classifications |
+| tls211_pat_publn | 168M | Publications |
+| tls212_citation | 597M | Citation data |
+| tls224_appln_cpc | 436M | CPC classifications |
+| tls230_appln_techn_field | 167M | WIPO technology field assignments |
+| tls801_country | 242 | Country reference data |
+| tls901_techn_field_ipc | 771 | WIPO technology field definitions |
+| tls904_nuts | 2,056 | NUTS regional codes |
+
+See [docs/bigquery-schema.md](docs/bigquery-schema.md) for complete schema documentation.
 
 ### Performance
 
@@ -162,6 +185,9 @@ universe_domain = "googleapis.com"
    - `estimated_seconds_cached`: Expected time for cached query
    - `sql`: The BigQuery SQL statement
 4. Test in BigQuery Console first
+5. Run `python test_queries.py` to validate
+
+See [docs/query-catalog.md](docs/query-catalog.md) for detailed query documentation and SQL patterns.
 
 ### BigQuery SQL Syntax
 
@@ -177,7 +203,21 @@ DATE_DIFF(date1, date2, DAY)
 
 -- IPC/CPC pattern matching
 WHERE ipc_class_symbol LIKE 'A61B%'
+
+-- WIPO technology field join (use weight > 0.5 for primary assignment)
+JOIN tls230_appln_techn_field tf ON a.appln_id = tf.appln_id
+WHERE tf.weight > 0.5
 ```
+
+## Documentation
+
+Detailed documentation is available in the `docs/` folder:
+
+- [Documentation Index](docs/index.md) - Start here
+- [Project Overview](docs/project-overview.md) - Architecture and setup
+- [Query Catalog](docs/query-catalog.md) - Complete query reference with SQL
+- [BigQuery Schema](docs/bigquery-schema.md) - All 27 PATSTAT tables
+- [Data Loading Guide](docs/data-loading.md) - Loading PATSTAT to BigQuery
 
 ## Data Access
 
@@ -197,7 +237,9 @@ When using this code, please credit as follows:
 
 ## Contact
 
-**Report bugs or request features:** arne@mtc.berlin
+**Report bugs or request features:** [GitHub Issues](https://github.com/herrkrueger/patstat/issues)
+
+**Email:** arne@mtc.berlin
 
 **LinkedIn:** [linkedin.com/in/herrkrueger](https://www.linkedin.com/in/herrkrueger/)
 
