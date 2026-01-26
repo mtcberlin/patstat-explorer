@@ -930,3 +930,101 @@ Uses SUBSTR to extract subclass - handles variable whitespace correctly.""",
         """
     },
 }
+
+# =============================================================================
+# DYNAMIC QUERIES - User-configurable parameters
+# =============================================================================
+# These queries have parameters that users can modify via UI widgets.
+# The app reads the parameter metadata and renders appropriate controls.
+
+DYNAMIC_QUERIES = {
+    "DQ01": {
+        "title": "Technology Trend Analysis",
+        "tags": ["PATLIB", "BUSINESS", "UNIVERSITY"],
+        "description": "Analyze patent application trends by jurisdiction and technology field",
+        "explanation": """Interactive analysis of patent filing trends over time.
+Filter by filing jurisdiction (patent office), WIPO technology field, and year range.
+
+Returns yearly application counts and unique invention counts (patent families).
+Use this to identify technology trends, compare jurisdictions, or track sector growth.""",
+        "key_outputs": [
+            "Yearly application counts",
+            "Unique inventions (patent families) per year",
+            "Trend visualization"
+        ],
+        "estimated_seconds_first_run": 8,
+        "estimated_seconds_cached": 2,
+        "parameters": {
+            "jurisdiction": {
+                "type": "select",
+                "label": "Filing Jurisdiction",
+                "description": "Patent office where applications were filed",
+                "default": "EP",
+                "options_query": "JURISDICTIONS"  # Reference to load from database
+            },
+            "tech_field": {
+                "type": "select",
+                "label": "Technology Field",
+                "description": "WIPO technology field classification (35 fields)",
+                "default": 13,  # Medical technology
+                "options_query": "TECH_FIELDS"  # Reference to load from database
+            },
+            "year_range": {
+                "type": "range",
+                "label": "Filing Years",
+                "description": "Range of filing years to analyze",
+                "min": 2000,
+                "max": 2024,
+                "default": [2015, 2023]
+            }
+        },
+        "sql_template": """
+            SELECT
+                a.appln_filing_year AS year,
+                COUNT(DISTINCT a.appln_id) AS application_count,
+                COUNT(DISTINCT a.docdb_family_id) AS invention_count
+            FROM tls201_appln a
+            JOIN tls230_appln_techn_field tf ON a.appln_id = tf.appln_id
+            WHERE a.appln_auth = @jurisdiction
+              AND tf.techn_field_nr = @tech_field
+              AND a.appln_filing_year BETWEEN @year_start AND @year_end
+              AND tf.weight > 0.5
+            GROUP BY a.appln_filing_year
+            ORDER BY a.appln_filing_year ASC
+        """
+    },
+}
+
+# =============================================================================
+# REFERENCE DATA QUERIES - For populating dynamic query dropdowns
+# =============================================================================
+
+REFERENCE_QUERIES = {
+    "JURISDICTIONS": """
+        WITH jurisdiction_counts AS (
+            SELECT
+                a.appln_auth AS code,
+                COALESCE(c.st3_name, a.appln_auth) AS name,
+                COUNT(*) AS app_count
+            FROM tls201_appln a
+            LEFT JOIN tls801_country c ON a.appln_auth = c.ctry_code
+            WHERE a.appln_auth IS NOT NULL
+              AND a.appln_filing_year >= 2010
+            GROUP BY a.appln_auth, c.st3_name
+            HAVING COUNT(*) >= 1000
+        )
+        SELECT code, name
+        FROM jurisdiction_counts
+        ORDER BY app_count DESC
+        LIMIT 50
+    """,
+    "TECH_FIELDS": """
+        SELECT DISTINCT
+            tf.techn_field_nr AS code,
+            tf.techn_field AS name,
+            tf.techn_sector AS sector
+        FROM tls901_techn_field_ipc tf
+        WHERE tf.techn_field_nr > 0
+        ORDER BY tf.techn_sector, tf.techn_field_nr
+    """
+}
