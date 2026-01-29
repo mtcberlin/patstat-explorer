@@ -180,5 +180,77 @@ class TestQueryCount:
             assert count >= 2, f"Category {cat} has only {count} queries"
 
 
+class TestQueryParameters:
+    """Tests for Story 1.8: Query-specific parameter system."""
+
+    def test_all_queries_have_parameters_key(self):
+        """Every query has a 'parameters' key (AC #1)."""
+        for qid, query in QUERIES.items():
+            assert 'parameters' in query, f"{qid} missing 'parameters' key"
+
+    def test_parameters_is_dict(self):
+        """Parameters must be a dict."""
+        for qid, query in QUERIES.items():
+            assert isinstance(query.get('parameters'), dict), f"{qid} parameters is not a dict"
+
+    def test_parameter_types_are_valid(self):
+        """All parameter types are valid (AC #1)."""
+        valid_types = {'year_range', 'multiselect', 'select', 'text'}
+        for qid, query in QUERIES.items():
+            for param_name, param_config in query.get('parameters', {}).items():
+                param_type = param_config.get('type')
+                assert param_type in valid_types, \
+                    f"{qid}.{param_name} has invalid type: {param_type}"
+
+    def test_year_range_has_defaults(self):
+        """year_range parameters have default_start and default_end."""
+        for qid, query in QUERIES.items():
+            for param_name, param_config in query.get('parameters', {}).items():
+                if param_config.get('type') == 'year_range':
+                    assert 'default_start' in param_config, \
+                        f"{qid}.{param_name} missing default_start"
+                    assert 'default_end' in param_config, \
+                        f"{qid}.{param_name} missing default_end"
+
+    def test_multiselect_has_options(self):
+        """multiselect parameters have options defined."""
+        for qid, query in QUERIES.items():
+            for param_name, param_config in query.get('parameters', {}).items():
+                if param_config.get('type') == 'multiselect':
+                    options = param_config.get('options')
+                    assert options is not None, \
+                        f"{qid}.{param_name} missing options"
+                    # Options can be a list or a reference string
+                    valid_refs = {'jurisdictions', 'wipo_fields'}
+                    assert isinstance(options, list) or options in valid_refs, \
+                        f"{qid}.{param_name} has invalid options: {options}"
+
+    def test_q05_has_no_parameters(self):
+        """Q05 (Sample Patents) should have empty parameters (AC #3)."""
+        assert QUERIES['Q05']['parameters'] == {}, \
+            "Q05 should have no parameters (empty dict)"
+
+    def test_parameters_match_sql_template(self):
+        """Queries with year_range param use @year_start/@year_end in sql_template (AC #4)."""
+        for qid, query in QUERIES.items():
+            params = query.get('parameters', {})
+            sql_template = query.get('sql_template', '')
+
+            if 'year_range' in params:
+                assert '@year_start' in sql_template or '@year_end' in sql_template, \
+                    f"{qid} has year_range param but sql_template doesn't use it"
+
+            if 'jurisdictions' in params:
+                assert '@jurisdictions' in sql_template, \
+                    f"{qid} has jurisdictions param but sql_template doesn't use it"
+
+    def test_parameter_count_reasonable(self):
+        """Each query has 0-4 parameters typically (AC #5)."""
+        for qid, query in QUERIES.items():
+            param_count = len(query.get('parameters', {}))
+            assert param_count <= 5, \
+                f"{qid} has {param_count} parameters (typically 0-4)"
+
+
 if __name__ == "__main__":
     pytest.main([__file__, "-v"])

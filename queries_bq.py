@@ -4,14 +4,38 @@ BigQuery syntax for EPO PATSTAT on Google BigQuery.
 
 Structure:
 - QUERIES: Dict with query ID (Q01, Q02, ...) as key
-- Each query has: title, tags, description, explanation, key_outputs, timing, sql, sql_template
+- Each query has: title, tags, description, explanation, key_outputs, timing, sql, sql_template, parameters
 - sql_template: Parameterized version using @param placeholders for dynamic queries
+- parameters: Dict defining which parameters this query accepts (query-specific)
 - STAKEHOLDERS: Available stakeholder tags for filtering
 
-Parameter Placeholders (Story 1.7):
+Parameter System (Story 1.8):
+Each query defines its own 'parameters' dict specifying which inputs it accepts.
+The frontend renders only the controls relevant to each query.
+
+Parameter Schema:
+    "parameters": {
+        "param_name": {
+            "type": "year_range" | "multiselect" | "select" | "text",
+            "label": "Display Label",
+            "options": [...] | "jurisdictions" | "wipo_fields",  # for select/multiselect
+            "defaults": [...] | value,
+            "default_start": int,  # for year_range only
+            "default_end": int,    # for year_range only
+            "required": True | False
+        }
+    }
+
+Available Parameter Types:
+- year_range: Year slider with default_start and default_end
+- multiselect: Multiple selection dropdown (options can be list or "jurisdictions"/"wipo_fields")
+- select: Single selection dropdown
+- text: Text input field
+
+SQL Parameter Placeholders (used in sql_template):
 - @year_start, @year_end: INT64 - Year range filter
 - @jurisdictions: ARRAY<STRING> - List of patent office codes
-- @tech_field: INT64 - WIPO technology field number (optional)
+- @tech_field: INT64 - WIPO technology field number
 """
 
 # Available stakeholder tags
@@ -30,6 +54,15 @@ QUERIES = {
         "tags": ["PATLIB"],
         "category": "Trends",
         "description": "Overall PATSTAT database statistics and key metrics",
+        "parameters": {
+            "year_range": {
+                "type": "year_range",
+                "label": "Filing Year Range",
+                "default_start": 1980,
+                "default_end": 2024,
+                "required": False
+            }
+        },
         "explanation": """High-level statistics about the PATSTAT database:
 - Total number of patent applications
 - Date range of the data
@@ -86,6 +119,15 @@ Essential for understanding the scope and coverage of the database.""",
         "tags": ["PATLIB"],
         "category": "Regional",
         "description": "Patent offices (filing authorities) in the database with application counts",
+        "parameters": {
+            "year_range": {
+                "type": "year_range",
+                "label": "Filing Year Range",
+                "default_start": 2015,
+                "default_end": 2024,
+                "required": False
+            }
+        },
         "explanation": """Shows all patent offices/filing authorities in PATSTAT with their application volumes.
 Helps understand which patent offices are represented and their relative importance.
 
@@ -127,6 +169,22 @@ EP = European Patent Office, US = USPTO, CN = CNIPA, etc.""",
         "tags": ["PATLIB"],
         "category": "Trends",
         "description": "Patent application trends over time (by filing year)",
+        "parameters": {
+            "year_range": {
+                "type": "year_range",
+                "label": "Filing Year Range",
+                "default_start": 1980,
+                "default_end": 2024,
+                "required": True
+            },
+            "jurisdictions": {
+                "type": "multiselect",
+                "label": "Patent Offices",
+                "options": "jurisdictions",
+                "defaults": ["EP", "US", "CN"],
+                "required": True
+            }
+        },
         "explanation": """Shows the distribution of patent applications across filing years.
 Useful for understanding data coverage and identifying trends in global patent activity.
 
@@ -170,6 +228,22 @@ Note: Recent years may show lower counts due to publication delays (18 months fr
         "tags": ["PATLIB"],
         "category": "Technology",
         "description": "Most common IPC technology classes in the database",
+        "parameters": {
+            "year_range": {
+                "type": "year_range",
+                "label": "Filing Year Range",
+                "default_start": 2015,
+                "default_end": 2024,
+                "required": True
+            },
+            "jurisdictions": {
+                "type": "multiselect",
+                "label": "Patent Offices",
+                "options": "jurisdictions",
+                "defaults": ["EP", "US", "CN"],
+                "required": True
+            }
+        },
         "explanation": """Shows the most frequently assigned IPC (International Patent Classification) classes.
 IPC classes indicate the technology area of a patent:
 - A: Human Necessities (medical, agriculture)
@@ -222,6 +296,7 @@ IPC classes indicate the technology area of a patent:
         "tags": ["PATLIB"],
         "category": "Technology",
         "description": "Sample of 100 patent applications with key fields",
+        "parameters": {},
         "explanation": """Returns a sample of patent applications to understand the data structure
 and available fields in the main application table (tls201_appln).
 
@@ -277,6 +352,22 @@ This is the central table in PATSTAT - most queries start here.""",
         "tags": ["PATLIB", "BUSINESS"],
         "category": "Competitors",
         "description": "Which countries have the highest patent application activity?",
+        "parameters": {
+            "year_range": {
+                "type": "year_range",
+                "label": "Filing Year Range",
+                "default_start": 2015,
+                "default_end": 2024,
+                "required": True
+            },
+            "jurisdictions": {
+                "type": "multiselect",
+                "label": "Patent Offices",
+                "options": "jurisdictions",
+                "defaults": ["EP", "US", "CN"],
+                "required": True
+            }
+        },
         "explanation": """This query analyzes patent filing activity by applicant country,
 calculating both total applications and grant rates. It identifies which countries are most active
 in patenting and how successful their applications are. The grant_rate metric helps assess the
@@ -334,6 +425,22 @@ Minimum threshold of 100 patents ensures statistical relevance.""",
         "tags": ["BUSINESS", "UNIVERSITY"],
         "category": "Trends",
         "description": "Patent activity with green technology (CPC Y02) focus by country",
+        "parameters": {
+            "year_range": {
+                "type": "year_range",
+                "label": "Filing Year Range",
+                "default_start": 2015,
+                "default_end": 2022,
+                "required": True
+            },
+            "jurisdictions": {
+                "type": "multiselect",
+                "label": "Countries to Analyze",
+                "options": "jurisdictions",
+                "defaults": ["US", "DE", "JP", "CN", "KR", "FR", "GB"],
+                "required": True
+            }
+        },
         "explanation": """This query tracks patent activity trends by country,
 with a special focus on green/environmental technologies (CPC Y02 class).
 The Y02 class covers climate change mitigation technologies, making this
@@ -399,6 +506,22 @@ Tracks both total applications and the proportion dedicated to green tech.""",
         "tags": ["BUSINESS", "UNIVERSITY"],
         "category": "Technology",
         "description": "Most active technology fields with family size and citation impact",
+        "parameters": {
+            "year_range": {
+                "type": "year_range",
+                "label": "Filing Year Range",
+                "default_start": 2018,
+                "default_end": 2024,
+                "required": True
+            },
+            "jurisdictions": {
+                "type": "multiselect",
+                "label": "Patent Offices",
+                "options": "jurisdictions",
+                "defaults": ["EP", "US", "CN"],
+                "required": True
+            }
+        },
         "explanation": """This query uses WIPO technology field classifications to identify the most
 active technology sectors. The weight filter (>0.5) ensures only primary
 technology assignments are counted. Family size indicates geographic filing
@@ -450,6 +573,22 @@ breadth (patent importance), while citation counts measure technical influence."
         "tags": ["BUSINESS"],
         "category": "Technology",
         "description": "AI-based enterprise resource planning (G06Q10 + G06N) landscape",
+        "parameters": {
+            "year_range": {
+                "type": "year_range",
+                "label": "Filing Year Range",
+                "default_start": 2018,
+                "default_end": 2024,
+                "required": True
+            },
+            "jurisdictions": {
+                "type": "multiselect",
+                "label": "Patent Offices",
+                "options": "jurisdictions",
+                "defaults": ["EP", "US", "CN"],
+                "required": True
+            }
+        },
         "explanation": """This query analyzes the patent landscape for AI-based ERP by identifying
 applications with both G06Q10 (ERP/business methods) and G06N (AI/machine learning)
 CPC classifications.
@@ -572,6 +711,22 @@ Identifies top applicants to monitor in this emerging technology intersection.""
         "tags": ["BUSINESS", "UNIVERSITY"],
         "category": "Competitors",
         "description": "Companies building patent portfolios in AI-assisted diagnostics (A61B + G06N)",
+        "parameters": {
+            "year_range": {
+                "type": "year_range",
+                "label": "Filing Year Range",
+                "default_start": 2015,
+                "default_end": 2024,
+                "required": True
+            },
+            "jurisdictions": {
+                "type": "multiselect",
+                "label": "Patent Offices",
+                "options": "jurisdictions",
+                "defaults": ["EP", "US", "CN"],
+                "required": True
+            }
+        },
         "explanation": """This query identifies companies active in AI-assisted diagnostics by finding
 patents at the intersection of medical diagnosis (A61B) and artificial
 intelligence (G06N) classifications. It calculates time-to-grant using the
@@ -722,6 +877,22 @@ established players in this field.""",
         "tags": ["BUSINESS"],
         "category": "Competitors",
         "description": "Top patent applicants with portfolio profile",
+        "parameters": {
+            "year_range": {
+                "type": "year_range",
+                "label": "Filing Year Range",
+                "default_start": 2015,
+                "default_end": 2024,
+                "required": True
+            },
+            "jurisdictions": {
+                "type": "multiselect",
+                "label": "Patent Offices",
+                "options": "jurisdictions",
+                "defaults": ["EP", "US", "CN"],
+                "required": True
+            }
+        },
         "explanation": """This query identifies the most prolific patent applicants by standardized
 name (doc_std_name), showing their filing activity, grant success, and
 temporal span of innovation. The unique_patent_families count helps
@@ -784,6 +955,22 @@ Minimum threshold of 50 patents ensures focus on significant players.""",
         "tags": ["BUSINESS"],
         "category": "Competitors",
         "description": "Geographic filing patterns of major MedTech competitors",
+        "parameters": {
+            "year_range": {
+                "type": "year_range",
+                "label": "Filing Year Range",
+                "default_start": 2015,
+                "default_end": 2024,
+                "required": True
+            },
+            "jurisdictions": {
+                "type": "multiselect",
+                "label": "Patent Offices to Compare",
+                "options": "jurisdictions",
+                "defaults": ["EP", "US", "CN"],
+                "required": True
+            }
+        },
         "explanation": """This query analyzes the geographic filing patterns of major MedTech competitors,
 focusing on EP (European Patent Office), US (USPTO), and CN (CNIPA) filings.
 
@@ -901,6 +1088,22 @@ Stryker, Zimmer, Smith & Nephew, Edwards, Baxter, Fresenius, and B. Braun.""",
         "tags": ["UNIVERSITY"],
         "category": "Trends",
         "description": "Most frequently cited patents by recent applications",
+        "parameters": {
+            "year_range": {
+                "type": "year_range",
+                "label": "Citing Application Year Range",
+                "default_start": 2018,
+                "default_end": 2024,
+                "required": True
+            },
+            "jurisdictions": {
+                "type": "multiselect",
+                "label": "Patent Offices",
+                "options": "jurisdictions",
+                "defaults": ["EP", "US", "CN"],
+                "required": True
+            }
+        },
         "explanation": """This query builds a citation network to identify the most influential prior
 art patents. By focusing on recent citing applications, it shows which older
 patents remain technically relevant. The citation lag metric reveals how
@@ -978,6 +1181,22 @@ Minimum threshold of 10 citations ensures significance.""",
         "tags": ["BUSINESS", "UNIVERSITY"],
         "category": "Technology",
         "description": "Grant rates for diagnostic imaging patents (A61B 6/) by patent office",
+        "parameters": {
+            "year_range": {
+                "type": "year_range",
+                "label": "Filing Year Range",
+                "default_start": 2010,
+                "default_end": 2023,
+                "required": True
+            },
+            "jurisdictions": {
+                "type": "multiselect",
+                "label": "Patent Offices",
+                "options": "jurisdictions",
+                "defaults": ["EP", "US", "CN"],
+                "required": True
+            }
+        },
         "explanation": """This query analyzes grant rates for diagnostic imaging patents (IPC subclass A61B 6/)
 across major patent offices. A61B 6/ covers diagnostic imaging technologies
 including X-ray, ultrasound, MRI, and other medical imaging devices.
@@ -1066,6 +1285,15 @@ Helps inform international filing strategy by showing office-specific grant succ
         "tags": ["PATLIB"],
         "category": "Regional",
         "description": "German Federal states patent activity in A61B (Diagnosis/Surgery)",
+        "parameters": {
+            "year_range": {
+                "type": "year_range",
+                "label": "Filing Year Range",
+                "default_start": 2018,
+                "default_end": 2024,
+                "required": True
+            }
+        },
         "explanation": """This query provides analysis of medical technology patent activity
 across German federal states using NUTS codes. It identifies regional
 innovation hubs in the medical diagnosis/surgery field (IPC A61B) and
@@ -1134,6 +1362,15 @@ Uses main class A61B% - covers all medical diagnosis/surgery subclasses.""",
         "tags": ["PATLIB"],
         "category": "Regional",
         "description": "A61B patent activity by German federal state with per-capita comparison",
+        "parameters": {
+            "year_range": {
+                "type": "year_range",
+                "label": "Filing Year Range",
+                "default_start": 2019,
+                "default_end": 2024,
+                "required": True
+            }
+        },
         "explanation": """This query analyzes patent activity in IPC class A61B (medical diagnosis/surgery)
 focusing on German federal states with per-capita comparison.
 
@@ -1271,6 +1508,15 @@ states of different sizes.""",
         "tags": ["PATLIB"],
         "category": "Regional",
         "description": "Compare German regions patent activity by WIPO technology sectors",
+        "parameters": {
+            "year_range": {
+                "type": "year_range",
+                "label": "Filing Year Range",
+                "default_start": 2015,
+                "default_end": 2024,
+                "required": True
+            }
+        },
         "explanation": """This query compares patent activity across German federal states (Sachsen, Bayern,
 Baden-Württemberg) broken down by WIPO technology sectors. It helps regional
 development agencies understand their innovation strengths relative to peer regions.
@@ -1382,6 +1628,22 @@ technology categorization across all patents.""",
         "tags": ["BUSINESS", "PATLIB"],
         "category": "Competitors",
         "description": "Applicants with the largest average patent family sizes, indicating global filing strategies",
+        "parameters": {
+            "year_range": {
+                "type": "year_range",
+                "label": "Filing Year Range",
+                "default_start": 2018,
+                "default_end": 2024,
+                "required": True
+            },
+            "jurisdictions": {
+                "type": "multiselect",
+                "label": "Patent Offices",
+                "options": "jurisdictions",
+                "defaults": ["EP", "US", "CN"],
+                "required": True
+            }
+        },
         "explanation": """Identifies applicants whose inventions are protected across the most jurisdictions.
 Large family sizes typically indicate:
 - High-value inventions worth global protection
@@ -1444,6 +1706,22 @@ Minimum 10 families ensures statistical relevance.""",
         "tags": ["UNIVERSITY", "BUSINESS"],
         "category": "Competitors",
         "description": "Inventors with the highest number of patent applications",
+        "parameters": {
+            "year_range": {
+                "type": "year_range",
+                "label": "Filing Year Range",
+                "default_start": 2018,
+                "default_end": 2024,
+                "required": True
+            },
+            "jurisdictions": {
+                "type": "multiselect",
+                "label": "Patent Offices",
+                "options": "jurisdictions",
+                "defaults": ["EP", "US", "CN"],
+                "required": True
+            }
+        },
         "explanation": """Identifies the most productive inventors by counting their patent applications.
 Prolific inventors often represent key R&D talent at companies or research institutions.
 
@@ -1505,6 +1783,22 @@ The person_name field contains the inventor's name as filed.""",
         "tags": ["BUSINESS", "UNIVERSITY"],
         "category": "Competitors",
         "description": "Applicants who co-file patents with partners from other countries",
+        "parameters": {
+            "year_range": {
+                "type": "year_range",
+                "label": "Filing Year Range",
+                "default_start": 2018,
+                "default_end": 2024,
+                "required": True
+            },
+            "jurisdictions": {
+                "type": "multiselect",
+                "label": "Patent Offices",
+                "options": "jurisdictions",
+                "defaults": ["EP", "US", "CN"],
+                "required": True
+            }
+        },
         "explanation": """Identifies international collaboration patterns by finding applications
 with co-applicants from different countries. This reveals:
 - R&D partnerships between companies
@@ -1576,6 +1870,22 @@ Based on EPO training query 2.3 - finding applicants with international co-appli
         "tags": ["UNIVERSITY", "BUSINESS"],
         "category": "Trends",
         "description": "Patent families receiving the most citations from other patent families",
+        "parameters": {
+            "year_range": {
+                "type": "year_range",
+                "label": "Filing Year Range",
+                "default_start": 2010,
+                "default_end": 2020,
+                "required": True
+            },
+            "jurisdictions": {
+                "type": "multiselect",
+                "label": "Patent Offices",
+                "options": "jurisdictions",
+                "defaults": ["EP", "US", "CN"],
+                "required": True
+            }
+        },
         "explanation": """Identifies the most influential inventions by counting how many other
 patent families cite them. Citation counts at the family level (nb_citing_docdb_fam) are
 more meaningful than publication-level counts because they measure true technical influence.
@@ -1628,6 +1938,15 @@ Based on EPO training query 2.1 - most cited applications.""",
         "tags": ["PATLIB"],
         "category": "Regional",
         "description": "Filing patterns of inventor-applicants (individuals who are both inventor and applicant)",
+        "parameters": {
+            "year_range": {
+                "type": "year_range",
+                "label": "Filing Year Range",
+                "default_start": 2018,
+                "default_end": 2024,
+                "required": True
+            }
+        },
         "explanation": """Identifies patent filings where the inventor is also the applicant,
 typically indicating individual inventors or small entities rather than corporate R&D.
 
@@ -1686,6 +2005,22 @@ Based on EPO training query 2.4.""",
         "tags": ["UNIVERSITY"],
         "category": "Competitors",
         "description": "University and research institution patent activity rankings",
+        "parameters": {
+            "year_range": {
+                "type": "year_range",
+                "label": "Filing Year Range",
+                "default_start": 2015,
+                "default_end": 2024,
+                "required": True
+            },
+            "jurisdictions": {
+                "type": "multiselect",
+                "label": "Patent Offices",
+                "options": "jurisdictions",
+                "defaults": ["EP", "US", "CN"],
+                "required": True
+            }
+        },
         "explanation": """Identifies the most active universities and research institutions
 by filtering for applicants in the 'UNIVERSITY' sector (psn_sector field).
 
@@ -1752,6 +2087,15 @@ This helps identify:
         "tags": ["PATLIB", "BUSINESS"],
         "category": "Regional",
         "description": "Average number of jurisdictions where applicants from each country file their patents",
+        "parameters": {
+            "year_range": {
+                "type": "year_range",
+                "label": "Filing Year Range",
+                "default_start": 2018,
+                "default_end": 2024,
+                "required": True
+            }
+        },
         "explanation": """Shows the international filing strategy by country of origin.
 Higher average family sizes indicate:
 - Greater international market focus
@@ -1812,6 +2156,22 @@ Based on analysis patterns from EPO training materials.""",
         "tags": ["PATLIB", "BUSINESS"],
         "category": "Trends",
         "description": "Average time from filing to grant publication by patent office",
+        "parameters": {
+            "year_range": {
+                "type": "year_range",
+                "label": "Filing Year Range",
+                "default_start": 2015,
+                "default_end": 2020,
+                "required": True
+            },
+            "jurisdictions": {
+                "type": "multiselect",
+                "label": "Patent Offices",
+                "options": "jurisdictions",
+                "defaults": ["EP", "US", "CN"],
+                "required": True
+            }
+        },
         "explanation": """Calculates the average pendency (time-to-grant) for different patent offices.
 This helps applicants understand:
 - Which offices process applications faster
@@ -1877,6 +2237,22 @@ Uses the first grant publication date from tls211_pat_publn.""",
         "tags": ["BUSINESS", "UNIVERSITY"],
         "category": "Technology",
         "description": "Grant success rates by WIPO technology field classification",
+        "parameters": {
+            "year_range": {
+                "type": "year_range",
+                "label": "Filing Year Range",
+                "default_start": 2010,
+                "default_end": 2018,
+                "required": True
+            },
+            "jurisdictions": {
+                "type": "multiselect",
+                "label": "Patent Offices",
+                "options": "jurisdictions",
+                "defaults": ["EP", "US", "CN"],
+                "required": True
+            }
+        },
         "explanation": """Compares grant rates across different technology sectors using
 WIPO's technology field classification. This helps:
 - Identify easier vs. harder technology areas for patent prosecution
@@ -1934,6 +2310,22 @@ Uses the tls230_appln_techn_field and tls901_techn_field_ipc tables.""",
         "tags": ["BUSINESS", "UNIVERSITY"],
         "category": "Technology",
         "description": "Applications classified in multiple technology areas (cross-domain innovations)",
+        "parameters": {
+            "year_range": {
+                "type": "year_range",
+                "label": "Filing Year Range",
+                "default_start": 2018,
+                "default_end": 2024,
+                "required": True
+            },
+            "jurisdictions": {
+                "type": "multiselect",
+                "label": "Patent Offices",
+                "options": "jurisdictions",
+                "defaults": ["EP", "US", "CN"],
+                "required": True
+            }
+        },
         "explanation": """Identifies patents at the intersection of multiple technology fields
 by finding applications with IPC codes from different main classes.
 
@@ -1990,6 +2382,22 @@ Based on EPO training query 2.7 - applications with multiple IPC classes.""",
         "tags": ["BUSINESS", "UNIVERSITY"],
         "category": "Trends",
         "description": "Fastest-growing sub-classes within G06Q (IT methods for management)",
+        "parameters": {
+            "year_range": {
+                "type": "year_range",
+                "label": "Year Range for Growth Comparison",
+                "default_start": 2021,
+                "default_end": 2023,
+                "required": True
+            },
+            "jurisdictions": {
+                "type": "multiselect",
+                "label": "Patent Offices",
+                "options": "jurisdictions",
+                "defaults": ["EP", "US", "CN"],
+                "required": True
+            }
+        },
         "explanation": """This query identifies the fastest-growing G06Q sub-classes by comparing
 filing activity between years. It also identifies the top 3 applicants driving growth
 in each subclass.
@@ -2143,6 +2551,22 @@ Uses SUBSTR to extract subclass - handles variable whitespace correctly.""",
         "tags": ["PATLIB", "BUSINESS"],
         "category": "Competitors",
         "description": "Most cited patent applications by citation count",
+        "parameters": {
+            "year_range": {
+                "type": "year_range",
+                "label": "Filing Year Range",
+                "default_start": 2010,
+                "default_end": 2020,
+                "required": True
+            },
+            "jurisdictions": {
+                "type": "multiselect",
+                "label": "Patent Offices",
+                "options": "jurisdictions",
+                "defaults": ["EP", "US", "CN"],
+                "required": True
+            }
+        },
         "explanation": """Identifies the most influential patents based on family citation counts.
 Uses nb_citing_docdb_fam which counts distinct DOCDB families that cite the
 application or any of its family members. Citation frequency on family level
@@ -2198,6 +2622,22 @@ the basis for subsequent innovation.""",
         "tags": ["PATLIB", "BUSINESS"],
         "category": "Competitors",
         "description": "Top patent applicants ranked by filing volume within a country",
+        "parameters": {
+            "year_range": {
+                "type": "year_range",
+                "label": "Filing Year Range",
+                "default_start": 2018,
+                "default_end": 2024,
+                "required": True
+            },
+            "jurisdictions": {
+                "type": "multiselect",
+                "label": "Patent Offices",
+                "options": "jurisdictions",
+                "defaults": ["EP", "US", "CN"],
+                "required": True
+            }
+        },
         "explanation": """Identifies the most prolific patent applicants by their country of residence.
 Uses DOCDB standardized names (doc_std_name) for better name harmonization.
 Applicants are identified by applt_seq_nr > 0.
@@ -2255,6 +2695,22 @@ results.""",
         "tags": ["PATLIB", "BUSINESS", "UNIVERSITY"],
         "category": "Competitors",
         "description": "Applicants who co-file patents with partners from other countries",
+        "parameters": {
+            "year_range": {
+                "type": "year_range",
+                "label": "Filing Year Range",
+                "default_start": 2018,
+                "default_end": 2024,
+                "required": True
+            },
+            "jurisdictions": {
+                "type": "multiselect",
+                "label": "Patent Offices",
+                "options": "jurisdictions",
+                "defaults": ["EP", "US", "CN"],
+                "required": True
+            }
+        },
         "explanation": """Identifies international collaboration patterns by finding applications
 with co-applicants from different countries. This reveals strategic partnerships,
 joint ventures, and cross-border R&D collaborations.
@@ -2325,6 +2781,22 @@ Results are ranked by the number of joint applications.""",
         "tags": ["PATLIB", "UNIVERSITY"],
         "category": "Regional",
         "description": "Applications where the same person is both inventor and applicant",
+        "parameters": {
+            "year_range": {
+                "type": "year_range",
+                "label": "Filing Year Range",
+                "default_start": 2015,
+                "default_end": 2024,
+                "required": True
+            },
+            "jurisdictions": {
+                "type": "multiselect",
+                "label": "Patent Offices",
+                "options": "jurisdictions",
+                "defaults": ["EP", "US", "CN"],
+                "required": True
+            }
+        },
         "explanation": """Identifies applications where the inventor is also the applicant,
 indicating individual inventors, small entities, or professor's privilege situations.
 Common in academia and for independent inventors.
@@ -2381,6 +2853,22 @@ who are both applicant and inventor on the same application.""",
         "tags": ["PATLIB", "BUSINESS"],
         "category": "Trends",
         "description": "Analysis of first filings (priority applications) vs. subsequent filings",
+        "parameters": {
+            "year_range": {
+                "type": "year_range",
+                "label": "Filing Year Range",
+                "default_start": 2015,
+                "default_end": 2024,
+                "required": True
+            },
+            "jurisdictions": {
+                "type": "multiselect",
+                "label": "Patent Offices",
+                "options": "jurisdictions",
+                "defaults": ["EP", "US", "CN"],
+                "required": True
+            }
+        },
         "explanation": """Distinguishes between first filings (priority applications where
 appln_id = earliest_filing_id) and subsequent filings (extensions, nationals, etc.).
 First filings represent genuine new inventions, while subsequent filings
@@ -2431,6 +2919,22 @@ This ratio helps understand innovation vs. globalization strategies.""",
         "tags": ["BUSINESS", "UNIVERSITY"],
         "category": "Technology",
         "description": "Applications classified in multiple distinct IPC classes",
+        "parameters": {
+            "year_range": {
+                "type": "year_range",
+                "label": "Filing Year Range",
+                "default_start": 2018,
+                "default_end": 2024,
+                "required": True
+            },
+            "jurisdictions": {
+                "type": "multiselect",
+                "label": "Patent Offices",
+                "options": "jurisdictions",
+                "defaults": ["EP", "US", "CN"],
+                "required": True
+            }
+        },
         "explanation": """Identifies patents that span multiple technology domains by having
 classifications in different IPC main classes (e.g., both C01B and H01M for
 battery chemistry). Cross-domain patents often represent innovative combinations
@@ -2512,6 +3016,22 @@ Uses EXISTS subqueries to find applications with both specified IPC classes.""",
         "tags": ["PATLIB"],
         "category": "Regional",
         "description": "Patent offices ranked by speed from filing to first publication",
+        "parameters": {
+            "year_range": {
+                "type": "year_range",
+                "label": "Filing Year Range",
+                "default_start": 2018,
+                "default_end": 2022,
+                "required": True
+            },
+            "jurisdictions": {
+                "type": "multiselect",
+                "label": "Patent Offices",
+                "options": "jurisdictions",
+                "defaults": ["EP", "US", "CN"],
+                "required": True
+            }
+        },
         "explanation": """Analyzes which patent offices publish applications fastest after filing.
 Standard publication is 18 months after filing, but some offices publish earlier.
 Early publication affects prior art considerations and competitive intelligence.
@@ -2573,6 +3093,22 @@ Uses DATE_DIFF to calculate months between filing and earliest publication date.
         "tags": ["UNIVERSITY", "BUSINESS"],
         "category": "Competitors",
         "description": "Inventors associated with major patent-filing organizations",
+        "parameters": {
+            "year_range": {
+                "type": "year_range",
+                "label": "Filing Year Range",
+                "default_start": 2018,
+                "default_end": 2024,
+                "required": True
+            },
+            "jurisdictions": {
+                "type": "multiselect",
+                "label": "Patent Offices",
+                "options": "jurisdictions",
+                "defaults": ["EP", "US", "CN"],
+                "required": True
+            }
+        },
         "explanation": """Identifies inventors (invt_seq_nr > 0) associated with applications
 from major patent-filing organizations. Shows which individuals drive innovation
 at large institutions and their technology focus areas (via IPC classes).
@@ -2679,6 +3215,22 @@ subsequent filing dates.""",
         "tags": ["PATLIB", "BUSINESS"],
         "category": "Technology",
         "description": "Largest DOCDB patent families by number of family members",
+        "parameters": {
+            "year_range": {
+                "type": "year_range",
+                "label": "Filing Year Range",
+                "default_start": 2015,
+                "default_end": 2024,
+                "required": True
+            },
+            "jurisdictions": {
+                "type": "multiselect",
+                "label": "Patent Offices",
+                "options": "jurisdictions",
+                "defaults": ["EP", "US", "CN"],
+                "required": True
+            }
+        },
         "explanation": """Identifies the largest patent families (DOCDB simple families).
 Large families indicate inventions with broad geographic protection strategies
 or high commercial value. Uses docdb_family_size for efficient querying.
@@ -2752,6 +3304,22 @@ essentially the same invention across different jurisdictions.""",
         "tags": ["PATLIB", "BUSINESS"],
         "category": "Regional",
         "description": "Geographic distribution of patent family filings",
+        "parameters": {
+            "year_range": {
+                "type": "year_range",
+                "label": "Filing Year Range",
+                "default_start": 2018,
+                "default_end": 2024,
+                "required": True
+            },
+            "jurisdictions": {
+                "type": "multiselect",
+                "label": "Patent Offices",
+                "options": "jurisdictions",
+                "defaults": ["EP", "US", "CN"],
+                "required": True
+            }
+        },
         "explanation": """Analyzes how inventions (represented by DOCDB families) are protected
 across different jurisdictions. Shows which filing authorities are most common
 for family extensions, revealing global patent strategy patterns.
@@ -2808,6 +3376,22 @@ broader global protection.""",
         "tags": ["PATLIB", "UNIVERSITY"],
         "category": "Trends",
         "description": "Patent grant rate trends by year and filing authority",
+        "parameters": {
+            "year_range": {
+                "type": "year_range",
+                "label": "Filing Year Range",
+                "default_start": 2010,
+                "default_end": 2020,
+                "required": True
+            },
+            "jurisdictions": {
+                "type": "multiselect",
+                "label": "Patent Offices",
+                "options": "jurisdictions",
+                "defaults": ["EP", "US", "CN", "JP", "KR"],
+                "required": True
+            }
+        },
         "explanation": """Analyzes how patent grant rates have evolved over time across different
 patent offices. Grant rate is calculated as the percentage of applications
 that received a grant (granted = 'Y').
@@ -2859,6 +3443,15 @@ Useful for understanding examination rigor and success rates across offices.""",
         "tags": ["PATLIB", "BUSINESS"],
         "category": "Regional",
         "description": "PCT international application distribution by receiving office",
+        "parameters": {
+            "year_range": {
+                "type": "year_range",
+                "label": "Filing Year Range",
+                "default_start": 2018,
+                "default_end": 2024,
+                "required": True
+            }
+        },
         "explanation": """Analyzes Patent Cooperation Treaty (PCT) international applications
 by receiving office. PCT applications (appln_kind = 'W') are filed at
 receiving offices before entering national/regional phases.
@@ -2913,6 +3506,22 @@ indicates the geographic origin of innovations seeking global protection.""",
         "tags": ["UNIVERSITY", "BUSINESS"],
         "category": "Trends",
         "description": "Patent filing comparison between universities and companies",
+        "parameters": {
+            "year_range": {
+                "type": "year_range",
+                "label": "Filing Year Range",
+                "default_start": 2015,
+                "default_end": 2020,
+                "required": True
+            },
+            "jurisdictions": {
+                "type": "multiselect",
+                "label": "Patent Offices",
+                "options": "jurisdictions",
+                "defaults": ["EP", "US", "CN"],
+                "required": True
+            }
+        },
         "explanation": """Compares patent activity between universities (psn_sector = 'UNIVERSITY')
 and companies (psn_sector = 'COMPANY'). Shows relative filing volumes,
 grant success rates, and citation impact.
@@ -2972,6 +3581,22 @@ The citation rate comparison indicates research vs. commercial focus.""",
         "tags": ["BUSINESS", "UNIVERSITY"],
         "category": "Technology",
         "description": "Fastest-growing CPC technology subclasses by filing growth",
+        "parameters": {
+            "year_range": {
+                "type": "year_range",
+                "label": "Year Range for Growth Comparison",
+                "default_start": 2018,
+                "default_end": 2023,
+                "required": True
+            },
+            "jurisdictions": {
+                "type": "multiselect",
+                "label": "Patent Offices",
+                "options": "jurisdictions",
+                "defaults": ["EP", "US", "CN"],
+                "required": True
+            }
+        },
         "explanation": """Identifies emerging technology areas by analyzing CPC subclass growth.
 Compares filing volumes between two periods to calculate growth rates.
 High-growth subclasses may indicate emerging technologies or increased

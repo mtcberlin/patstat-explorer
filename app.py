@@ -31,6 +31,10 @@ DEFAULT_YEAR_END = 2024
 DEFAULT_JURISDICTIONS = ["EP", "US", "CN"]
 DEFAULT_TECH_FIELD = None
 
+# Year range bounds for sliders
+YEAR_MIN = 1990
+YEAR_MAX = 2024
+
 
 def init_session_state():
     """Initialize session state for page navigation and parameters.
@@ -285,8 +289,8 @@ def render_parameter_block():
             # Time: Year range slider
             year_range = st.slider(
                 "Year Range",
-                min_value=1990,
-                max_value=2024,
+                min_value=YEAR_MIN,
+                max_value=YEAR_MAX,
                 value=(st.session_state.get('year_start', DEFAULT_YEAR_START),
                        st.session_state.get('year_end', DEFAULT_YEAR_END)),
                 help="Select the filing year range for analysis"
@@ -331,6 +335,136 @@ def render_parameter_block():
     st.session_state['tech_field'] = tech_field
 
     return year_start, year_end, jurisdictions, tech_field, run_clicked
+
+
+def resolve_options(options):
+    """Resolve option references to actual lists (Story 1.8).
+
+    Args:
+        options: Either a list of options, or a string reference like "jurisdictions"
+
+    Returns:
+        List of option values
+    """
+    if options == 'jurisdictions':
+        return JURISDICTIONS
+    elif options == 'wipo_fields':
+        return list(TECH_FIELDS.keys())
+    elif isinstance(options, list):
+        return options
+    return []
+
+
+def render_single_parameter(name: str, config: dict, key_prefix: str = ""):
+    """Render a single parameter control based on its type (Story 1.8).
+
+    Args:
+        name: Parameter name
+        config: Parameter configuration dict with type, label, defaults, etc.
+        key_prefix: Optional prefix for Streamlit widget keys
+
+    Returns:
+        The value from the rendered control
+    """
+    param_type = config.get('type')
+    label = config.get('label', name)
+    key = f"{key_prefix}_{name}" if key_prefix else name
+
+    if param_type == 'year_range':
+        default_start = config.get('default_start', DEFAULT_YEAR_START)
+        default_end = config.get('default_end', DEFAULT_YEAR_END)
+        year_range = st.slider(
+            label,
+            min_value=YEAR_MIN,
+            max_value=YEAR_MAX,
+            value=(default_start, default_end),
+            key=key
+        )
+        return {'year_start': year_range[0], 'year_end': year_range[1]}
+
+    elif param_type == 'multiselect':
+        options = resolve_options(config.get('options', []))
+        defaults = config.get('defaults', options[:3] if options else [])
+        # Ensure defaults are valid options
+        valid_defaults = [d for d in defaults if d in options]
+        return st.multiselect(label, options, default=valid_defaults, key=key)
+
+    elif param_type == 'select':
+        options = resolve_options(config.get('options', []))
+        default = config.get('defaults')
+        default_index = options.index(default) if default in options else 0
+        return st.selectbox(label, options, index=default_index, key=key)
+
+    elif param_type == 'text':
+        default = config.get('defaults', '')
+        placeholder = config.get('placeholder', '')
+        return st.text_input(label, value=default, placeholder=placeholder, key=key)
+
+    # Unknown parameter type - warn and return None
+    if param_type:
+        st.warning(f"Unknown parameter type '{param_type}' for {name}")
+    return None
+
+
+def render_query_parameters(query_id: str) -> tuple:
+    """Render parameter controls based on query's parameter configuration (Story 1.8).
+
+    Reads the query's 'parameters' dict and renders only the controls
+    defined for that specific query.
+
+    Args:
+        query_id: Query ID to get parameter config for
+
+    Returns:
+        tuple: (collected_params dict, run_clicked bool)
+    """
+    query = get_all_queries().get(query_id, {})
+    params_config = query.get('parameters', {})
+
+    if not params_config:
+        # No parameters defined for this query
+        with st.container(border=True):
+            col1, col2 = st.columns([3, 1])
+            with col1:
+                st.info("This query has no configurable parameters.")
+            with col2:
+                st.write("")  # Spacing
+                run_clicked = st.button("Run Analysis", type="primary", use_container_width=True)
+        return {}, run_clicked
+
+    collected_params = {}
+    key_prefix = f"param_{query_id}"
+
+    with st.container(border=True):
+        # Determine layout based on parameter count
+        param_count = len(params_config)
+        if param_count == 1:
+            cols = st.columns([3, 1])
+        elif param_count == 2:
+            cols = st.columns([2, 2, 1])
+        else:
+            cols = st.columns([2, 2, 2, 1])
+
+        col_idx = 0
+        for param_name, param_def in params_config.items():
+            with cols[col_idx % (len(cols) - 1)]:  # Last column reserved for button
+                value = render_single_parameter(param_name, param_def, key_prefix)
+
+                # Handle year_range which returns a dict
+                if param_def.get('type') == 'year_range':
+                    collected_params['year_start'] = value['year_start']
+                    collected_params['year_end'] = value['year_end']
+                else:
+                    collected_params[param_name] = value
+            col_idx += 1
+
+        # Run button in last column
+        with cols[-1]:
+            st.write("")  # Spacing to align with other controls
+            run_clicked = st.button("Run Analysis", type="primary", use_container_width=True)
+
+    return collected_params, run_clicked
+
 
 # =============================================================================
 # INSIGHT & VISUALIZATION (Story 1.4)
@@ -692,8 +826,14 @@ def render_detail_page(query_id: str):
 
     ''  # Spacing
 
-    # Parameter block (Story 1.2 AC #1)
-    year_start, year_end, jurisdictions, tech_field, run_clicked = render_parameter_block()
+    # Parameter block - use query-specific parameters (Story 1.8)
+    collected_params, run_clicked = render_query_parameters(query_id)
+
+    # Extract common params for display and backwards compatibility
+    year_start = collected_params.get('year_start', DEFAULT_YEAR_START)
+    year_end = collected_params.get('year_end', DEFAULT_YEAR_END)
+    jurisdictions = collected_params.get('jurisdictions', DEFAULT_JURISDICTIONS)
+    tech_field = collected_params.get('tech_field')
 
     ''  # Spacing
 
@@ -720,8 +860,20 @@ def render_detail_page(query_id: str):
     with st.expander("View SQL Query", expanded=False):
         # Display SQL with current parameter values substituted for clarity
         display_sql = query_info["sql"]
-        # Show parameter context
-        st.caption(f"Parameters: Years {year_start}-{year_end} | Jurisdictions: {', '.join(jurisdictions) if jurisdictions else 'None'} | Tech Field: {tech_field or 'All'}")
+        # Build parameter context from collected params
+        params_config = query_info.get('parameters', {})
+        if params_config:
+            param_parts = []
+            if 'year_range' in params_config:
+                param_parts.append(f"Years {year_start}-{year_end}")
+            if 'jurisdictions' in params_config:
+                param_parts.append(f"Offices: {', '.join(jurisdictions) if jurisdictions else 'None'}")
+            if 'tech_field' in params_config:
+                param_parts.append(f"Tech Field: {tech_field or 'All'}")
+            param_context = " | ".join(param_parts) if param_parts else "No parameters"
+        else:
+            param_context = "No configurable parameters"
+        st.caption(f"Parameters: {param_context}")
         st.code(display_sql.strip(), language="sql")
 
     # Methodology note if available (Story 1.6)
@@ -745,14 +897,18 @@ def render_detail_page(query_id: str):
 
         with st.spinner(f"{spinner_msg} (~{format_time(estimated_seconds)})"):
             try:
-                # Use parameterized query if sql_template is available (Story 1.7)
+                # Use parameterized query if sql_template is available (Story 1.7, 1.8)
                 if "sql_template" in query_info:
-                    params = {
-                        "year_start": year_start,
-                        "year_end": year_end,
-                        "jurisdictions": jurisdictions if jurisdictions else None,
-                        "tech_field": tech_field
-                    }
+                    # Build params from collected values - only include what the query uses
+                    params = {}
+                    params_config = query_info.get('parameters', {})
+                    if 'year_range' in params_config:
+                        params['year_start'] = year_start
+                        params['year_end'] = year_end
+                    if 'jurisdictions' in params_config:
+                        params['jurisdictions'] = jurisdictions if jurisdictions else None
+                    if 'tech_field' in params_config:
+                        params['tech_field'] = tech_field
                     df, execution_time = run_parameterized_query(client, query_info["sql_template"], params)
                 else:
                     # Fallback to static SQL for queries not yet converted
