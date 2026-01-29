@@ -381,6 +381,11 @@ Minimum threshold of 100 patents ensures statistical relevance.""",
         ],
         "estimated_seconds_first_run": 5,
         "estimated_seconds_cached": 1,
+        "visualization": {
+            "x": "person_ctry_code",
+            "y": "patent_count",
+            "type": "bar"
+        },
         "sql": """
             SELECT
                 p.person_ctry_code,
