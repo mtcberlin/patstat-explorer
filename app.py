@@ -520,35 +520,53 @@ def generate_insight_headline(df, query_info):
 
 
 def render_chart(df, query_info):
-    """Render an Altair chart based on query results (Story 1.4).
+    """Render an Altair chart based on query results (Story 1.4, 1.9).
 
-    Auto-detects chart type based on data shape.
+    Supports optional visualization config for explicit control:
+        "visualization": {
+            "x": "column_name",      # x-axis column
+            "y": "column_name",      # y-axis column
+            "color": "column_name",  # optional color grouping
+            "type": "bar|line"       # chart type (default: auto-detect)
+        }
+
+    Falls back to auto-detection if no config provided.
     """
     if df.empty or len(df.columns) < 2:
         return None
 
-    # Determine chart type based on data
-    x_col = df.columns[0]
-    y_col = df.columns[-1] if len(df.columns) > 1 else df.columns[0]
+    # Get visualization config or use empty dict for auto-detection
+    viz_config = query_info.get('visualization', {})
 
-    # Check if x is temporal
-    is_temporal = "year" in x_col.lower() or "date" in x_col.lower()
+    # Determine columns - use config or auto-detect
+    x_col = viz_config.get('x', df.columns[0])
+    y_col = viz_config.get('y', df.columns[-1] if len(df.columns) > 1 else df.columns[0])
+    color_col = viz_config.get('color')
+    chart_type = viz_config.get('type')  # bar, line, or None for auto
 
-    # Check if we have a category column for color
-    color_col = None
-    if len(df.columns) >= 3:
-        # Middle column might be category
+    # Auto-detect color if not specified and we have 3+ columns
+    if color_col is None and len(df.columns) >= 3:
         potential_color = df.columns[1]
         if df[potential_color].nunique() <= 10:
             color_col = potential_color
 
+    # Auto-detect chart type if not specified
+    if chart_type is None:
+        is_temporal = "year" in x_col.lower() or "date" in x_col.lower()
+        chart_type = "line" if is_temporal and len(df) > 1 else "bar"
+
     try:
-        if is_temporal and len(df) > 1:
+        color_encoding = (
+            alt.Color(f"{color_col}:N", scale=alt.Scale(range=COLOR_PALETTE))
+            if color_col else alt.value(COLOR_PRIMARY)
+        )
+
+        if chart_type == "line":
             # Line chart for time series
             chart = alt.Chart(df).mark_line(point=True).encode(
                 x=alt.X(f"{x_col}:O", title=x_col.replace("_", " ").title()),
                 y=alt.Y(f"{y_col}:Q", title=y_col.replace("_", " ").title()),
-                color=alt.Color(f"{color_col}:N", scale=alt.Scale(range=COLOR_PALETTE)) if color_col else alt.value(COLOR_PRIMARY),
+                color=color_encoding,
                 tooltip=list(df.columns)
             ).properties(height=400)
         else:
@@ -556,7 +574,7 @@ def render_chart(df, query_info):
             chart = alt.Chart(df.head(20)).mark_bar().encode(
                 x=alt.X(f"{x_col}:N", title=x_col.replace("_", " ").title(), sort="-y"),
                 y=alt.Y(f"{y_col}:Q", title=y_col.replace("_", " ").title()),
-                color=alt.value(COLOR_PRIMARY),
+                color=color_encoding,
                 tooltip=list(df.columns)
             ).properties(height=400)
 

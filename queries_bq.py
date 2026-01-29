@@ -540,6 +540,12 @@ breadth (patent importance), while citation counts measure technical influence."
         ],
         "estimated_seconds_first_run": 14,
         "estimated_seconds_cached": 1,
+        "visualization": {
+            "x": "techn_field",
+            "y": "application_count",
+            "color": "techn_sector",
+            "type": "bar"
+        },
         "sql": """
             SELECT
                 tf.techn_field,
