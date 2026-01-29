@@ -58,8 +58,8 @@ QUERIES = {
             "year_range": {
                 "type": "year_range",
                 "label": "Filing Year Range",
-                "default_start": 1980,
-                "default_end": 2024,
+                "default_start": 2014,
+                "default_end": 2023,
                 "required": False
             }
         },
@@ -123,8 +123,8 @@ Essential for understanding the scope and coverage of the database.""",
             "year_range": {
                 "type": "year_range",
                 "label": "Filing Year Range",
-                "default_start": 2015,
-                "default_end": 2024,
+                "default_start": 2014,
+                "default_end": 2023,
                 "required": False
             }
         },
@@ -139,6 +139,11 @@ EP = European Patent Office, US = USPTO, CN = CNIPA, etc.""",
         ],
         "estimated_seconds_first_run": 1,
         "estimated_seconds_cached": 1,
+        "visualization": {
+            "x": "filing_authority",
+            "y": "application_count",
+            "type": "bar"
+        },
         "sql": """
             SELECT
                 appln_auth AS filing_authority,
@@ -173,15 +178,15 @@ EP = European Patent Office, US = USPTO, CN = CNIPA, etc.""",
             "year_range": {
                 "type": "year_range",
                 "label": "Filing Year Range",
-                "default_start": 1980,
-                "default_end": 2024,
+                "default_start": 2014,
+                "default_end": 2023,
                 "required": True
             },
             "jurisdictions": {
                 "type": "multiselect",
                 "label": "Patent Offices",
                 "options": "jurisdictions",
-                "defaults": ["EP", "US", "CN"],
+                "defaults": ["EP", "US", "DE"],
                 "required": True
             }
         },
@@ -232,15 +237,15 @@ Note: Recent years may show lower counts due to publication delays (18 months fr
             "year_range": {
                 "type": "year_range",
                 "label": "Filing Year Range",
-                "default_start": 2015,
-                "default_end": 2024,
+                "default_start": 2014,
+                "default_end": 2023,
                 "required": True
             },
             "jurisdictions": {
                 "type": "multiselect",
                 "label": "Patent Offices",
                 "options": "jurisdictions",
-                "defaults": ["EP", "US", "CN"],
+                "defaults": ["EP", "US", "DE"],
                 "required": True
             }
         },
@@ -356,15 +361,15 @@ No parameters needed - this shows recent sample data.""",
             "year_range": {
                 "type": "year_range",
                 "label": "Filing Year Range",
-                "default_start": 2015,
-                "default_end": 2024,
+                "default_start": 2014,
+                "default_end": 2023,
                 "required": True
             },
             "jurisdictions": {
                 "type": "multiselect",
                 "label": "Patent Offices",
                 "options": "jurisdictions",
-                "defaults": ["EP", "US", "CN"],
+                "defaults": ["EP", "US", "DE"],
                 "required": True
             }
         },
@@ -434,8 +439,8 @@ Minimum threshold of 100 patents ensures statistical relevance.""",
             "year_range": {
                 "type": "year_range",
                 "label": "Filing Year Range",
-                "default_start": 2015,
-                "default_end": 2022,
+                "default_start": 2014,
+                "default_end": 2023,
                 "required": True
             },
             "jurisdictions": {
@@ -515,15 +520,15 @@ Tracks both total applications and the proportion dedicated to green tech.""",
             "year_range": {
                 "type": "year_range",
                 "label": "Filing Year Range",
-                "default_start": 2018,
-                "default_end": 2024,
+                "default_start": 2014,
+                "default_end": 2023,
                 "required": True
             },
             "jurisdictions": {
                 "type": "multiselect",
                 "label": "Patent Offices",
                 "options": "jurisdictions",
-                "defaults": ["EP", "US", "CN"],
+                "defaults": ["EP", "US", "DE"],
                 "required": True
             },
             "tech_sector": {
@@ -596,15 +601,15 @@ breadth (patent importance), while citation counts measure technical influence."
             "year_range": {
                 "type": "year_range",
                 "label": "Filing Year Range",
-                "default_start": 2018,
-                "default_end": 2024,
+                "default_start": 2014,
+                "default_end": 2023,
                 "required": True
             },
             "jurisdictions": {
                 "type": "multiselect",
                 "label": "Patent Offices",
                 "options": "jurisdictions",
-                "defaults": ["EP", "US", "CN"],
+                "defaults": ["EP", "US", "DE"],
                 "required": True
             }
         },
@@ -624,6 +629,11 @@ Identifies top applicants to monitor in this emerging technology intersection.""
         ],
         "estimated_seconds_first_run": 4,
         "estimated_seconds_cached": 1,
+        "visualization": {
+            "x": "person_name",
+            "y": "patent_count",
+            "type": "bar"
+        },
         "sql": """
             WITH ai_erp_patents AS (
                 SELECT DISTINCT
@@ -734,15 +744,15 @@ Identifies top applicants to monitor in this emerging technology intersection.""
             "year_range": {
                 "type": "year_range",
                 "label": "Filing Year Range",
-                "default_start": 2015,
-                "default_end": 2024,
+                "default_start": 2014,
+                "default_end": 2023,
                 "required": True
             },
             "jurisdictions": {
                 "type": "multiselect",
                 "label": "Patent Offices",
                 "options": "jurisdictions",
-                "defaults": ["EP", "US", "CN"],
+                "defaults": ["EP", "US", "DE"],
                 "required": True
             }
         },
@@ -760,6 +770,11 @@ established players in this field.""",
         ],
         "estimated_seconds_first_run": 5,
         "estimated_seconds_cached": 1,
+        "visualization": {
+            "x": "company_name",
+            "y": "patent_count",
+            "type": "bar"
+        },
         "sql": """
             WITH ai_diagnostics_patents AS (
                 SELECT DISTINCT
@@ -900,15 +915,15 @@ established players in this field.""",
             "year_range": {
                 "type": "year_range",
                 "label": "Filing Year Range",
-                "default_start": 2015,
-                "default_end": 2024,
+                "default_start": 2014,
+                "default_end": 2023,
                 "required": True
             },
             "jurisdictions": {
                 "type": "multiselect",
                 "label": "Patent Offices",
                 "options": "jurisdictions",
-                "defaults": ["EP", "US", "CN"],
+                "defaults": ["EP", "US", "DE"],
                 "required": True
             },
             "applicant_name": {
@@ -986,15 +1001,15 @@ Minimum threshold of 50 patents ensures focus on significant players.""",
             "year_range": {
                 "type": "year_range",
                 "label": "Filing Year Range",
-                "default_start": 2015,
-                "default_end": 2024,
+                "default_start": 2014,
+                "default_end": 2023,
                 "required": True
             },
             "jurisdictions": {
                 "type": "multiselect",
                 "label": "Patent Offices to Compare",
                 "options": "jurisdictions",
-                "defaults": ["EP", "US", "CN"],
+                "defaults": ["EP", "US", "DE"],
                 "required": True
             },
             "competitors": {
@@ -1121,15 +1136,15 @@ Stryker, Zimmer, Smith & Nephew, Edwards, Baxter, Fresenius, and B. Braun.""",
             "year_range": {
                 "type": "year_range",
                 "label": "Citing Application Year Range",
-                "default_start": 2018,
-                "default_end": 2024,
+                "default_start": 2014,
+                "default_end": 2023,
                 "required": True
             },
             "jurisdictions": {
                 "type": "multiselect",
                 "label": "Patent Offices",
                 "options": "jurisdictions",
-                "defaults": ["EP", "US", "CN"],
+                "defaults": ["EP", "US", "DE"],
                 "required": True
             }
         },
@@ -1214,7 +1229,7 @@ Minimum threshold of 10 citations ensures significance.""",
             "year_range": {
                 "type": "year_range",
                 "label": "Filing Year Range",
-                "default_start": 2010,
+                "default_start": 2014,
                 "default_end": 2023,
                 "required": True
             },
@@ -1222,7 +1237,7 @@ Minimum threshold of 10 citations ensures significance.""",
                 "type": "multiselect",
                 "label": "Patent Offices",
                 "options": "jurisdictions",
-                "defaults": ["EP", "US", "CN"],
+                "defaults": ["EP", "US", "DE"],
                 "required": True
             },
             "ipc_class": {
@@ -1319,8 +1334,8 @@ Helps inform international filing strategy by showing office-specific grant succ
             "year_range": {
                 "type": "year_range",
                 "label": "Filing Year Range",
-                "default_start": 2018,
-                "default_end": 2024,
+                "default_start": 2014,
+                "default_end": 2023,
                 "required": True
             },
             "ipc_class": {
@@ -1403,8 +1418,8 @@ Uses main class A61B% - covers all medical diagnosis/surgery subclasses.""",
             "year_range": {
                 "type": "year_range",
                 "label": "Filing Year Range",
-                "default_start": 2019,
-                "default_end": 2024,
+                "default_start": 2014,
+                "default_end": 2023,
                 "required": True
             },
             "ipc_class": {
@@ -1556,8 +1571,8 @@ states of different sizes.""",
             "year_range": {
                 "type": "year_range",
                 "label": "Filing Year Range",
-                "default_start": 2015,
-                "default_end": 2024,
+                "default_start": 2014,
+                "default_end": 2023,
                 "required": True
             }
         },
@@ -1575,6 +1590,12 @@ technology categorization across all patents.""",
         ],
         "estimated_seconds_first_run": 3,
         "estimated_seconds_cached": 1,
+        "visualization": {
+            "x": "region_group",
+            "y": "patent_count",
+            "color": "techn_sector",
+            "type": "bar"
+        },
         "sql": """
             WITH regional_patents AS (
                 SELECT
@@ -1676,15 +1697,15 @@ technology categorization across all patents.""",
             "year_range": {
                 "type": "year_range",
                 "label": "Filing Year Range",
-                "default_start": 2018,
-                "default_end": 2024,
+                "default_start": 2014,
+                "default_end": 2023,
                 "required": True
             },
             "jurisdictions": {
                 "type": "multiselect",
                 "label": "Patent Offices",
                 "options": "jurisdictions",
-                "defaults": ["EP", "US", "CN"],
+                "defaults": ["EP", "US", "DE"],
                 "required": True
             }
         },
@@ -1704,6 +1725,11 @@ Minimum 10 families ensures statistical relevance.""",
         "methodology": "Uses DOCDB family grouping from tls201_appln, filtered for recent filings",
         "estimated_seconds_first_run": 8,
         "estimated_seconds_cached": 2,
+        "visualization": {
+            "x": "applicant_name",
+            "y": "avg_family_size",
+            "type": "bar"
+        },
         "sql": """
             SELECT
                 p.doc_std_name AS applicant_name,
@@ -1754,15 +1780,15 @@ Minimum 10 families ensures statistical relevance.""",
             "year_range": {
                 "type": "year_range",
                 "label": "Filing Year Range",
-                "default_start": 2018,
-                "default_end": 2024,
+                "default_start": 2014,
+                "default_end": 2023,
                 "required": True
             },
             "jurisdictions": {
                 "type": "multiselect",
                 "label": "Patent Offices",
                 "options": "jurisdictions",
-                "defaults": ["EP", "US", "CN"],
+                "defaults": ["EP", "US", "DE"],
                 "required": True
             }
         },
@@ -1779,6 +1805,11 @@ The person_name field contains the inventor's name as filed.""",
         "methodology": "Counts distinct applications per inventor from tls207_pers_appln",
         "estimated_seconds_first_run": 10,
         "estimated_seconds_cached": 2,
+        "visualization": {
+            "x": "inventor_name",
+            "y": "application_count",
+            "type": "bar"
+        },
         "sql": """
             SELECT
                 p.person_name AS inventor_name,
@@ -1831,15 +1862,15 @@ The person_name field contains the inventor's name as filed.""",
             "year_range": {
                 "type": "year_range",
                 "label": "Filing Year Range",
-                "default_start": 2018,
-                "default_end": 2024,
+                "default_start": 2014,
+                "default_end": 2023,
                 "required": True
             },
             "jurisdictions": {
                 "type": "multiselect",
                 "label": "Patent Offices",
                 "options": "jurisdictions",
-                "defaults": ["EP", "US", "CN"],
+                "defaults": ["EP", "US", "DE"],
                 "required": True
             }
         },
@@ -1918,15 +1949,15 @@ Based on EPO training query 2.3 - finding applicants with international co-appli
             "year_range": {
                 "type": "year_range",
                 "label": "Filing Year Range",
-                "default_start": 2010,
-                "default_end": 2020,
+                "default_start": 2014,
+                "default_end": 2023,
                 "required": True
             },
             "jurisdictions": {
                 "type": "multiselect",
                 "label": "Patent Offices",
                 "options": "jurisdictions",
-                "defaults": ["EP", "US", "CN"],
+                "defaults": ["EP", "US", "DE"],
                 "required": True
             }
         },
@@ -1986,8 +2017,8 @@ Based on EPO training query 2.1 - most cited applications.""",
             "year_range": {
                 "type": "year_range",
                 "label": "Filing Year Range",
-                "default_start": 2018,
-                "default_end": 2024,
+                "default_start": 2014,
+                "default_end": 2023,
                 "required": True
             }
         },
@@ -2053,15 +2084,15 @@ Based on EPO training query 2.4.""",
             "year_range": {
                 "type": "year_range",
                 "label": "Filing Year Range",
-                "default_start": 2015,
-                "default_end": 2024,
+                "default_start": 2014,
+                "default_end": 2023,
                 "required": True
             },
             "jurisdictions": {
                 "type": "multiselect",
                 "label": "Patent Offices",
                 "options": "jurisdictions",
-                "defaults": ["EP", "US", "CN"],
+                "defaults": ["EP", "US", "DE"],
                 "required": True
             }
         },
@@ -2135,8 +2166,8 @@ This helps identify:
             "year_range": {
                 "type": "year_range",
                 "label": "Filing Year Range",
-                "default_start": 2018,
-                "default_end": 2024,
+                "default_start": 2014,
+                "default_end": 2023,
                 "required": True
             }
         },
@@ -2155,6 +2186,11 @@ Based on analysis patterns from EPO training materials.""",
         "methodology": "Aggregates docdb_family_size by applicant country from tls206_person",
         "estimated_seconds_first_run": 10,
         "estimated_seconds_cached": 2,
+        "visualization": {
+            "x": "applicant_country",
+            "y": "avg_family_size",
+            "type": "bar"
+        },
         "sql": """
             SELECT
                 p.person_ctry_code AS applicant_country,
@@ -2204,15 +2240,15 @@ Based on analysis patterns from EPO training materials.""",
             "year_range": {
                 "type": "year_range",
                 "label": "Filing Year Range",
-                "default_start": 2015,
-                "default_end": 2020,
+                "default_start": 2014,
+                "default_end": 2023,
                 "required": True
             },
             "jurisdictions": {
                 "type": "multiselect",
                 "label": "Patent Offices",
                 "options": "jurisdictions",
-                "defaults": ["EP", "US", "CN"],
+                "defaults": ["EP", "US", "DE"],
                 "required": True
             }
         },
@@ -2285,15 +2321,15 @@ Uses the first grant publication date from tls211_pat_publn.""",
             "year_range": {
                 "type": "year_range",
                 "label": "Filing Year Range",
-                "default_start": 2010,
-                "default_end": 2018,
+                "default_start": 2014,
+                "default_end": 2023,
                 "required": True
             },
             "jurisdictions": {
                 "type": "multiselect",
                 "label": "Patent Offices",
                 "options": "jurisdictions",
-                "defaults": ["EP", "US", "CN"],
+                "defaults": ["EP", "US", "DE"],
                 "required": True
             }
         },
@@ -2358,15 +2394,15 @@ Uses the tls230_appln_techn_field and tls901_techn_field_ipc tables.""",
             "year_range": {
                 "type": "year_range",
                 "label": "Filing Year Range",
-                "default_start": 2018,
-                "default_end": 2024,
+                "default_start": 2014,
+                "default_end": 2023,
                 "required": True
             },
             "jurisdictions": {
                 "type": "multiselect",
                 "label": "Patent Offices",
                 "options": "jurisdictions",
-                "defaults": ["EP", "US", "CN"],
+                "defaults": ["EP", "US", "DE"],
                 "required": True
             }
         },
@@ -2430,7 +2466,7 @@ Based on EPO training query 2.7 - applications with multiple IPC classes.""",
             "year_range": {
                 "type": "year_range",
                 "label": "Year Range for Growth Comparison",
-                "default_start": 2021,
+                "default_start": 2014,
                 "default_end": 2023,
                 "required": True
             },
@@ -2438,7 +2474,7 @@ Based on EPO training query 2.7 - applications with multiple IPC classes.""",
                 "type": "multiselect",
                 "label": "Patent Offices",
                 "options": "jurisdictions",
-                "defaults": ["EP", "US", "CN"],
+                "defaults": ["EP", "US", "DE"],
                 "required": True
             }
         },
@@ -2599,15 +2635,15 @@ Uses SUBSTR to extract subclass - handles variable whitespace correctly.""",
             "year_range": {
                 "type": "year_range",
                 "label": "Filing Year Range",
-                "default_start": 2010,
-                "default_end": 2020,
+                "default_start": 2014,
+                "default_end": 2023,
                 "required": True
             },
             "jurisdictions": {
                 "type": "multiselect",
                 "label": "Patent Offices",
                 "options": "jurisdictions",
-                "defaults": ["EP", "US", "CN"],
+                "defaults": ["EP", "US", "DE"],
                 "required": True
             }
         },
@@ -2670,15 +2706,15 @@ the basis for subsequent innovation.""",
             "year_range": {
                 "type": "year_range",
                 "label": "Filing Year Range",
-                "default_start": 2018,
-                "default_end": 2024,
+                "default_start": 2014,
+                "default_end": 2023,
                 "required": True
             },
             "jurisdictions": {
                 "type": "multiselect",
                 "label": "Patent Offices",
                 "options": "jurisdictions",
-                "defaults": ["EP", "US", "CN"],
+                "defaults": ["EP", "US", "DE"],
                 "required": True
             }
         },
@@ -2743,15 +2779,15 @@ results.""",
             "year_range": {
                 "type": "year_range",
                 "label": "Filing Year Range",
-                "default_start": 2018,
-                "default_end": 2024,
+                "default_start": 2014,
+                "default_end": 2023,
                 "required": True
             },
             "jurisdictions": {
                 "type": "multiselect",
                 "label": "Patent Offices",
                 "options": "jurisdictions",
-                "defaults": ["EP", "US", "CN"],
+                "defaults": ["EP", "US", "DE"],
                 "required": True
             }
         },
@@ -2829,15 +2865,15 @@ Results are ranked by the number of joint applications.""",
             "year_range": {
                 "type": "year_range",
                 "label": "Filing Year Range",
-                "default_start": 2015,
-                "default_end": 2024,
+                "default_start": 2014,
+                "default_end": 2023,
                 "required": True
             },
             "jurisdictions": {
                 "type": "multiselect",
                 "label": "Patent Offices",
                 "options": "jurisdictions",
-                "defaults": ["EP", "US", "CN"],
+                "defaults": ["EP", "US", "DE"],
                 "required": True
             }
         },
@@ -2901,15 +2937,15 @@ who are both applicant and inventor on the same application.""",
             "year_range": {
                 "type": "year_range",
                 "label": "Filing Year Range",
-                "default_start": 2015,
-                "default_end": 2024,
+                "default_start": 2014,
+                "default_end": 2023,
                 "required": True
             },
             "jurisdictions": {
                 "type": "multiselect",
                 "label": "Patent Offices",
                 "options": "jurisdictions",
-                "defaults": ["EP", "US", "CN"],
+                "defaults": ["EP", "US", "DE"],
                 "required": True
             }
         },
@@ -2967,15 +3003,15 @@ This ratio helps understand innovation vs. globalization strategies.""",
             "year_range": {
                 "type": "year_range",
                 "label": "Filing Year Range",
-                "default_start": 2018,
-                "default_end": 2024,
+                "default_start": 2014,
+                "default_end": 2023,
                 "required": True
             },
             "jurisdictions": {
                 "type": "multiselect",
                 "label": "Patent Offices",
                 "options": "jurisdictions",
-                "defaults": ["EP", "US", "CN"],
+                "defaults": ["EP", "US", "DE"],
                 "required": True
             }
         },
@@ -3064,15 +3100,15 @@ Uses EXISTS subqueries to find applications with both specified IPC classes.""",
             "year_range": {
                 "type": "year_range",
                 "label": "Filing Year Range",
-                "default_start": 2018,
-                "default_end": 2022,
+                "default_start": 2014,
+                "default_end": 2023,
                 "required": True
             },
             "jurisdictions": {
                 "type": "multiselect",
                 "label": "Patent Offices",
                 "options": "jurisdictions",
-                "defaults": ["EP", "US", "CN"],
+                "defaults": ["EP", "US", "DE"],
                 "required": True
             }
         },
@@ -3141,15 +3177,15 @@ Uses DATE_DIFF to calculate months between filing and earliest publication date.
             "year_range": {
                 "type": "year_range",
                 "label": "Filing Year Range",
-                "default_start": 2018,
-                "default_end": 2024,
+                "default_start": 2014,
+                "default_end": 2023,
                 "required": True
             },
             "jurisdictions": {
                 "type": "multiselect",
                 "label": "Patent Offices",
                 "options": "jurisdictions",
-                "defaults": ["EP", "US", "CN"],
+                "defaults": ["EP", "US", "DE"],
                 "required": True
             }
         },
@@ -3263,15 +3299,15 @@ subsequent filing dates.""",
             "year_range": {
                 "type": "year_range",
                 "label": "Filing Year Range",
-                "default_start": 2015,
-                "default_end": 2024,
+                "default_start": 2014,
+                "default_end": 2023,
                 "required": True
             },
             "jurisdictions": {
                 "type": "multiselect",
                 "label": "Patent Offices",
                 "options": "jurisdictions",
-                "defaults": ["EP", "US", "CN"],
+                "defaults": ["EP", "US", "DE"],
                 "required": True
             }
         },
@@ -3352,15 +3388,15 @@ essentially the same invention across different jurisdictions.""",
             "year_range": {
                 "type": "year_range",
                 "label": "Filing Year Range",
-                "default_start": 2018,
-                "default_end": 2024,
+                "default_start": 2014,
+                "default_end": 2023,
                 "required": True
             },
             "jurisdictions": {
                 "type": "multiselect",
                 "label": "Patent Offices",
                 "options": "jurisdictions",
-                "defaults": ["EP", "US", "CN"],
+                "defaults": ["EP", "US", "DE"],
                 "required": True
             }
         },
@@ -3424,8 +3460,8 @@ broader global protection.""",
             "year_range": {
                 "type": "year_range",
                 "label": "Filing Year Range",
-                "default_start": 2010,
-                "default_end": 2020,
+                "default_start": 2014,
+                "default_end": 2023,
                 "required": True
             },
             "jurisdictions": {
@@ -3491,8 +3527,8 @@ Useful for understanding examination rigor and success rates across offices.""",
             "year_range": {
                 "type": "year_range",
                 "label": "Filing Year Range",
-                "default_start": 2018,
-                "default_end": 2024,
+                "default_start": 2014,
+                "default_end": 2023,
                 "required": True
             }
         },
@@ -3554,15 +3590,15 @@ indicates the geographic origin of innovations seeking global protection.""",
             "year_range": {
                 "type": "year_range",
                 "label": "Filing Year Range",
-                "default_start": 2015,
-                "default_end": 2020,
+                "default_start": 2014,
+                "default_end": 2023,
                 "required": True
             },
             "jurisdictions": {
                 "type": "multiselect",
                 "label": "Patent Offices",
                 "options": "jurisdictions",
-                "defaults": ["EP", "US", "CN"],
+                "defaults": ["EP", "US", "DE"],
                 "required": True
             }
         },
@@ -3629,7 +3665,7 @@ The citation rate comparison indicates research vs. commercial focus.""",
             "year_range": {
                 "type": "year_range",
                 "label": "Year Range for Growth Comparison",
-                "default_start": 2018,
+                "default_start": 2014,
                 "default_end": 2023,
                 "required": True
             },
@@ -3637,7 +3673,7 @@ The citation rate comparison indicates research vs. commercial focus.""",
                 "type": "multiselect",
                 "label": "Patent Offices",
                 "options": "jurisdictions",
-                "defaults": ["EP", "US", "CN"],
+                "defaults": ["EP", "US", "DE"],
                 "required": True
             }
         },

@@ -26,9 +26,9 @@ load_dotenv()
 # =============================================================================
 
 # Default parameter values (DRY - single source of truth)
-DEFAULT_YEAR_START = 2015
-DEFAULT_YEAR_END = 2024
-DEFAULT_JURISDICTIONS = ["EP", "US", "CN"]
+DEFAULT_YEAR_START = 2014
+DEFAULT_YEAR_END = 2023
+DEFAULT_JURISDICTIONS = ["EP", "US", "DE"]
 DEFAULT_TECH_FIELD = None
 
 # Year range bounds for sliders
