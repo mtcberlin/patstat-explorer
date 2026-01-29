@@ -542,8 +542,8 @@ breadth (patent importance), while citation counts measure technical influence."
         "estimated_seconds_cached": 1,
         "sql": """
             SELECT
-                tf.techn_sector,
                 tf.techn_field,
+                tf.techn_sector,
                 COUNT(DISTINCT a.appln_id) AS application_count,
                 AVG(a.docdb_family_size) AS avg_family_size,
                 AVG(a.nb_citing_docdb_fam) AS avg_citations
@@ -552,14 +552,14 @@ breadth (patent importance), while citation counts measure technical influence."
             JOIN tls201_appln a ON atf.appln_id = a.appln_id
             WHERE a.appln_filing_year BETWEEN 2018 AND 2022
               AND atf.weight > 0.5
-            GROUP BY tf.techn_sector, tf.techn_field
+            GROUP BY tf.techn_field, tf.techn_sector
             ORDER BY application_count DESC
             LIMIT 15
         """,
         "sql_template": """
             SELECT
-                tf.techn_sector,
                 tf.techn_field,
+                tf.techn_sector,
                 COUNT(DISTINCT a.appln_id) AS application_count,
                 ROUND(AVG(a.docdb_family_size), 2) AS avg_family_size,
                 ROUND(AVG(a.nb_citing_docdb_fam), 2) AS avg_citations
@@ -570,7 +570,7 @@ breadth (patent importance), while citation counts measure technical influence."
               AND atf.weight > 0.5
               AND a.appln_auth IN UNNEST(@jurisdictions)
               AND (@tech_sector = 'All Sectors' OR tf.techn_sector = @tech_sector)
-            GROUP BY tf.techn_sector, tf.techn_field
+            GROUP BY tf.techn_field, tf.techn_sector
             ORDER BY application_count DESC
             LIMIT 15
         """

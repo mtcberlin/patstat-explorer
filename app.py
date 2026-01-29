@@ -920,6 +920,15 @@ def render_detail_page(query_id: str):
                         params['jurisdictions'] = jurisdictions if jurisdictions else None
                     if 'tech_field' in params_config:
                         params['tech_field'] = tech_field
+                    # Query-specific parameters (Story 1.8)
+                    if 'tech_sector' in params_config:
+                        params['tech_sector'] = collected_params.get('tech_sector')
+                    if 'applicant_name' in params_config:
+                        params['applicant_name'] = collected_params.get('applicant_name', '')
+                    if 'competitors' in params_config:
+                        params['competitors'] = collected_params.get('competitors')
+                    if 'ipc_class' in params_config:
+                        params['ipc_class'] = collected_params.get('ipc_class', '')
                     df, execution_time = run_parameterized_query(client, query_info["sql_template"], params)
                 else:
                     # Fallback to static SQL for queries not yet converted
@@ -1067,6 +1076,10 @@ def run_parameterized_query(client, sql_template: str, params: dict):
             - year_end: int
             - jurisdictions: list[str]
             - tech_field: int or None
+            - tech_sector: str or None (Q08)
+            - applicant_name: str or None (Q11)
+            - competitors: list[str] or None (Q12)
+            - ipc_class: str or None (Q14, Q15, Q16)
 
     Returns:
         tuple: (DataFrame, execution_time in seconds)
@@ -1077,6 +1090,7 @@ def run_parameterized_query(client, sql_template: str, params: dict):
     # Build query parameters
     query_params = []
 
+    # Common parameters
     if "year_start" in params and params["year_start"] is not None:
         query_params.append(bigquery.ScalarQueryParameter("year_start", "INT64", params["year_start"]))
 
@@ -1088,6 +1102,19 @@ def run_parameterized_query(client, sql_template: str, params: dict):
 
     if "tech_field" in params and params["tech_field"] is not None:
         query_params.append(bigquery.ScalarQueryParameter("tech_field", "INT64", params["tech_field"]))
+
+    # Query-specific parameters (Story 1.8)
+    if "tech_sector" in params and params["tech_sector"] is not None:
+        query_params.append(bigquery.ScalarQueryParameter("tech_sector", "STRING", params["tech_sector"]))
+
+    if "applicant_name" in params and params["applicant_name"] is not None:
+        query_params.append(bigquery.ScalarQueryParameter("applicant_name", "STRING", params["applicant_name"]))
+
+    if "competitors" in params and params["competitors"]:
+        query_params.append(bigquery.ArrayQueryParameter("competitors", "STRING", params["competitors"]))
+
+    if "ipc_class" in params and params["ipc_class"] is not None:
+        query_params.append(bigquery.ScalarQueryParameter("ipc_class", "STRING", params["ipc_class"]))
 
     # Set job config with parameters
     job_config = bigquery.QueryJobConfig(
