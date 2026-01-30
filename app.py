@@ -1541,19 +1541,33 @@ def render_contribute_page():
 # =============================================================================
 
 def get_claude_client():
-    """Get Claude API client if configured (Story 4.1)."""
+    """Get Claude API client if configured (Story 4.1).
+
+    Checks st.secrets first (Cloud), then os.getenv (Local).
+    """
     try:
         import anthropic
-        api_key = os.getenv("ANTHROPIC_API_KEY")
+        
+        # 1. Try Streamlit Secrets (Cloud / .streamlit/secrets.toml)
+        try:
+            api_key = st.secrets.get("ANTHROPIC_API_KEY")
+        except (FileNotFoundError, AttributeError):
+            api_key = None
+            
+        # 2. Try Environment Variable (Local .env)
         if not api_key:
-            try:
-                api_key = st.secrets.get("ANTHROPIC_API_KEY")
-            except:
-                pass
+            api_key = os.getenv("ANTHROPIC_API_KEY")
+            
         if api_key:
             return anthropic.Anthropic(api_key=api_key)
+            
     except ImportError:
         pass
+    except Exception as e:
+        # Catch other initialization errors but don't crash
+        print(f"Error initializing Claude client: {e}")
+        pass
+        
     return None
 
 
