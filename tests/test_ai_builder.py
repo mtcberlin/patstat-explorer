@@ -7,11 +7,8 @@ import os
 # Add parent directory to path for imports
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from app import (
-    parse_ai_response,
-    is_ai_available,
-    PATSTAT_SYSTEM_PROMPT
-)
+from modules.logic import parse_ai_response, is_ai_available
+from modules.config import PATSTAT_SYSTEM_PROMPT
 
 
 class TestParseAiResponse:

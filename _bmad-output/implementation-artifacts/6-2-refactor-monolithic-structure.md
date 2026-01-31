@@ -1,5 +1,5 @@
 ---
-status: ready-for-dev
+status: in-progress
 epic: 6
 story: 2
 name: refactor-monolithic-structure
@@ -61,20 +61,20 @@ name: refactor-monolithic-structure
 - [x] Create `modules/ui.py` with all render_* functions
 
 ### Phase 2: Update Imports in app.py
-- [ ] Replace inline code with imports from modules
-- [ ] Keep only `main()`, page config, and routing in app.py
-- [ ] Verify no circular imports (test with `python -c "import app"`)
+- [x] Replace inline code with imports from modules
+- [x] Keep only `main()`, page config, and routing in app.py
+- [x] Verify no circular imports (test with `python -c "import app"`)
 
 ### Phase 3: Update Test Imports
-- [ ] Update `tests/test_ai_builder.py` imports (see Test Migration Table)
-- [ ] Update `tests/test_ai_config.py` imports
-- [ ] Update `tests/test_contribution.py` imports
-- [ ] Update `tests/test_filter_queries.py` imports
-- [ ] Update `tests/test_query_metadata.py` imports
-- [ ] Run full test suite, fix any failures
+- [x] Update `tests/test_ai_builder.py` imports (see Test Migration Table)
+- [x] Update `tests/test_ai_config.py` imports
+- [x] Update `tests/test_contribution.py` imports
+- [x] Update `tests/test_filter_queries.py` imports
+- [x] Update `tests/test_query_metadata.py` imports
+- [x] Run full test suite, fix any failures
 
 ### Phase 4: Verification
-- [ ] Run `pytest tests/ -v` - all 89 tests pass
+- [x] Run `pytest tests/ -v` - all 90 tests pass
 - [ ] Run `streamlit run app.py` - manual smoke test
 - [ ] Verify each major feature works (landing, detail, contribute, AI builder)
 
@@ -209,13 +209,13 @@ if __name__ == "__main__":
 3. **Streamlit caching**: `@st.cache_resource` decorator on `get_bigquery_client()` - ensure it still works from module
 
 ### Verification Checklist
-- [ ] `python -c "from modules import config"` - no errors
-- [ ] `python -c "from modules import utils"` - no errors
-- [ ] `python -c "from modules import data"` - no errors
-- [ ] `python -c "from modules import logic"` - no errors
-- [ ] `python -c "from modules import ui"` - no errors
-- [ ] `python -c "import app"` - no errors
-- [ ] `pytest tests/ -v` - all tests pass
+- [x] `python -c "from modules import config"` - no errors
+- [x] `python -c "from modules import utils"` - no errors
+- [x] `python -c "from modules import data"` - no errors
+- [x] `python -c "from modules import logic"` - no errors
+- [x] `python -c "from modules import ui"` - no errors
+- [x] `python -c "import app"` - no errors
+- [x] `pytest tests/ -v` - all tests pass (90 tests)
 - [ ] `streamlit run app.py` - app loads and works
 
 ## Out of Scope
@@ -254,9 +254,23 @@ if __name__ == "__main__":
   - modules/data.py (~140 LOC - BigQuery client, run_query, run_parameterized_query, get_all_queries)
   - modules/logic.py (~180 LOC - filter_queries, AI functions, validation)
   - modules/ui.py (~750 LOC - all render_* functions, navigation, session state)
+- 2026-01-31: Phase 2 complete - app.py refactored to 67 LOC entry point
+  - Replaced 1,860 LOC with imports from modules
+  - No circular imports (all module imports verified)
+- 2026-01-31: Phase 3 complete - all 5 test files updated
+  - test_ai_builder.py: imports from modules.logic, modules.config
+  - test_ai_config.py: imports from modules.logic
+  - test_contribution.py: imports from modules.logic, modules.utils, modules.config
+  - test_filter_queries.py: imports from modules.logic, modules.config
+  - test_query_metadata.py: imports from modules.ui, modules.utils
+  - Fixed monkeypatch targets for session_state mocking
+- 2026-01-31: Phase 4 partial - 90 tests pass
+  - Awaiting manual smoke test
 
 ## Change Log
 - 2026-01-30: Story created
 - 2026-01-31: Story RESET - previous "done" status was incorrect (work never performed)
 - 2026-01-31: Story rewritten with detailed task breakdown, function mapping, and test migration plan
 - 2026-01-31: Phase 1 complete - modules directory created with all 6 modules
+- 2026-01-31: Phase 2 complete - app.py refactored to 67 LOC entry point
+- 2026-01-31: Phase 3 complete - all test imports updated, 90 tests passing

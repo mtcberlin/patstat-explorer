@@ -7,7 +7,8 @@ import os
 # Add parent directory to path for imports
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from app import filter_queries, STAKEHOLDER_TAGS, CATEGORIES
+from modules.logic import filter_queries
+from modules.config import STAKEHOLDER_TAGS, CATEGORIES
 
 
 # Test data - simplified query structures

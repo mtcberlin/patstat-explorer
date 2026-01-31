@@ -7,13 +7,9 @@ import os
 # Add parent directory to path for imports
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from app import (
-    validate_contribution_step1,
-    detect_sql_parameters,
-    submit_contribution,
-    CATEGORIES,
-    STAKEHOLDER_TAGS
-)
+from modules.logic import validate_contribution_step1, submit_contribution
+from modules.utils import detect_sql_parameters
+from modules.config import CATEGORIES, STAKEHOLDER_TAGS
 
 
 class TestValidateContribution:
@@ -21,7 +17,7 @@ class TestValidateContribution:
 
     def test_valid_contribution(self, monkeypatch):
         """Valid contribution passes validation."""
-        # Mock session state
+        # Mock session state - must patch where it's used, not where it's defined
         mock_state = {
             'contribution': {
                 'title': 'Test Query Title?',
@@ -31,8 +27,8 @@ class TestValidateContribution:
                 'category': 'Technology'
             }
         }
-        import streamlit as st
-        monkeypatch.setattr(st, 'session_state', mock_state)
+        from modules import logic
+        monkeypatch.setattr(logic.st, 'session_state', mock_state)
 
         errors = validate_contribution_step1()
         assert len(errors) == 0
@@ -48,8 +44,8 @@ class TestValidateContribution:
                 'category': 'Technology'
             }
         }
-        import streamlit as st
-        monkeypatch.setattr(st, 'session_state', mock_state)
+        from modules import logic
+        monkeypatch.setattr(logic.st, 'session_state', mock_state)
 
         errors = validate_contribution_step1()
         assert "Title is required" in errors
@@ -65,8 +61,8 @@ class TestValidateContribution:
                 'category': 'Technology'
             }
         }
-        import streamlit as st
-        monkeypatch.setattr(st, 'session_state', mock_state)
+        from modules import logic
+        monkeypatch.setattr(logic.st, 'session_state', mock_state)
 
         errors = validate_contribution_step1()
         assert "Description is required" in errors
@@ -82,8 +78,8 @@ class TestValidateContribution:
                 'category': 'Technology'
             }
         }
-        import streamlit as st
-        monkeypatch.setattr(st, 'session_state', mock_state)
+        from modules import logic
+        monkeypatch.setattr(logic.st, 'session_state', mock_state)
 
         errors = validate_contribution_step1()
         assert "SQL query is required" in errors
@@ -99,8 +95,8 @@ class TestValidateContribution:
                 'category': 'Technology'
             }
         }
-        import streamlit as st
-        monkeypatch.setattr(st, 'session_state', mock_state)
+        from modules import logic
+        monkeypatch.setattr(logic.st, 'session_state', mock_state)
 
         errors = validate_contribution_step1()
         assert "Select at least one stakeholder tag" in errors
@@ -116,8 +112,8 @@ class TestValidateContribution:
                 'category': ''
             }
         }
-        import streamlit as st
-        monkeypatch.setattr(st, 'session_state', mock_state)
+        from modules import logic
+        monkeypatch.setattr(logic.st, 'session_state', mock_state)
 
         errors = validate_contribution_step1()
         assert "Select a category" in errors
@@ -180,10 +176,10 @@ class TestSubmitContribution:
 
     def test_submit_generates_query_id(self, monkeypatch):
         """Submission generates new query ID."""
-        # Mock session state and QUERIES
+        # Mock session state - must patch where it's used
         mock_state = {'contributed_queries': {}}
-        import streamlit as st
-        monkeypatch.setattr(st, 'session_state', mock_state)
+        from modules import logic
+        monkeypatch.setattr(logic.st, 'session_state', mock_state)
 
         contribution = {
             'title': 'Test Query',
@@ -201,8 +197,8 @@ class TestSubmitContribution:
     def test_submit_adds_to_contributed_queries(self, monkeypatch):
         """Submission adds query to contributed_queries in session state."""
         mock_state = {'contributed_queries': {}}
-        import streamlit as st
-        monkeypatch.setattr(st, 'session_state', mock_state)
+        from modules import logic
+        monkeypatch.setattr(logic.st, 'session_state', mock_state)
 
         contribution = {
             'title': 'Test Query',

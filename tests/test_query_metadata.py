@@ -7,7 +7,8 @@ import os
 # Add parent directory to path for imports
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from app import render_tags_inline, format_time
+from modules.ui import render_tags_inline
+from modules.utils import format_time
 from queries_bq import QUERIES, STAKEHOLDERS
 
 
