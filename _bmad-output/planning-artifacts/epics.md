@@ -730,3 +730,63 @@ So that I can find documentation and additional resources.
 **And** the repository contains a comprehensive README
 **And** README includes: overview, query catalog, contribution guidelines
 **And** link opens in new tab
+
+---
+
+## Epic 6: Stabilization & Refinement
+
+**Goal:** Ensure the MVP is production-ready, maintainable, and verified correct before expanding scope.
+
+### Story 6.1: Fix AI Query Builder & Dependencies
+
+As a developer,
+I want the AI Query Builder to work reliably in both local and cloud environments,
+So that the core "AI" feature of the MVP is actually functional.
+
+**Acceptance Criteria:**
+**Given** the project configuration
+**When** checked
+**Then** `anthropic` library is listed in `requirements.txt`
+**And** `app.py` correctly handles API key loading from both `.env` (local) and `st.secrets` (cloud)
+**And** error handling is robust (friendly message if key is missing)
+
+### Story 6.2: Refactor Monolithic App Structure
+
+As a developer,
+I want to break down the 1,800 LOC `app.py` into modular components,
+So that the codebase is maintainable and new features (Epic 7+) can be added safely.
+
+**Acceptance Criteria:**
+**Given** the current `app.py`
+**When** refactored
+**Then** UI components (layout, rendering) are moved to `ui/` module
+**And** Query logic is isolated in `logic/` or kept in `queries_bq.py`
+**And** `app.py` becomes a lightweight orchestrator (<500 lines ideally)
+**And** functionality passes all regression tests (app behaves exactly the same)
+
+### Story 6.3: UI Polish & Consistency
+
+As a user,
+I want the visual hierarchy to be consistent,
+So that the interface looks professional and polished.
+
+**Acceptance Criteria:**
+**Given** the Query Detail page
+**When** the Question title (e.g., "Q01: ...") is displayed
+**Then** it has the **same font size** as the Execution Time (e.g., "~1.0s")
+**And** visual alignment between the question and time is centered
+**And** any other evident UI misalignments are corrected
+
+### Story 6.4: Query Quality Audit
+
+As a Product Owner,
+I want to verify that every query returns meaningful, correct data,
+So that we don't ship "garbage" insights to users.
+
+**Acceptance Criteria:**
+**Given** the 40+ queries in the library
+**When** audited
+**Then** each query is executed and results verified for logical sense
+**And** queries that return confusing/empty results are fixed or flagged
+**And** column names in results are user-friendly (not `f0_` style)
+

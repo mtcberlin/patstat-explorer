@@ -434,11 +434,12 @@ This is a **demo/training tool**, not production software:
 
 ### Dynamic Parameters
 
-- **FR11:** Users can adjust jurisdiction parameters (country/patent office selection)
+- **FR11:** Users can adjust parameters relevant to the selected query. Each query defines which parameters it accepts.
 - **FR12:** Users can adjust year range parameters via slider or input
 - **FR13:** Users can select technology field from WIPO classification list
 - **FR14:** Users can select multiple values for multi-select parameters
 - **FR15:** System validates parameter inputs before query execution
+- **FR15a:** Frontend dynamically renders only the parameter controls relevant to the selected query based on its parameter configuration.
 
 ### Data Visualization & Export
 
