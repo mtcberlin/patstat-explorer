@@ -1142,30 +1142,7 @@ def render_ai_builder_page():
 
         col1, col2, col3 = st.columns(3)
         with col1:
-            if st.button("🧪 Preview Results"):
-                client = get_bigquery_client()
-                if client:
-                    with st.spinner("Running query..."):
-                        try:
-                            test_sql = generation['sql']
-                            if 'LIMIT' not in test_sql.upper():
-                                test_sql = test_sql.rstrip().rstrip(';') + ' LIMIT 100'
-                            df, exec_time = run_query(client, test_sql)
-                            st.success(f"Executed in {format_time(exec_time)} - {len(df)} rows")
-
-                            query_info = {'title': 'AI Query', 'category': 'Technology'}
-                            headline = generate_insight_headline(df, query_info)
-                            if headline:
-                                st.markdown(headline)
-
-                            chart = render_chart(df, query_info)
-                            if chart:
-                                st.altair_chart(chart, use_container_width=True)
-
-                            with st.expander("View Data"):
-                                st.dataframe(df, use_container_width=True)
-                        except Exception as e:
-                            st.error(f"Error: {str(e)}")
+            preview_clicked = st.button("🧪 Preview Results")
 
         with col2:
             if st.button("⭐ Save to Favorites"):
@@ -1180,6 +1157,34 @@ def render_ai_builder_page():
                 }
                 st.session_state['favorites'].append(fav)
                 st.success("Saved to favorites!")
+
+        # Render preview results full-width (outside column context)
+        if preview_clicked:
+            client = get_bigquery_client()
+            if client:
+                with st.spinner("Running query..."):
+                    try:
+                        test_sql = generation['sql']
+                        if 'LIMIT' not in test_sql.upper():
+                            test_sql = test_sql.rstrip().rstrip(';') + ' LIMIT 100'
+                        df, exec_time = run_query(client, test_sql)
+
+                        st.divider()
+                        st.success(f"Executed in {format_time(exec_time)} - {len(df)} rows")
+
+                        query_info = {'title': 'AI Query', 'category': 'Technology'}
+                        headline = generate_insight_headline(df, query_info)
+                        if headline:
+                            st.markdown(headline)
+
+                        chart = render_chart(df, query_info)
+                        if chart:
+                            st.altair_chart(chart, use_container_width=True)
+
+                        with st.expander("View Data"):
+                            st.dataframe(df, use_container_width=True)
+                    except Exception as e:
+                        st.error(f"Error: {str(e)}")
 
         versions = st.session_state.get('ai_query_versions', [])
         if len(versions) > 1:
