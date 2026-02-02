@@ -7,6 +7,7 @@ import pandas as pd
 
 from queries_bq import QUERIES
 from .config import PATSTAT_SYSTEM_PROMPT
+from .abra_q_client import get_abraq_client, is_abraq_available
 
 
 def filter_queries(queries: dict, search_term: str = None, category: str = None,
@@ -170,29 +171,56 @@ def get_claude_client():
 
 def is_ai_available() -> bool:
     """Check if AI features are available."""
-    return get_claude_client() is not None
+    provider = os.getenv("QUERY_PROVIDER", "claude").lower()
+
+    if provider == "abra-q":
+        return is_abraq_available()
+    else:
+        return get_claude_client() is not None
 
 
 def generate_sql_query(user_request: str) -> dict:
-    """Generate SQL from natural language using Claude (Story 4.2)."""
-    client = get_claude_client()
-    if not client:
-        return {'success': False, 'error': 'AI not configured'}
+    """Generate SQL from natural language using configured provider (Story 4.2).
 
-    try:
-        response = client.messages.create(
-            model="claude-sonnet-4-20250514",
-            max_tokens=2000,
-            system=PATSTAT_SYSTEM_PROMPT,
-            messages=[{
-                "role": "user",
-                "content": f"Generate a BigQuery SQL query for this request:\n\n{user_request}"
-            }]
-        )
+    Supports multiple query generation providers:
+    - claude: Anthropic Claude API (default)
+    - abra-q: TTC's Abra-Q service
 
-        return parse_ai_response(response.content[0].text)
-    except Exception as e:
-        return {'success': False, 'error': str(e)}
+    Provider is selected via QUERY_PROVIDER environment variable.
+    """
+    provider = os.getenv("QUERY_PROVIDER", "claude").lower()
+
+    # Route to Abra-Q provider
+    if provider == "abra-q":
+        abraq_client = get_abraq_client()
+        if not abraq_client:
+            return {'success': False, 'error': 'Abra-Q not configured. Check ABRAQ_EMAIL and ABRAQ_PASSWORD.'}
+
+        try:
+            return abraq_client.generate_query(user_request)
+        except Exception as e:
+            return {'success': False, 'error': f'Abra-Q error: {str(e)}'}
+
+    # Route to Claude provider (default)
+    else:
+        client = get_claude_client()
+        if not client:
+            return {'success': False, 'error': 'Claude API not configured. Check ANTHROPIC_API_KEY.'}
+
+        try:
+            response = client.messages.create(
+                model="claude-sonnet-4-20250514",
+                max_tokens=2000,
+                system=PATSTAT_SYSTEM_PROMPT,
+                messages=[{
+                    "role": "user",
+                    "content": f"Generate a BigQuery SQL query for this request:\n\n{user_request}"
+                }]
+            )
+
+            return parse_ai_response(response.content[0].text)
+        except Exception as e:
+            return {'success': False, 'error': f'Claude API error: {str(e)}'}
 
 
 def parse_ai_response(response_text: str) -> dict:
