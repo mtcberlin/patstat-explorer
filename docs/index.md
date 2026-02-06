@@ -1,204 +1,193 @@
 # PATSTAT Explorer Documentation Index
 
-**Generated:** 2026-01-26 | **Scan Level:** Deep | **Project Type:** Data Analytics
+**Generated:** 2026-02-01 | **Scan Level:** Deep | **Project Type:** Data Analytics
 
 ## Project Overview
 
 | Attribute | Value |
 |-----------|-------|
-| **Type** | Monolith - Data Analytics Application |
+| **Type** | Monolith - Data Analytics Application (Modular Architecture) |
 | **Primary Language** | Python |
-| **UI Framework** | Streamlit |
+| **UI Framework** | Streamlit >= 1.28.0 |
 | **Database** | Google BigQuery (~450 GB) |
+| **AI Integration** | Anthropic Claude (Query Builder) |
 | **Data Source** | EPO PATSTAT 2025 Autumn Edition |
 
 ### Quick Reference
 
 | Item | Value |
 |------|-------|
-| **Entry Point** | `app.py` |
-| **Queries** | `queries_bq.py` (19 queries) |
-| **Tests** | `test_queries.py` |
-| **Config** | `.env` / Streamlit Secrets |
+| **Entry Point** | `app.py` (72 lines) |
+| **Modules** | `modules/` (1,802 lines total) |
+| **Queries** | `queries_bq.py` (42 queries, 3,893 lines) |
+| **Tests** | `tests/` (5 test files) |
 | **Live Demo** | [patstat.streamlit.app](https://patstat.streamlit.app/) |
+
+### TIP4PATLIB Alignment
+
+This application serves as a **bridge to TIP** for 300 PATLIB centres, delivering:
+- 42 ready-to-use parameterized queries
+- No-code parameter adjustment
+- AI-powered query generation
+- Direct export to TIP Jupyter environment
+
+---
 
 ## Generated Documentation
 
 ### Core Documentation
 
-- [Project Overview](./project-overview.md) - Architecture, technology stack, development guide
-- [Query Catalog](./query-catalog.md) - Complete reference for all 19 queries with SQL
-- [BigQuery Schema](./bigquery-schema.md) - PATSTAT table definitions (27 tables)
-- [Data Loading Guide](./data-loading.md) - Loading PATSTAT data to BigQuery
+| Document | Description |
+|----------|-------------|
+| [Project Overview](./project-overview.md) | Architecture, tech stack, deployment guide |
+| [Query Design Patterns](./query-design-patterns.md) | **NEW** - How queries are structured, SQL patterns |
+| [What Worked Well](./what-worked-well.md) | **NEW** - Lessons learned, key decisions |
+| [Query Catalog](./query-catalog.md) | Complete reference for 42 queries |
+| [BigQuery Schema](./bigquery-schema.md) | PATSTAT table definitions (27 tables) |
+| [Data Loading Guide](./data-loading.md) | Loading PATSTAT data to BigQuery |
 
 ### Architecture
 
 ```
-┌─────────────────────────────────────────┐
-│           Streamlit Cloud               │
-│  ┌───────────────────────────────────┐  │
-│  │            app.py                 │  │
-│  │  ┌─────────┐ ┌─────────┐        │  │
-│  │  │Interactive│ │Query   │        │  │
-│  │  │  Panel   │ │Panel   │        │  │
-│  │  └────┬─────┘ └────┬────┘        │  │
-│  │       └─────┬──────┘             │  │
-│  │             ▼                    │  │
-│  │     queries_bq.py                │  │
-│  │     (19 SQL queries)             │  │
-│  └─────────────┬─────────────────────┘  │
-│                │                        │
-│                ▼                        │
-│       BigQuery Client                   │
-└────────────────┬────────────────────────┘
-                 │
-                 ▼
-        ┌─────────────────┐
-        │  Google BigQuery │
-        │  patstat-mtc     │
-        │  ~450 GB         │
-        │  27 tables       │
-        └─────────────────┘
+┌─────────────────────────────────────────────────────────────┐
+│                    Streamlit Cloud                          │
+│  ┌───────────────────────────────────────────────────────┐  │
+│  │                     app.py (72 lines)                 │  │
+│  │                    Entry Point + Router               │  │
+│  └───────────────────────┬───────────────────────────────┘  │
+│                          │                                  │
+│  ┌───────────────────────▼───────────────────────────────┐  │
+│  │                   modules/ (1,802 lines)              │  │
+│  │  config.py │ data.py │ logic.py │ ui.py │ utils.py   │  │
+│  └───────────────────────┬───────────────────────────────┘  │
+│                          │                                  │
+│  ┌───────────────────────▼───────────────────────────────┐  │
+│  │              queries_bq.py (42 queries)               │  │
+│  └───────────────────────┬───────────────────────────────┘  │
+└──────────────────────────┼──────────────────────────────────┘
+                           │
+                           ▼
+                  ┌─────────────────┐
+                  │  Google BigQuery │
+                  │   27 tables      │
+                  │   ~450 GB        │
+                  └─────────────────┘
 ```
 
-## Source Files
+---
 
-| File | Lines | Description |
-|------|-------|-------------|
-| `app.py` | 454 | Streamlit web application |
-| `queries_bq.py` | 1031 | 19 BigQuery queries with metadata |
-| `test_queries.py` | 158 | Query validation and timing tests |
-| `requirements.txt` | 5 | Python dependencies |
+## Key Features
+
+| Feature | Description |
+|---------|-------------|
+| **Question-Based Navigation** | Queries presented as questions, filtered by category/stakeholder |
+| **Dynamic Parameters** | Year range, jurisdictions, tech fields via UI controls |
+| **AI Query Builder** | Natural language → SQL using Claude |
+| **Take to TIP** | Export ready-to-run code for TIP Jupyter |
+| **Visualization** | Auto-generated Altair charts |
+| **Contribution** | Users can submit new queries |
+
+---
 
 ## Query Summary
 
-**Total:** 19 queries (18 static + 1 dynamic)
+**Total:** 42 queries organized by category and stakeholder
 
-| Category | Queries | IDs |
-|----------|---------|-----|
-| Database Overview | 5 | Q01-Q05 |
-| Strategic Intelligence | 2 | Q06-Q07 |
-| Technology Scouting | 3 | Q08-Q10 |
-| Competitive Intelligence | 2 | Q11-Q12 |
-| Citation & Prosecution | 2 | Q13-Q14 |
-| Regional Analysis (DE) | 3 | Q15-Q17 |
-| Technology Transfer | 1 | Q18 |
-| Dynamic/Interactive | 1 | DQ01 |
+### By Category
+
+| Category | Count | Description |
+|----------|-------|-------------|
+| Trends | 12 | Time-series analysis, growth patterns |
+| Competitors | 10 | Applicant rankings, market share |
+| Regional | 8 | Geographic analysis, NUTS regions |
+| Technology | 12 | IPC/CPC/WIPO field analysis |
 
 ### By Stakeholder
 
-| Tag | Count | Queries |
-|-----|-------|---------|
-| PATLIB | 8 | Q01-Q06, Q15-Q17 |
-| BUSINESS | 11 | Q06-Q12, Q14, Q18, DQ01 |
-| UNIVERSITY | 6 | Q07-Q08, Q10, Q13-Q14, Q18 |
+| Tag | Count | Description |
+|-----|-------|-------------|
+| PATLIB | 25 | Patent libraries, information centers |
+| BUSINESS | 20 | Companies, industry users |
+| UNIVERSITY | 15 | Researchers, academia |
 
-## Database Schema
+---
 
-**27 Tables** organized as:
+## Module Structure
 
-| Category | Tables | Description |
-|----------|--------|-------------|
-| Core | tls201, tls202, tls203 | Applications, titles, abstracts |
-| Persons | tls206, tls207, tls226, tls227 | Applicants, inventors, links |
-| Classifications | tls209, tls210, tls222, tls224, tls225 | IPC, CPC, JP classifications |
-| Citations | tls212, tls214, tls215, tls228 | Patent and NPL citations |
-| Publications | tls211 | Published documents |
-| Legal Status | tls231, tls803 | INPADOC events |
-| Reference | tls801, tls901, tls902, tls904 | Countries, tech fields, NUTS |
-| Industry | tls229, tls230 | NACE2, WIPO tech fields |
+| Module | Lines | Responsibility |
+|--------|-------|----------------|
+| `config.py` | 123 | Constants, color palette, AI prompt |
+| `data.py` | 156 | BigQuery client, query execution |
+| `logic.py` | 238 | Business logic, AI, filtering |
+| `ui.py` | 1,193 | All Streamlit rendering |
+| `utils.py` | 84 | Pure helper functions |
+
+---
 
 ## Development Guide
 
 ### Local Setup
 
 ```bash
-# Clone and setup
 git clone https://github.com/herrkrueger/patstat.git
 cd patstat
 python -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
-
-# Configure (copy .env.example to .env, add credentials)
-cp .env.example .env
-
-# Run locally
+cp .env.example .env  # Add credentials
 streamlit run app.py
 ```
 
 ### Adding a New Query
 
-1. Edit `queries_bq.py`
-2. Add entry with ID `Q19` (or next available)
-3. Include: `title`, `tags`, `description`, `explanation`, `key_outputs`, timing estimates, `sql`
-4. Test in BigQuery Console
-5. Run `python test_queries.py` to validate
+1. Add entry to `queries_bq.py` with unique ID
+2. Include metadata: title, tags, category, description
+3. Define `parameters` for dynamic queries
+4. Set `visualization` config for charts
+5. Run `pytest tests/test_query_metadata.py`
 
 ### Testing
 
 ```bash
-# Run all query tests
-python test_queries.py
-
-# Output: timing report and JSON results file
+pytest tests/ -v
 ```
+
+---
 
 ## Reference Materials
 
-### EPO Documentation
-
 | Document | Location |
 |----------|----------|
-| PATSTAT Data Catalog | `context/Documentation_Scripts/DataCatalog_Global_v5.26.pdf` |
-| OECD Patent Manual | `context/Useful manuals and other docs/OECD patent statistics manual.pdf` |
-| IPC-NACE Concordance | `context/Useful manuals and other docs/IPC_NACE/` |
-| NUTS Regionalisation | `context/Useful manuals and other docs/NUTS_regionalisation/` |
-| Legal Event Codes | `context/Useful manuals and other docs/Overview_legal_status_events_tls231_2024a.xlsx` |
+| TIP4PATLIB Specification | `context/BPM001977_Technical_Specifications__TIP4PATLIB.pdf` |
+| README | `README.md` |
 
-### Utility Scripts
-
-| Script | Purpose |
-|--------|---------|
-| `context/load_patstat_local.py` | Load PATSTAT CSV to BigQuery |
-| `context/create_patstat_tables.sql` | PostgreSQL schema (reference) |
+---
 
 ## Getting Started
 
-### For New Queries
+### For PATLIB Users
+1. Visit [patstat.streamlit.app](https://patstat.streamlit.app/)
+2. Browse queries by category (Competitors, Trends, Regional, Technology)
+3. Filter by stakeholder tag (PATLIB, BUSINESS, UNIVERSITY)
+4. Run a query, adjust parameters, download results
+5. Use "Take to TIP" to export to Jupyter
 
-1. Review [Query Catalog](./query-catalog.md) for existing patterns
-2. Check [BigQuery Schema](./bigquery-schema.md) for table structures
-3. Use [Data Loading Guide](./data-loading.md) if setting up your own database
+### For Developers
+1. Read [Project Overview](./project-overview.md) for architecture
+2. Study [Query Design Patterns](./query-design-patterns.md) for SQL patterns
+3. Review [What Worked Well](./what-worked-well.md) for design decisions
+4. Check `tests/` for validation patterns
 
-### For Feature Development
+### For New Projects
+1. Copy [Query Design Patterns](./query-design-patterns.md) for query structure
+2. Apply lessons from [What Worked Well](./what-worked-well.md)
+3. Use query-as-data pattern for rich metadata
+4. Build TIP export from day one
 
-1. Read [Project Overview](./project-overview.md) for architecture understanding
-2. Main entry point: `app.py`
-3. Query definitions: `queries_bq.py`
-4. Test with: `python test_queries.py`
-
-### Common Patterns
-
-```python
-# BigQuery query execution (from app.py)
-job_config = bigquery.QueryJobConfig(
-    default_dataset=f"{project}.{dataset}"
-)
-result = client.query(sql, job_config=job_config).to_dataframe()
-
-# Adding stakeholder tag filter
-def get_filtered_queries(stakeholder_filter: str) -> dict:
-    if stakeholder_filter == "Alle":
-        return QUERIES
-    return {
-        qid: qinfo for qid, qinfo in QUERIES.items()
-        if stakeholder_filter in qinfo.get("tags", [])
-    }
-```
+---
 
 ## Contact
 
 - **Author:** Arne Krueger
 - **Email:** arne@mtc.berlin
-- **LinkedIn:** [linkedin.com/in/herrkrueger](https://www.linkedin.com/in/herrkrueger/)
+- **GitHub:** [github.com/herrkrueger/patstat](https://github.com/herrkrueger/patstat)
 - **Issues:** [github.com/herrkrueger/patstat/issues](https://github.com/herrkrueger/patstat/issues)

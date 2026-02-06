@@ -1,72 +1,101 @@
 # PATSTAT Explorer - Project Overview
 
-**Generated:** 2026-01-26 | **Version:** Deep Scan | **Status:** AI-Assisted Development Reference
+**Last Updated:** 2026-02-01 | **Version:** 2.0 (Post Epic 6 Refactor)
 
 ## Executive Summary
 
-PATSTAT Explorer is a **Streamlit-based data analytics dashboard** for querying and visualizing the EPO PATSTAT patent database hosted on Google BigQuery. The application provides 19 predefined SQL queries (18 static + 1 dynamic) for patent analysis, filterable by three stakeholder perspectives: PATLIB, BUSINESS, and UNIVERSITY.
+PATSTAT Explorer is a **Streamlit-based web application** that enables patent information professionals (PATLIB staff) to explore EPO PATSTAT data without programming skills. It serves as a **bridge to TIP** (Technology Intelligence Platform), allowing users to:
+
+1. **Explore** 42 ready-to-use patent analysis queries
+2. **Customize** parameters (year range, jurisdictions, technology fields) via UI
+3. **Visualize** results with automatic charts and insights
+4. **Export** queries to TIP's Jupyter environment for advanced analysis
+5. **Generate** custom queries using AI (natural language → SQL)
 
 **Live Demo:** [patstat.streamlit.app](https://patstat.streamlit.app/)
 
-## Project Classification
+### TIP4PATLIB Alignment
 
-| Attribute | Value |
-|-----------|-------|
-| **Repository Type** | Monolith |
-| **Project Type** | Data Analytics Application |
-| **Primary Language** | Python 3.9+ |
-| **UI Framework** | Streamlit >= 1.28.0 |
-| **Database** | Google BigQuery |
-| **Data Source** | EPO PATSTAT 2025 Autumn Edition |
-| **Deployment** | Streamlit Cloud |
+This application directly addresses EPO's TIP4PATLIB requirements:
+
+| EPO Requirement | Implementation |
+|-----------------|----------------|
+| Ready-to-use queries without coding | 42 parameterized queries with UI controls |
+| Regional, sectoral, comparative analysis | Queries organized by category (Regional, Competitors, Trends, Technology) |
+| Step-by-step guidance | Query explanations, methodology, key outputs |
+| Parameter adaptation without programming | Dynamic parameter UI (sliders, multiselects) |
+| TIP integration | "Take to TIP" export with ready-to-run Python code |
+
+---
+
+## Architecture
+
+### High-Level Architecture
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    Streamlit Cloud                          │
+│  ┌───────────────────────────────────────────────────────┐  │
+│  │                     app.py (72 lines)                 │  │
+│  │                    Entry Point + Router               │  │
+│  └───────────────────────┬───────────────────────────────┘  │
+│                          │                                  │
+│  ┌───────────────────────▼───────────────────────────────┐  │
+│  │                   modules/ (1,802 lines)              │  │
+│  │  ┌─────────┐ ┌─────────┐ ┌─────────┐ ┌─────────────┐  │  │
+│  │  │config.py│ │ data.py │ │logic.py │ │   ui.py     │  │  │
+│  │  │Constants│ │BigQuery │ │Business │ │ Rendering   │  │  │
+│  │  │ Colors  │ │ Client  │ │  Logic  │ │ Components  │  │  │
+│  │  │ Config  │ │Execution│ │ AI/Filter│ │   Pages    │  │  │
+│  │  └─────────┘ └─────────┘ └─────────┘ └─────────────┘  │  │
+│  │                      ┌─────────┐                      │  │
+│  │                      │utils.py │                      │  │
+│  │                      │Helpers  │                      │  │
+│  │                      └─────────┘                      │  │
+│  └───────────────────────┬───────────────────────────────┘  │
+│                          │                                  │
+│  ┌───────────────────────▼───────────────────────────────┐  │
+│  │              queries_bq.py (3,893 lines)              │  │
+│  │                 42 Query Definitions                   │  │
+│  │          (SQL + metadata + parameters)                 │  │
+│  └───────────────────────┬───────────────────────────────┘  │
+└──────────────────────────┼──────────────────────────────────┘
+                           │
+                           ▼
+                  ┌─────────────────┐
+                  │  Google BigQuery │
+                  │   patstat-mtc    │
+                  │    ~450 GB       │
+                  │   27 tables      │
+                  └─────────────────┘
+```
+
+### Module Responsibilities
+
+| Module | Lines | Responsibility |
+|--------|-------|----------------|
+| `app.py` | 72 | Entry point, page routing, session state initialization |
+| `modules/config.py` | 123 | Constants, color palette, tech fields, AI system prompt |
+| `modules/data.py` | 156 | BigQuery client, query execution, parameter handling |
+| `modules/logic.py` | 238 | Business logic, filtering, AI client, contribution flow |
+| `modules/ui.py` | 1,193 | All Streamlit rendering (pages, components, charts) |
+| `modules/utils.py` | 84 | Pure helper functions (formatting, SQL parsing) |
+| `queries_bq.py` | 3,893 | Query definitions with metadata and SQL |
+
+---
 
 ## Technology Stack
 
 | Category | Technology | Version | Purpose |
 |----------|------------|---------|---------|
-| **UI Framework** | Streamlit | >= 1.28.0 | Interactive web dashboard |
-| **Data Processing** | pandas | >= 2.0.0 | DataFrame manipulation |
-| **Database Client** | google-cloud-bigquery | >= 3.13.0 | BigQuery connectivity |
-| **Type Support** | db-dtypes | >= 1.2.0 | BigQuery-pandas type mapping |
-| **Configuration** | python-dotenv | >= 1.0.0 | Environment variable management |
+| **UI Framework** | Streamlit | >= 1.28.0 | Web application framework |
+| **Data Processing** | pandas | >= 2.0.0 | DataFrame operations |
+| **Database** | Google BigQuery | >= 3.13.0 | PATSTAT data storage (~450 GB) |
+| **Visualization** | Altair | >= 5.0.0 | Interactive charts |
+| **AI Integration** | Anthropic Claude | >= 0.7.0 | Natural language → SQL |
+| **Configuration** | python-dotenv | >= 1.0.0 | Environment variables |
 
-## Architecture Pattern
-
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                     Streamlit Cloud                              │
-│  ┌─────────────────────────────────────────────────────────┐    │
-│  │                    app.py                                │    │
-│  │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐   │    │
-│  │  │ Interactive  │  │   Query      │  │  Stakeholder │   │    │
-│  │  │   Panel      │  │   Panel      │  │    Tabs      │   │    │
-│  │  └──────────────┘  └──────────────┘  └──────────────┘   │    │
-│  │           │                │                │           │    │
-│  │           └────────────────┼────────────────┘           │    │
-│  │                            ▼                            │    │
-│  │                 ┌──────────────────┐                    │    │
-│  │                 │  queries_bq.py   │                    │    │
-│  │                 │  19 SQL Queries  │                    │    │
-│  │                 │  + Metadata      │                    │    │
-│  │                 └────────┬─────────┘                    │    │
-│  └──────────────────────────┼──────────────────────────────┘    │
-│                             │                                    │
-│                             ▼                                    │
-│              ┌──────────────────────────────┐                   │
-│              │  Google BigQuery Client      │                   │
-│              │  (Service Account Auth)      │                   │
-│              └──────────────┬───────────────┘                   │
-└─────────────────────────────┼───────────────────────────────────┘
-                              │
-                              ▼
-               ┌──────────────────────────────┐
-               │     Google BigQuery          │
-               │  Project: patstat-mtc        │
-               │  Dataset: patstat            │
-               │  Region: EU                  │
-               │  ~450 GB, 27 tables          │
-               └──────────────────────────────┘
-```
+---
 
 ## Data Architecture
 
@@ -78,82 +107,95 @@ PATSTAT Explorer is a **Streamlit-based data analytics dashboard** for querying 
 
 ### Key Tables
 
-| Table | Rows | Size | Description |
-|-------|------|------|-------------|
-| `tls201_appln` | 140M | ~25 GB | Patent applications (central table) |
-| `tls206_person` | 98M | ~16 GB | Applicants and inventors |
-| `tls207_pers_appln` | 408M | ~12 GB | Person-application links |
-| `tls209_appln_ipc` | 375M | ~15 GB | IPC classifications |
-| `tls211_pat_publn` | 168M | ~10 GB | Publications |
-| `tls212_citation` | 597M | ~40 GB | Citation data |
-| `tls224_appln_cpc` | 436M | ~9 GB | CPC classifications |
-| `tls230_appln_techn_field` | 167M | - | WIPO technology field assignments |
-| `tls801_country` | 242 | - | Country reference data |
-| `tls901_techn_field_ipc` | 771 | - | WIPO technology field definitions |
-| `tls904_nuts` | 2,056 | - | NUTS regional codes |
+| Table | Rows | Description |
+|-------|------|-------------|
+| `tls201_appln` | 140M | Patent applications (central table) |
+| `tls206_person` | 98M | Applicants and inventors |
+| `tls207_pers_appln` | 408M | Person-application links |
+| `tls209_appln_ipc` | 375M | IPC classifications |
+| `tls211_pat_publn` | 168M | Publications |
+| `tls212_citation` | 597M | Citation data |
+| `tls224_appln_cpc` | 436M | CPC classifications |
+| `tls230_appln_techn_field` | 167M | WIPO technology fields |
 
-### Performance Characteristics
+---
 
-| Metric | Value |
-|--------|-------|
-| First query (uncached) | 1-14s |
-| Cached query | 0.3-1s |
-| Estimated cost | ~$5-10/month |
+## Key Features
+
+### 1. Question-Based Navigation
+- Landing page presents queries as questions ("Who...", "What...", "Which...")
+- Category pills for filtering (Competitors, Trends, Regional, Technology)
+- Stakeholder tags (PATLIB, BUSINESS, UNIVERSITY)
+
+### 2. Dynamic Parameter System
+- Queries define their own parameters in `parameters` dict
+- UI automatically renders appropriate controls
+- Supported types: `year_range`, `year_picker`, `multiselect`, `select`, `text`
+
+### 3. AI Query Builder
+- Natural language input → Claude generates BigQuery SQL
+- Explanation + SQL + notes returned
+- Preview results before saving
+- Save to favorites for session
+
+### 4. TIP Integration ("Take to TIP")
+- Panel on every query result page
+- Ready-to-run Python code for TIP's Jupyter environment
+- SQL parameters substituted with actual values
+- PatstatClient boilerplate included
+
+### 5. Query Contribution
+- Users can submit new queries
+- SQL validation before submission
+- Test query execution with preview
+
+---
 
 ## Source Tree
 
 ```
 patstat/
-├── app.py                      # Streamlit web application (entry point)
-├── queries_bq.py               # 19 BigQuery queries with metadata
-├── test_queries.py             # Query validation and timing tests
+├── app.py                      # Entry point (72 lines)
+├── queries_bq.py               # 42 queries with metadata (3,893 lines)
 ├── requirements.txt            # Python dependencies
-├── .env.example                # Environment variables template
-├── .env                        # Local configuration (gitignored)
-├── .gitignore                  # Git ignore patterns
-├── README.md                   # Project documentation (outdated)
-├── docs/                       # Generated documentation
-│   └── index.md               # Documentation index
+├── modules/                    # Modular architecture
+│   ├── __init__.py
+│   ├── config.py              # Constants and configuration
+│   ├── data.py                # BigQuery client and execution
+│   ├── logic.py               # Business logic and AI
+│   ├── ui.py                  # Streamlit UI components
+│   └── utils.py               # Pure helper functions
+├── tests/                      # Test suite
+│   ├── test_filter_queries.py # Search and filter tests
+│   ├── test_query_metadata.py # Query validation tests
+│   ├── test_ai_builder.py     # AI generation tests
+│   ├── test_ai_config.py      # AI configuration tests
+│   └── test_contribution.py   # Contribution flow tests
+├── docs/                       # Documentation
 ├── context/                    # Reference materials
-│   ├── load_patstat_local.py  # BigQuery data loading utility
-│   ├── create_patstat_tables.sql  # PostgreSQL schema (reference)
-│   └── Documentation_Scripts/  # EPO PATSTAT reference docs
-│       ├── DataCatalog_Global_v5.26.pdf
-│       └── Useful manuals and other docs/
-├── .github/
-│   └── workflows/
-│       └── neon_workflow.yml  # CI/CD for Neon DB (PR preview)
-└── .devcontainer/
-    └── devcontainer.json      # VS Code dev container config
+│   └── BPM001977_Technical_Specifications__TIP4PATLIB.pdf
+└── .streamlit/                 # Streamlit configuration
 ```
 
+---
+
 ## Development Guide
-
-### Prerequisites
-
-- Python 3.9+
-- Google Cloud Service Account with BigQuery access
 
 ### Local Setup
 
 ```bash
-# Clone repository
 git clone https://github.com/herrkrueger/patstat.git
 cd patstat
-
-# Create virtual environment
-python -m venv .venv
-source .venv/bin/activate  # or .venv\Scripts\activate on Windows
-
-# Install dependencies
+python -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
-
-# Configure environment
-cp .env.example .env
-# Edit .env with your BigQuery credentials
-
-# Run locally
+cp .env.example .env  # Configure credentials
 streamlit run app.py
+```
+
+### Testing
+
+```bash
+pytest tests/ -v
 ```
 
 ### Environment Variables
@@ -162,36 +204,26 @@ streamlit run app.py
 |----------|----------|-------------|
 | `BIGQUERY_PROJECT` | Yes | GCP project ID (default: `patstat-mtc`) |
 | `BIGQUERY_DATASET` | Yes | BigQuery dataset name (default: `patstat`) |
-| `GOOGLE_APPLICATION_CREDENTIALS_JSON` | Yes* | Service account JSON (single-line string) |
+| `GOOGLE_APPLICATION_CREDENTIALS_JSON` | Yes* | Service account JSON |
+| `ANTHROPIC_API_KEY` | No | For AI Query Builder |
 
-*Required for local development. On Streamlit Cloud, use Secrets instead.
-
-### Streamlit Cloud Secrets
-
-Configure in Streamlit Cloud → App Settings → Secrets:
-
-```toml
-[gcp_service_account]
-type = "service_account"
-project_id = "patstat-mtc"
-private_key_id = "..."
-private_key = "-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n"
-client_email = "patstat-reader@patstat-mtc.iam.gserviceaccount.com"
-# ... additional fields
-```
+---
 
 ## Related Documentation
 
-- [Query Catalog](./query-catalog.md) - Complete query reference
+- [Query Design Patterns](./query-design-patterns.md) - How queries are structured
+- [Query Catalog](./query-catalog.md) - Complete query reference (42 queries)
 - [BigQuery Schema](./bigquery-schema.md) - PATSTAT table definitions
-- [Data Loading Guide](./data-loading.md) - Loading PATSTAT to BigQuery
+- [What Worked Well](./what-worked-well.md) - Lessons learned
+
+---
 
 ## License
 
-All code in this project by Arne Krueger is licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
+All code by Arne Krueger is licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
 
 ## Contact
 
 - **Author:** Arne Krueger
 - **Email:** arne@mtc.berlin
-- **LinkedIn:** [linkedin.com/in/herrkrueger](https://www.linkedin.com/in/herrkrueger/)
+- **GitHub:** [github.com/herrkrueger/patstat](https://github.com/herrkrueger/patstat)
