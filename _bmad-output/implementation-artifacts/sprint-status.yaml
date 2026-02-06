@@ -86,7 +86,7 @@ development_status:
   # Epic 6: Stabilization & Refinement
   epic-6: in-progress
   6-1-fix-ai-query-builder: done
-  6-2-refactor-monolithic-structure: review  # 2026-01-31: Ready for review
-  6-3-ui-polish-consistency: deferred  # 2026-01-31: Partial impl, deferred to future UI epic
-  6-4-query-quality-audit: in-progress
+  6-2-refactor-monolithic-structure: done  # 2026-02-01: Code review complete
+  6-3-ui-polish-consistency: backlog  # 2026-01-31: Partial impl, deferred to future UI epic
+  6-4-query-quality-audit: backlog  # 2026-02-01: Moved to backlog for future sprint
   epic-6-retrospective: optional

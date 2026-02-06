@@ -1,68 +1,62 @@
 {
   "workflow_version": "1.2.0",
   "timestamps": {
-    "started": "2026-01-26T21:00:00Z",
-    "last_updated": "2026-01-26T21:30:00Z",
-    "completed": "2026-01-26T21:30:00Z"
+    "started": "2026-02-01T11:35:00Z",
+    "last_updated": "2026-02-01T11:55:00Z",
+    "completed": "2026-02-01T11:55:00Z"
   },
-  "mode": "initial_scan",
+  "mode": "full_rescan",
   "scan_level": "deep",
-  "project_root": "/Users/arnekrueger/Documents/development/patstat",
-  "output_folder": "/Users/arnekrueger/Documents/development/patstat/docs",
+  "project_root": "/Users/arnekrueger/Documents/development/herrkrueger/patstat",
+  "output_folder": "/Users/arnekrueger/Documents/development/herrkrueger/patstat/docs",
   "completed_steps": [
     {
       "step": "step_1",
       "status": "completed",
-      "timestamp": "2026-01-26T21:00:00Z",
-      "summary": "Classified as monolith with 1 part - Data Analytics (Streamlit + BigQuery)"
+      "timestamp": "2026-02-01T11:35:00Z",
+      "summary": "Classified as monolith (modular) with 1 part - Data Analytics (Streamlit + BigQuery + Claude AI)"
     },
     {
       "step": "step_2",
       "status": "completed",
-      "timestamp": "2026-01-26T21:05:00Z",
-      "summary": "Found 1 existing doc (README.md - outdated), extensive context folder with EPO reference PDFs"
+      "timestamp": "2026-02-01T11:38:00Z",
+      "summary": "Found existing docs, identified TIP4PATLIB spec as key context"
     },
     {
       "step": "step_3",
       "status": "completed",
-      "timestamp": "2026-01-26T21:10:00Z",
-      "summary": "Tech stack: Streamlit 1.28+, pandas 2.0+, google-cloud-bigquery 3.13+"
+      "timestamp": "2026-02-01T11:40:00Z",
+      "summary": "Tech stack: Streamlit 1.28+, pandas 2.0+, BigQuery 3.13+, Altair 5.0+, Anthropic 0.7+"
     },
     {
       "step": "step_4",
       "status": "completed",
-      "timestamp": "2026-01-26T21:15:00Z",
-      "summary": "Analyzed 19 queries (18 static + 1 dynamic), BigQuery schema (27 tables, ~450GB)"
+      "timestamp": "2026-02-01T11:45:00Z",
+      "summary": "Analyzed 42 queries, 5 modules, 5 test files, parameter system, AI integration"
     },
     {
       "step": "step_5",
       "status": "completed",
-      "timestamp": "2026-01-26T21:17:00Z",
-      "summary": "Source tree documented - flat structure with app.py, queries_bq.py, context/"
-    },
-    {
-      "step": "step_6",
-      "status": "completed",
-      "timestamp": "2026-01-26T21:20:00Z",
-      "summary": "Development setup documented, Streamlit Cloud deployment, .env configuration"
+      "timestamp": "2026-02-01T11:47:00Z",
+      "summary": "Source tree documented - modular structure with modules/, tests/, docs/"
     },
     {
       "step": "step_9",
       "status": "completed",
-      "timestamp": "2026-01-26T21:25:00Z",
-      "summary": "Generated: project-overview.md, query-catalog.md, bigquery-schema.md, data-loading.md"
+      "timestamp": "2026-02-01T11:50:00Z",
+      "summary": "Generated: project-overview.md, query-design-patterns.md, what-worked-well.md"
     },
     {
       "step": "step_10",
       "status": "completed",
-      "timestamp": "2026-01-26T21:28:00Z",
+      "timestamp": "2026-02-01T11:52:00Z",
       "summary": "Master index generated at docs/index.md"
     },
     {
       "step": "step_12",
       "status": "completed",
-      "timestamp": "2026-01-26T21:30:00Z",
-      "summary": "Workflow complete"
+      "timestamp": "2026-02-01T11:55:00Z",
+      "summary": "Workflow complete - full rescan with deep dive focus areas"
     }
   ],
   "current_step": "completed",
@@ -76,40 +70,67 @@
   "findings": {
     "project_classification": {
       "repository_type": "monolith",
+      "architecture_pattern": "layered_modular",
       "parts_count": 1,
       "primary_language": "Python",
       "primary_framework": "Streamlit",
-      "database": "Google BigQuery"
+      "database": "Google BigQuery",
+      "ai_integration": "Anthropic Claude"
     },
     "technology_stack": {
       "ui_framework": "Streamlit >= 1.28.0",
       "data_processing": "pandas >= 2.0.0",
       "database_client": "google-cloud-bigquery >= 3.13.0",
+      "visualization": "altair >= 5.0.0",
+      "ai_client": "anthropic >= 0.7.0",
       "configuration": "python-dotenv >= 1.0.0"
     },
     "code_metrics": {
-      "app_py_lines": 454,
-      "queries_bq_py_lines": 1031,
-      "total_queries": 19,
-      "static_queries": 18,
-      "dynamic_queries": 1
+      "app_py_lines": 72,
+      "queries_bq_py_lines": 3893,
+      "modules_total_lines": 1802,
+      "modules_breakdown": {
+        "config.py": 123,
+        "data.py": 156,
+        "logic.py": 238,
+        "ui.py": 1193,
+        "utils.py": 84
+      },
+      "total_queries": 42,
+      "test_files": 5
     },
-    "database": {
-      "project": "patstat-mtc",
-      "dataset": "patstat",
-      "region": "EU",
-      "total_size_gb": 450,
-      "table_count": 27,
-      "largest_table": "tls215_citn_categ (1.3B rows)"
+    "key_context": {
+      "tip4patlib_spec": "context/BPM001977_Technical_Specifications__TIP4PATLIB.pdf",
+      "purpose": "Bridge to TIP for 300 PATLIB centres",
+      "deliverables": [
+        "42 parameterized queries",
+        "No-code parameter UI",
+        "AI query builder",
+        "TIP export feature"
+      ]
+    },
+    "changes_since_last_scan": {
+      "architecture": "Monolith → Modular (5 modules)",
+      "queries": "19 → 42 queries",
+      "features_added": [
+        "AI Query Builder",
+        "Dynamic parameter system",
+        "Query contribution",
+        "TIP integration"
+      ]
     }
   },
   "outputs_generated": [
     "project-scan-report.json",
     "project-overview.md",
-    "query-catalog.md",
-    "bigquery-schema.md",
-    "data-loading.md",
+    "query-design-patterns.md",
+    "what-worked-well.md",
     "index.md"
+  ],
+  "deep_dive_topics": [
+    "Query design patterns",
+    "PATSTAT schema knowledge",
+    "What worked well in Streamlit app"
   ],
   "resume_instructions": "Workflow complete. All documentation generated."
 }
