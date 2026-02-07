@@ -1,0 +1,984 @@
+{
+  "dataset_info": {
+    "project_id": "p-epo-tip-prj-3a1f",
+    "dataset_id": "p_epo_tip_euwe4_bqd_patstatb"
+  },
+  "tables": [
+    {
+      "table_name": "reg101_appln",
+      "table_type": "BASE TABLE",
+      "creation_time": "2025-12-19 15:35:33.646000+00:00"
+    },
+    {
+      "table_name": "reg102_pat_publn",
+      "table_type": "BASE TABLE",
+      "creation_time": "2025-12-19 15:35:20.324000+00:00"
+    },
+    {
+      "table_name": "reg103_ipc",
+      "table_type": "BASE TABLE",
+      "creation_time": "2025-12-19 15:35:44.732000+00:00"
+    },
+    {
+      "table_name": "reg106_prior",
+      "table_type": "BASE TABLE",
+      "creation_time": "2025-12-19 15:35:09.737000+00:00"
+    },
+    {
+      "table_name": "reg107_parties",
+      "table_type": "BASE TABLE",
+      "creation_time": "2025-12-19 15:35:24.569000+00:00"
+    },
+    {
+      "table_name": "reg108_applicant_states",
+      "table_type": "BASE TABLE",
+      "creation_time": "2025-12-19 15:34:48.369000+00:00"
+    },
+    {
+      "table_name": "reg109_designated_states",
+      "table_type": "BASE TABLE",
+      "creation_time": "2025-12-19 15:35:00.827000+00:00"
+    },
+    {
+      "table_name": "reg110_title",
+      "table_type": "BASE TABLE",
+      "creation_time": "2025-12-19 15:35:52.595000+00:00"
+    },
+    {
+      "table_name": "reg111_licensee",
+      "table_type": "BASE TABLE",
+      "creation_time": "2025-12-19 15:35:08.327000+00:00"
+    },
+    {
+      "table_name": "reg112_licensee_states",
+      "table_type": "BASE TABLE",
+      "creation_time": "2025-12-19 15:35:23.119000+00:00"
+    },
+    {
+      "table_name": "reg113_terms_of_grant",
+      "table_type": "BASE TABLE",
+      "creation_time": "2025-12-19 15:35:19.023000+00:00"
+    },
+    {
+      "table_name": "reg114_dates",
+      "table_type": "BASE TABLE",
+      "creation_time": "2025-12-19 15:35:25.950000+00:00"
+    },
+    {
+      "table_name": "reg117_relation",
+      "table_type": "BASE TABLE",
+      "creation_time": "2025-12-19 15:34:42.414000+00:00"
+    },
+    {
+      "table_name": "reg118_prev_filed_appln",
+      "table_type": "BASE TABLE",
+      "creation_time": "2025-12-19 15:34:29.903000+00:00"
+    },
+    {
+      "table_name": "reg125_appeal",
+      "table_type": "BASE TABLE",
+      "creation_time": "2025-12-19 15:35:37.854000+00:00"
+    },
+    {
+      "table_name": "reg127_petition_rvw",
+      "table_type": "BASE TABLE",
+      "creation_time": "2025-12-19 15:35:41.782000+00:00"
+    },
+    {
+      "table_name": "reg128_limitation",
+      "table_type": "BASE TABLE",
+      "creation_time": "2025-12-19 15:35:21.629000+00:00"
+    },
+    {
+      "table_name": "reg130_opponent",
+      "table_type": "BASE TABLE",
+      "creation_time": "2025-12-19 15:35:35.004000+00:00"
+    },
+    {
+      "table_name": "reg135_text",
+      "table_type": "BASE TABLE",
+      "creation_time": "2025-12-19 15:36:04.372000+00:00"
+    },
+    {
+      "table_name": "reg136_search_report",
+      "table_type": "BASE TABLE",
+      "creation_time": "2025-12-19 15:35:14.535000+00:00"
+    },
+    {
+      "table_name": "reg201_proc_step",
+      "table_type": "BASE TABLE",
+      "creation_time": "2025-12-19 15:35:29.105000+00:00"
+    },
+    {
+      "table_name": "reg202_proc_step_text",
+      "table_type": "BASE TABLE",
+      "creation_time": "2025-12-19 15:35:16.127000+00:00"
+    },
+    {
+      "table_name": "reg203_proc_step_date",
+      "table_type": "BASE TABLE",
+      "creation_time": "2025-12-19 15:35:27.510000+00:00"
+    },
+    {
+      "table_name": "reg301_event_data",
+      "table_type": "BASE TABLE",
+      "creation_time": "2025-12-19 15:34:45.316000+00:00"
+    },
+    {
+      "table_name": "reg402_event_text",
+      "table_type": "BASE TABLE",
+      "creation_time": "2025-12-19 15:36:01.554000+00:00"
+    },
+    {
+      "table_name": "reg403_appln_status",
+      "table_type": "BASE TABLE",
+      "creation_time": "2025-12-19 15:34:49.877000+00:00"
+    },
+    {
+      "table_name": "reg701_appln",
+      "table_type": "BASE TABLE",
+      "creation_time": "2025-12-19 15:35:39.254000+00:00"
+    },
+    {
+      "table_name": "reg705_places_of_business",
+      "table_type": "BASE TABLE",
+      "creation_time": "2025-12-19 15:34:41.079000+00:00"
+    },
+    {
+      "table_name": "reg707_parties",
+      "table_type": "BASE TABLE",
+      "creation_time": "2025-12-19 15:34:53.988000+00:00"
+    },
+    {
+      "table_name": "reg711_licensee",
+      "table_type": "BASE TABLE",
+      "creation_time": "2025-12-19 15:34:55.479000+00:00"
+    },
+    {
+      "table_name": "reg712_licensee_states",
+      "table_type": "BASE TABLE",
+      "creation_time": "2025-12-19 15:35:47.987000+00:00"
+    },
+    {
+      "table_name": "reg714_dates",
+      "table_type": "BASE TABLE",
+      "creation_time": "2025-12-19 15:34:56.780000+00:00"
+    },
+    {
+      "table_name": "reg721_proc_step",
+      "table_type": "BASE TABLE",
+      "creation_time": "2025-12-19 15:34:38.078000+00:00"
+    },
+    {
+      "table_name": "reg722_proc_step_text",
+      "table_type": "BASE TABLE",
+      "creation_time": "2025-12-19 15:35:46.415000+00:00"
+    },
+    {
+      "table_name": "reg723_proc_step_date",
+      "table_type": "BASE TABLE",
+      "creation_time": "2025-12-19 15:35:51.048000+00:00"
+    },
+    {
+      "table_name": "reg731_event_data",
+      "table_type": "BASE TABLE",
+      "creation_time": "2025-12-19 15:36:02.934000+00:00"
+    },
+    {
+      "table_name": "reg741_appln_status",
+      "table_type": "BASE TABLE",
+      "creation_time": "2025-12-19 15:35:58.824000+00:00"
+    },
+    {
+      "table_name": "reg742_event_text",
+      "table_type": "BASE TABLE",
+      "creation_time": "2025-12-19 15:34:33.218000+00:00"
+    },
+    {
+      "table_name": "tls201_appln",
+      "table_type": "BASE TABLE",
+      "creation_time": "2025-12-19 15:34:43.912000+00:00"
+    },
+    {
+      "table_name": "tls202_appln_title",
+      "table_type": "BASE TABLE",
+      "creation_time": "2025-12-19 15:34:52.631000+00:00"
+    },
+    {
+      "table_name": "tls203_appln_abstr",
+      "table_type": "BASE TABLE",
+      "creation_time": "2025-12-19 15:35:43.228000+00:00"
+    },
+    {
+      "table_name": "tls204_appln_prior",
+      "table_type": "BASE TABLE",
+      "creation_time": "2025-12-19 15:35:17.570000+00:00"
+    },
+    {
+      "table_name": "tls205_tech_rel",
+      "table_type": "BASE TABLE",
+      "creation_time": "2025-12-19 15:35:32.310000+00:00"
+    },
+    {
+      "table_name": "tls206_person",
+      "table_type": "BASE TABLE",
+      "creation_time": "2025-12-19 15:34:46.888000+00:00"
+    },
+    {
+      "table_name": "tls207_pers_appln",
+      "table_type": "BASE TABLE",
+      "creation_time": "2025-12-19 15:36:00.172000+00:00"
+    },
+    {
+      "table_name": "tls209_appln_ipc",
+      "table_type": "BASE TABLE",
+      "creation_time": "2025-12-19 15:34:39.671000+00:00"
+    },
+    {
+      "table_name": "tls210_appln_n_cls",
+      "table_type": "BASE TABLE",
+      "creation_time": "2025-12-19 15:35:57.336000+00:00"
+    },
+    {
+      "table_name": "tls211_pat_publn",
+      "table_type": "BASE TABLE",
+      "creation_time": "2025-12-19 15:34:36.516000+00:00"
+    },
+    {
+      "table_name": "tls212_citation",
+      "table_type": "BASE TABLE",
+      "creation_time": "2025-12-19 15:35:06.900000+00:00"
+    },
+    {
+      "table_name": "tls214_npl_publn",
+      "table_type": "BASE TABLE",
+      "creation_time": "2025-12-19 15:34:34.777000+00:00"
+    },
+    {
+      "table_name": "tls215_citn_categ",
+      "table_type": "BASE TABLE",
+      "creation_time": "2025-12-19 15:35:55.821000+00:00"
+    },
+    {
+      "table_name": "tls216_appln_contn",
+      "table_type": "BASE TABLE",
+      "creation_time": "2025-12-19 15:34:58.012000+00:00"
+    },
+    {
+      "table_name": "tls222_appln_jp_class",
+      "table_type": "BASE TABLE",
+      "creation_time": "2025-12-19 15:35:02.335000+00:00"
+    },
+    {
+      "table_name": "tls224_appln_cpc",
+      "table_type": "BASE TABLE",
+      "creation_time": "2025-12-19 15:35:03.680000+00:00"
+    },
+    {
+      "table_name": "tls225_docdb_fam_cpc",
+      "table_type": "BASE TABLE",
+      "creation_time": "2025-12-19 15:34:51.305000+00:00"
+    },
+    {
+      "table_name": "tls226_person_orig",
+      "table_type": "BASE TABLE",
+      "creation_time": "2025-12-19 15:35:49.585000+00:00"
+    },
+    {
+      "table_name": "tls227_pers_publn",
+      "table_type": "BASE TABLE",
+      "creation_time": "2025-12-19 15:34:59.434000+00:00"
+    },
+    {
+      "table_name": "tls228_docdb_fam_citn",
+      "table_type": "BASE TABLE",
+      "creation_time": "2025-12-19 15:34:31.550000+00:00"
+    },
+    {
+      "table_name": "tls229_appln_nace2",
+      "table_type": "BASE TABLE",
+      "creation_time": "2025-12-19 15:35:11.402000+00:00"
+    },
+    {
+      "table_name": "tls230_appln_techn_field",
+      "table_type": "BASE TABLE",
+      "creation_time": "2025-12-19 15:35:30.769000+00:00"
+    },
+    {
+      "table_name": "tls231_inpadoc_legal_event",
+      "table_type": "BASE TABLE",
+      "creation_time": "2025-12-19 15:35:54.286000+00:00"
+    },
+    {
+      "table_name": "tls801_country",
+      "table_type": "BASE TABLE",
+      "creation_time": "2025-12-19 15:35:05.290000+00:00"
+    },
+    {
+      "table_name": "tls803_legal_event_code",
+      "table_type": "BASE TABLE",
+      "creation_time": "2025-12-19 15:35:36.476000+00:00"
+    },
+    {
+      "table_name": "tls901_techn_field_ipc",
+      "table_type": "BASE TABLE",
+      "creation_time": "2025-12-19 15:36:06.096000+00:00"
+    },
+    {
+      "table_name": "tls902_ipc_nace2",
+      "table_type": "BASE TABLE",
+      "creation_time": "2025-12-19 15:35:12.857000+00:00"
+    },
+    {
+      "table_name": "tls904_nuts",
+      "table_type": "BASE TABLE",
+      "creation_time": "2025-12-19 15:35:40.551000+00:00"
+    }
+  ],
+  "key_table_schemas": [
+    {
+      "table_name": "tls201_appln",
+      "columns": [
+        {
+          "column_name": "appln_id",
+          "data_type": "INT64",
+          "is_nullable": "YES",
+          "ordinal_position": 1,
+          "column_default": "NULL"
+        },
+        {
+          "column_name": "appln_auth",
+          "data_type": "STRING",
+          "is_nullable": "YES",
+          "ordinal_position": 2,
+          "column_default": "NULL"
+        },
+        {
+          "column_name": "appln_nr",
+          "data_type": "STRING",
+          "is_nullable": "YES",
+          "ordinal_position": 3,
+          "column_default": "NULL"
+        },
+        {
+          "column_name": "appln_kind",
+          "data_type": "STRING",
+          "is_nullable": "YES",
+          "ordinal_position": 4,
+          "column_default": "NULL"
+        },
+        {
+          "column_name": "appln_filing_date",
+          "data_type": "DATE",
+          "is_nullable": "YES",
+          "ordinal_position": 5,
+          "column_default": "NULL"
+        },
+        {
+          "column_name": "appln_filing_year",
+          "data_type": "INT64",
+          "is_nullable": "YES",
+          "ordinal_position": 6,
+          "column_default": "NULL"
+        },
+        {
+          "column_name": "appln_nr_epodoc",
+          "data_type": "STRING",
+          "is_nullable": "YES",
+          "ordinal_position": 7,
+          "column_default": "NULL"
+        },
+        {
+          "column_name": "appln_nr_original",
+          "data_type": "STRING",
+          "is_nullable": "YES",
+          "ordinal_position": 8,
+          "column_default": "NULL"
+        },
+        {
+          "column_name": "ipr_type",
+          "data_type": "STRING",
+          "is_nullable": "YES",
+          "ordinal_position": 9,
+          "column_default": "NULL"
+        },
+        {
+          "column_name": "receiving_office",
+          "data_type": "STRING",
+          "is_nullable": "YES",
+          "ordinal_position": 10,
+          "column_default": "NULL"
+        },
+        {
+          "column_name": "internat_appln_id",
+          "data_type": "INT64",
+          "is_nullable": "YES",
+          "ordinal_position": 11,
+          "column_default": "NULL"
+        },
+        {
+          "column_name": "int_phase",
+          "data_type": "STRING",
+          "is_nullable": "YES",
+          "ordinal_position": 12,
+          "column_default": "NULL"
+        },
+        {
+          "column_name": "reg_phase",
+          "data_type": "STRING",
+          "is_nullable": "YES",
+          "ordinal_position": 13,
+          "column_default": "NULL"
+        },
+        {
+          "column_name": "nat_phase",
+          "data_type": "STRING",
+          "is_nullable": "YES",
+          "ordinal_position": 14,
+          "column_default": "NULL"
+        },
+        {
+          "column_name": "earliest_filing_date",
+          "data_type": "DATE",
+          "is_nullable": "YES",
+          "ordinal_position": 15,
+          "column_default": "NULL"
+        },
+        {
+          "column_name": "earliest_filing_year",
+          "data_type": "INT64",
+          "is_nullable": "YES",
+          "ordinal_position": 16,
+          "column_default": "NULL"
+        },
+        {
+          "column_name": "earliest_filing_id",
+          "data_type": "INT64",
+          "is_nullable": "YES",
+          "ordinal_position": 17,
+          "column_default": "NULL"
+        },
+        {
+          "column_name": "earliest_publn_date",
+          "data_type": "DATE",
+          "is_nullable": "YES",
+          "ordinal_position": 18,
+          "column_default": "NULL"
+        },
+        {
+          "column_name": "earliest_publn_year",
+          "data_type": "INT64",
+          "is_nullable": "YES",
+          "ordinal_position": 19,
+          "column_default": "NULL"
+        },
+        {
+          "column_name": "earliest_pat_publn_id",
+          "data_type": "INT64",
+          "is_nullable": "YES",
+          "ordinal_position": 20,
+          "column_default": "NULL"
+        },
+        {
+          "column_name": "granted",
+          "data_type": "STRING",
+          "is_nullable": "YES",
+          "ordinal_position": 21,
+          "column_default": "NULL"
+        },
+        {
+          "column_name": "docdb_family_id",
+          "data_type": "INT64",
+          "is_nullable": "YES",
+          "ordinal_position": 22,
+          "column_default": "NULL"
+        },
+        {
+          "column_name": "inpadoc_family_id",
+          "data_type": "INT64",
+          "is_nullable": "YES",
+          "ordinal_position": 23,
+          "column_default": "NULL"
+        },
+        {
+          "column_name": "docdb_family_size",
+          "data_type": "INT64",
+          "is_nullable": "YES",
+          "ordinal_position": 24,
+          "column_default": "NULL"
+        },
+        {
+          "column_name": "nb_citing_docdb_fam",
+          "data_type": "INT64",
+          "is_nullable": "YES",
+          "ordinal_position": 25,
+          "column_default": "NULL"
+        },
+        {
+          "column_name": "nb_applicants",
+          "data_type": "INT64",
+          "is_nullable": "YES",
+          "ordinal_position": 26,
+          "column_default": "NULL"
+        },
+        {
+          "column_name": "nb_inventors",
+          "data_type": "INT64",
+          "is_nullable": "YES",
+          "ordinal_position": 27,
+          "column_default": "NULL"
+        }
+      ],
+      "options": [],
+      "partitions": [
+        {
+          "table_name": "tls201_appln",
+          "partition_id": null,
+          "total_rows": 140525582,
+          "total_logical_bytes": 27088841325,
+          "last_modified_time": "2025-12-19 15:55:17.379000+00:00"
+        }
+      ]
+    },
+    {
+      "table_name": "tls206_person",
+      "columns": [
+        {
+          "column_name": "person_id",
+          "data_type": "INT64",
+          "is_nullable": "YES",
+          "ordinal_position": 1,
+          "column_default": "NULL"
+        },
+        {
+          "column_name": "person_name",
+          "data_type": "STRING",
+          "is_nullable": "YES",
+          "ordinal_position": 2,
+          "column_default": "NULL"
+        },
+        {
+          "column_name": "person_name_orig_lg",
+          "data_type": "STRING",
+          "is_nullable": "YES",
+          "ordinal_position": 3,
+          "column_default": "NULL"
+        },
+        {
+          "column_name": "person_address",
+          "data_type": "STRING",
+          "is_nullable": "YES",
+          "ordinal_position": 4,
+          "column_default": "NULL"
+        },
+        {
+          "column_name": "person_ctry_code",
+          "data_type": "STRING",
+          "is_nullable": "YES",
+          "ordinal_position": 5,
+          "column_default": "NULL"
+        },
+        {
+          "column_name": "nuts",
+          "data_type": "STRING",
+          "is_nullable": "YES",
+          "ordinal_position": 6,
+          "column_default": "NULL"
+        },
+        {
+          "column_name": "nuts_level",
+          "data_type": "INT64",
+          "is_nullable": "YES",
+          "ordinal_position": 7,
+          "column_default": "NULL"
+        },
+        {
+          "column_name": "doc_std_name_id",
+          "data_type": "INT64",
+          "is_nullable": "YES",
+          "ordinal_position": 8,
+          "column_default": "NULL"
+        },
+        {
+          "column_name": "doc_std_name",
+          "data_type": "STRING",
+          "is_nullable": "YES",
+          "ordinal_position": 9,
+          "column_default": "NULL"
+        },
+        {
+          "column_name": "psn_id",
+          "data_type": "INT64",
+          "is_nullable": "YES",
+          "ordinal_position": 10,
+          "column_default": "NULL"
+        },
+        {
+          "column_name": "psn_name",
+          "data_type": "STRING",
+          "is_nullable": "YES",
+          "ordinal_position": 11,
+          "column_default": "NULL"
+        },
+        {
+          "column_name": "psn_level",
+          "data_type": "INT64",
+          "is_nullable": "YES",
+          "ordinal_position": 12,
+          "column_default": "NULL"
+        },
+        {
+          "column_name": "psn_sector",
+          "data_type": "STRING",
+          "is_nullable": "YES",
+          "ordinal_position": 13,
+          "column_default": "NULL"
+        },
+        {
+          "column_name": "han_id",
+          "data_type": "INT64",
+          "is_nullable": "YES",
+          "ordinal_position": 14,
+          "column_default": "NULL"
+        },
+        {
+          "column_name": "han_name",
+          "data_type": "STRING",
+          "is_nullable": "YES",
+          "ordinal_position": 15,
+          "column_default": "NULL"
+        },
+        {
+          "column_name": "han_harmonized",
+          "data_type": "INT64",
+          "is_nullable": "YES",
+          "ordinal_position": 16,
+          "column_default": "NULL"
+        },
+        {
+          "column_name": "reg_code",
+          "data_type": "STRING",
+          "is_nullable": "YES",
+          "ordinal_position": 17,
+          "column_default": "NULL"
+        }
+      ],
+      "options": [],
+      "partitions": [
+        {
+          "table_name": "tls206_person",
+          "partition_id": null,
+          "total_rows": 97853865,
+          "total_logical_bytes": 17361688151,
+          "last_modified_time": "2025-12-19 15:55:33.536000+00:00"
+        }
+      ]
+    },
+    {
+      "table_name": "tls207_pers_appln",
+      "columns": [
+        {
+          "column_name": "person_id",
+          "data_type": "INT64",
+          "is_nullable": "YES",
+          "ordinal_position": 1,
+          "column_default": "NULL"
+        },
+        {
+          "column_name": "appln_id",
+          "data_type": "INT64",
+          "is_nullable": "YES",
+          "ordinal_position": 2,
+          "column_default": "NULL"
+        },
+        {
+          "column_name": "applt_seq_nr",
+          "data_type": "INT64",
+          "is_nullable": "YES",
+          "ordinal_position": 3,
+          "column_default": "NULL"
+        },
+        {
+          "column_name": "invt_seq_nr",
+          "data_type": "INT64",
+          "is_nullable": "YES",
+          "ordinal_position": 4,
+          "column_default": "NULL"
+        }
+      ],
+      "options": [],
+      "partitions": [
+        {
+          "table_name": "tls207_pers_appln",
+          "partition_id": null,
+          "total_rows": 408478469,
+          "total_logical_bytes": 13071311008,
+          "last_modified_time": "2025-12-19 16:01:57.284000+00:00"
+        }
+      ]
+    },
+    {
+      "table_name": "tls209_appln_ipc",
+      "columns": [
+        {
+          "column_name": "appln_id",
+          "data_type": "INT64",
+          "is_nullable": "YES",
+          "ordinal_position": 1,
+          "column_default": "NULL"
+        },
+        {
+          "column_name": "ipc_class_symbol",
+          "data_type": "STRING",
+          "is_nullable": "YES",
+          "ordinal_position": 2,
+          "column_default": "NULL"
+        },
+        {
+          "column_name": "ipc_class_level",
+          "data_type": "STRING",
+          "is_nullable": "YES",
+          "ordinal_position": 3,
+          "column_default": "NULL"
+        },
+        {
+          "column_name": "ipc_version",
+          "data_type": "DATE",
+          "is_nullable": "YES",
+          "ordinal_position": 4,
+          "column_default": "NULL"
+        },
+        {
+          "column_name": "ipc_value",
+          "data_type": "STRING",
+          "is_nullable": "YES",
+          "ordinal_position": 5,
+          "column_default": "NULL"
+        },
+        {
+          "column_name": "ipc_position",
+          "data_type": "STRING",
+          "is_nullable": "YES",
+          "ordinal_position": 6,
+          "column_default": "NULL"
+        },
+        {
+          "column_name": "ipc_gener_auth",
+          "data_type": "STRING",
+          "is_nullable": "YES",
+          "ordinal_position": 7,
+          "column_default": "NULL"
+        }
+      ],
+      "options": [],
+      "partitions": [
+        {
+          "table_name": "tls209_appln_ipc",
+          "partition_id": null,
+          "total_rows": 374559946,
+          "total_logical_bytes": 15779312986,
+          "last_modified_time": "2025-12-19 15:54:53.001000+00:00"
+        }
+      ]
+    },
+    {
+      "table_name": "tls211_pat_publn",
+      "columns": [
+        {
+          "column_name": "pat_publn_id",
+          "data_type": "INT64",
+          "is_nullable": "YES",
+          "ordinal_position": 1,
+          "column_default": "NULL"
+        },
+        {
+          "column_name": "publn_auth",
+          "data_type": "STRING",
+          "is_nullable": "YES",
+          "ordinal_position": 2,
+          "column_default": "NULL"
+        },
+        {
+          "column_name": "publn_nr",
+          "data_type": "STRING",
+          "is_nullable": "YES",
+          "ordinal_position": 3,
+          "column_default": "NULL"
+        },
+        {
+          "column_name": "publn_nr_original",
+          "data_type": "STRING",
+          "is_nullable": "YES",
+          "ordinal_position": 4,
+          "column_default": "NULL"
+        },
+        {
+          "column_name": "publn_kind",
+          "data_type": "STRING",
+          "is_nullable": "YES",
+          "ordinal_position": 5,
+          "column_default": "NULL"
+        },
+        {
+          "column_name": "appln_id",
+          "data_type": "INT64",
+          "is_nullable": "YES",
+          "ordinal_position": 6,
+          "column_default": "NULL"
+        },
+        {
+          "column_name": "publn_date",
+          "data_type": "DATE",
+          "is_nullable": "YES",
+          "ordinal_position": 7,
+          "column_default": "NULL"
+        },
+        {
+          "column_name": "publn_lg",
+          "data_type": "STRING",
+          "is_nullable": "YES",
+          "ordinal_position": 8,
+          "column_default": "NULL"
+        },
+        {
+          "column_name": "publn_first_grant",
+          "data_type": "STRING",
+          "is_nullable": "YES",
+          "ordinal_position": 9,
+          "column_default": "NULL"
+        },
+        {
+          "column_name": "publn_claims",
+          "data_type": "INT64",
+          "is_nullable": "YES",
+          "ordinal_position": 10,
+          "column_default": "NULL"
+        }
+      ],
+      "options": [],
+      "partitions": [
+        {
+          "table_name": "tls211_pat_publn",
+          "partition_id": null,
+          "total_rows": 167837244,
+          "total_logical_bytes": 10788893917,
+          "last_modified_time": "2025-12-19 15:54:36.914000+00:00"
+        }
+      ]
+    },
+    {
+      "table_name": "tls212_citation",
+      "columns": [
+        {
+          "column_name": "pat_publn_id",
+          "data_type": "INT64",
+          "is_nullable": "YES",
+          "ordinal_position": 1,
+          "column_default": "NULL"
+        },
+        {
+          "column_name": "citn_replenished",
+          "data_type": "INT64",
+          "is_nullable": "YES",
+          "ordinal_position": 2,
+          "column_default": "NULL"
+        },
+        {
+          "column_name": "citn_id",
+          "data_type": "INT64",
+          "is_nullable": "YES",
+          "ordinal_position": 3,
+          "column_default": "NULL"
+        },
+        {
+          "column_name": "citn_origin",
+          "data_type": "STRING",
+          "is_nullable": "YES",
+          "ordinal_position": 4,
+          "column_default": "NULL"
+        },
+        {
+          "column_name": "cited_pat_publn_id",
+          "data_type": "INT64",
+          "is_nullable": "YES",
+          "ordinal_position": 5,
+          "column_default": "NULL"
+        },
+        {
+          "column_name": "cited_appln_id",
+          "data_type": "INT64",
+          "is_nullable": "YES",
+          "ordinal_position": 6,
+          "column_default": "NULL"
+        },
+        {
+          "column_name": "pat_citn_seq_nr",
+          "data_type": "INT64",
+          "is_nullable": "YES",
+          "ordinal_position": 7,
+          "column_default": "NULL"
+        },
+        {
+          "column_name": "cited_npl_publn_id",
+          "data_type": "STRING",
+          "is_nullable": "YES",
+          "ordinal_position": 8,
+          "column_default": "NULL"
+        },
+        {
+          "column_name": "npl_citn_seq_nr",
+          "data_type": "INT64",
+          "is_nullable": "YES",
+          "ordinal_position": 9,
+          "column_default": "NULL"
+        },
+        {
+          "column_name": "citn_gener_auth",
+          "data_type": "STRING",
+          "is_nullable": "YES",
+          "ordinal_position": 10,
+          "column_default": "NULL"
+        }
+      ],
+      "options": [],
+      "partitions": [
+        {
+          "table_name": "tls212_citation",
+          "partition_id": null,
+          "total_rows": 596775557,
+          "total_logical_bytes": 43311413641,
+          "last_modified_time": "2025-12-19 15:57:23.363000+00:00"
+        }
+      ]
+    },
+    {
+      "table_name": "tls224_appln_cpc",
+      "columns": [
+        {
+          "column_name": "appln_id",
+          "data_type": "INT64",
+          "is_nullable": "YES",
+          "ordinal_position": 1,
+          "column_default": "NULL"
+        },
+        {
+          "column_name": "cpc_class_symbol",
+          "data_type": "STRING",
+          "is_nullable": "YES",
+          "ordinal_position": 2,
+          "column_default": "NULL"
+        }
+      ],
+      "options": [],
+      "partitions": [
+        {
+          "table_name": "tls224_appln_cpc",
+          "partition_id": null,
+          "total_rows": 436450350,
+          "total_logical_bytes": 9554079286,
+          "last_modified_time": "2025-12-19 15:57:08.873000+00:00"
+        }
+      ]
+    }
+  ]
+}
