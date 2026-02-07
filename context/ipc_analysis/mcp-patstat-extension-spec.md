@@ -214,13 +214,13 @@ ORDER BY techn_field_nr, ipc_maingroup_symbol
 
 ### Classification Symbol Formatting
 
-This is the single most important thing to get right. All classification symbols (`ipc_class_symbol`, `cpc_class_symbol`) use **fixed-width formatting** with variable internal whitespace:
+This is the single most important thing to get right. All classification symbols (`ipc_class_symbol`, `cpc_class_symbol`) use a **fixed-width format**: the group number is **right-justified in a 4-character field** between the subclass and the `/`. The number of spaces is purely a formatting consequence of the group number's digit count — it has no classification meaning.
 
 ```
-"A23L   7/117"   ← 3 spaces (1-digit group)
-"H04L  29/06"    ← 2 spaces (2-digit group)
-"G06F   3/01"    ← 3 spaces (1-digit group)
-"B22C  17/00"    ← 2 spaces (2-digit group)
+"A23L   7/117"   ← group 7    → 3 padding spaces  (4-char field: "   7")
+"H04L  29/06"    ← group 29   → 2 padding spaces  (4-char field: "  29")
+"A43D 100/02"    ← group 100  → 1 padding space   (4-char field: " 100")
+"F15B2211/50518" ← group 2211 → 0 padding spaces  (4-char field: "2211")
 ```
 
 **Recommended approach**: Always normalize by stripping spaces before comparison:
