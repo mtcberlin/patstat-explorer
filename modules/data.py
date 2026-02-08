@@ -106,6 +106,22 @@ def run_parameterized_query(client, sql_template: str, params: dict):
     if "ipc_class" in params and params["ipc_class"] is not None:
         query_params.append(bigquery.ScalarQueryParameter("ipc_class", "STRING", params["ipc_class"]))
 
+    # Classification query parameters (Q54-Q58)
+    if "classification_symbol" in params and params["classification_symbol"] is not None:
+        query_params.append(bigquery.ScalarQueryParameter("classification_symbol", "STRING", params["classification_symbol"]))
+
+    if "keyword" in params and params["keyword"] is not None:
+        query_params.append(bigquery.ScalarQueryParameter("keyword", "STRING", params["keyword"]))
+
+    if "modification_type" in params and params["modification_type"] is not None:
+        query_params.append(bigquery.ScalarQueryParameter("modification_type", "STRING", params["modification_type"]))
+
+    if "parent_symbol" in params and params["parent_symbol"] is not None:
+        query_params.append(bigquery.ScalarQueryParameter("parent_symbol", "STRING", params["parent_symbol"]))
+
+    if "system" in params and params["system"] is not None:
+        query_params.append(bigquery.ScalarQueryParameter("system", "STRING", params["system"]))
+
     # Set job config with parameters
     job_config = bigquery.QueryJobConfig(
         default_dataset=f"{project}.{dataset}",

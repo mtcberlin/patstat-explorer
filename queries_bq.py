@@ -3854,10 +3854,7 @@ is calculated as percentage change from base year to recent year.""",
             "system": {
                 "type": "select",
                 "label": "Classification System",
-                "options": [
-                    {"label": "IPC", "value": "IPC"},
-                    {"label": "CPC", "value": "CPC"}
-                ],
+                "options": ["IPC", "CPC"],
                 "defaults": "IPC",
                 "required": True
             }
@@ -3996,12 +3993,7 @@ not on EPO TIP.""",
             "modification_type": {
                 "type": "select",
                 "label": "Change Type",
-                "options": [
-                    {"label": "All changes", "value": "all"},
-                    {"label": "Created (new symbols)", "value": "c"},
-                    {"label": "Deleted (removed symbols)", "value": "d"},
-                    {"label": "Modified (scope changed)", "value": "m"}
-                ],
+                "options": ["all", "c", "d", "m"],
                 "defaults": "all",
                 "required": True
             }
@@ -4196,10 +4188,7 @@ not on EPO TIP.""",
             "system": {
                 "type": "select",
                 "label": "Classification System",
-                "options": [
-                    {"label": "IPC", "value": "IPC"},
-                    {"label": "CPC", "value": "CPC"}
-                ],
+                "options": ["IPC", "CPC"],
                 "defaults": "IPC",
                 "required": True
             }
