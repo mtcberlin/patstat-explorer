@@ -99,10 +99,20 @@ class TestQueryMetadataStructure:
 
     def test_all_queries_have_category(self):
         """Every query has a category."""
-        valid_categories = ["Competitors", "Trends", "Regional", "Technology"]
+        valid_categories = ["Competitors", "Trends", "Regional", "Technology", "Classification"]
         for qid, query in QUERIES.items():
             assert 'category' in query, f"{qid} missing category"
             assert query['category'] in valid_categories, f"{qid} has invalid category: {query['category']}"
+
+    def test_all_queries_have_platforms(self):
+        """Every query has a platforms field with valid values."""
+        valid_platforms = {"bigquery", "tip"}
+        for qid, query in QUERIES.items():
+            assert 'platforms' in query, f"{qid} missing platforms"
+            assert isinstance(query['platforms'], list), f"{qid} platforms is not a list"
+            assert len(query['platforms']) > 0, f"{qid} has empty platforms"
+            for p in query['platforms']:
+                assert p in valid_platforms, f"{qid} has invalid platform: {p}"
 
     def test_all_queries_have_estimated_time(self):
         """Every query has estimated execution time."""

@@ -53,6 +53,7 @@ QUERIES = {
         "title": "What are the overall PATSTAT database statistics?",
         "tags": ["PATLIB"],
         "category": "Trends",
+        "platforms": ["bigquery", "tip"],
         "description": "Comprehensive PATSTAT database statistics: applications, grants, publications, families, and more",
         "parameters": {
             "year_range": {
@@ -154,6 +155,7 @@ Essential for understanding the scope and coverage of the database.""",
         "title": "Which patent offices are most active?",
         "tags": ["PATLIB"],
         "category": "Regional",
+        "platforms": ["bigquery", "tip"],
         "description": "Patent offices (filing authorities) in the database with application counts",
         "parameters": {
             "year_range": {
@@ -209,6 +211,7 @@ EP = European Patent Office, US = USPTO, CN = CNIPA, etc.""",
         "title": "How have patent applications changed over time?",
         "tags": ["PATLIB"],
         "category": "Trends",
+        "platforms": ["bigquery", "tip"],
         "description": "Patent application trends over time showing granted vs pending/rejected",
         "parameters": {
             "year_range": {
@@ -277,6 +280,7 @@ Note: Recent years may show lower grant rates due to:
         "title": "What are the most common technology classes?",
         "tags": ["PATLIB"],
         "category": "Technology",
+        "platforms": ["bigquery", "tip"],
         "description": "Most common IPC technology classes in the database",
         "todo": "Add IPC text description, not only the symbol",
         "parameters": {
@@ -346,6 +350,7 @@ IPC classes indicate the technology area of a patent:
         "title": "What do sample patent records look like?",
         "tags": ["PATLIB"],
         "category": "Technology",
+        "platforms": ["bigquery", "tip"],
         "description": "Sample of 100 patent applications with key fields",
         "todo": "Extend table with more data: applicant count, inventor count, title",
         "visualization": None,
@@ -404,6 +409,7 @@ No parameters needed - this shows recent sample data.""",
         "title": "Which countries lead in patent filing activity?",
         "tags": ["PATLIB", "BUSINESS"],
         "category": "Competitors",
+        "platforms": ["bigquery", "tip"],
         "description": "Which countries have the highest patent application activity?",
         "todo": "Fix: query mixes person_ctry_code (applicant origin) with appln_auth filter (patent office). Clarify intent: applicants from country X, or filings at office X?",
         "parameters": {
@@ -483,6 +489,7 @@ Minimum threshold of 100 patents ensures statistical relevance.""",
         "title": "What are the green technology trends by country?",
         "tags": ["BUSINESS", "UNIVERSITY"],
         "category": "Trends",
+        "platforms": ["bigquery", "tip"],
         "description": "Patent activity with green technology (CPC Y02) focus by country",
         "parameters": {
             "year_range": {
@@ -564,6 +571,7 @@ Tracks both total applications and the proportion dedicated to green tech.""",
         "title": "Which technology fields are most active?",
         "tags": ["BUSINESS", "UNIVERSITY"],
         "category": "Technology",
+        "platforms": ["bigquery", "tip"],
         "description": "Most active technology fields with family size and citation impact",
         "parameters": {
             "year_range": {
@@ -645,6 +653,7 @@ breadth (patent importance), while citation counts measure technical influence."
         "title": "Who leads in AI-based ERP patents?",
         "tags": ["BUSINESS"],
         "category": "Technology",
+        "platforms": ["bigquery", "tip"],
         "description": "AI-based enterprise resource planning (G06Q10 + G06N) landscape",
         "parameters": {
             "year_range": {
@@ -788,6 +797,7 @@ Identifies top applicants to monitor in this emerging technology intersection.""
         "title": "Who is building AI-assisted diagnostics portfolios?",
         "tags": ["BUSINESS", "UNIVERSITY"],
         "category": "Competitors",
+        "platforms": ["bigquery", "tip"],
         "description": "Companies building patent portfolios in AI-assisted diagnostics (A61B + G06N)",
         "parameters": {
             "year_range": {
@@ -959,6 +969,7 @@ established players in this field.""",
         "title": "Who are the top patent applicants?",
         "tags": ["BUSINESS"],
         "category": "Competitors",
+        "platforms": ["bigquery", "tip"],
         "description": "Top patent applicants with portfolio profile",
         "parameters": {
             "year_range": {
@@ -1045,6 +1056,7 @@ Minimum threshold of 50 patents ensures focus on significant players.""",
         "title": "Where do MedTech competitors file their patents?",
         "tags": ["BUSINESS"],
         "category": "Competitors",
+        "platforms": ["bigquery", "tip"],
         "description": "Geographic filing patterns of major MedTech competitors",
         "visualization": None,
         "parameters": {
@@ -1181,6 +1193,7 @@ Stryker, Zimmer, Smith & Nephew, Edwards, Baxter, Fresenius, and B. Braun.""",
         "title": "Which patents are most frequently cited?",
         "tags": ["UNIVERSITY"],
         "category": "Trends",
+        "platforms": ["bigquery", "tip"],
         "description": "Most frequently cited patents by recent applications",
         "parameters": {
             "year_range": {
@@ -1274,6 +1287,7 @@ Minimum threshold of 10 citations ensures significance.""",
         "title": "What are grant rates for diagnostic imaging patents?",
         "tags": ["BUSINESS", "UNIVERSITY"],
         "category": "Technology",
+        "platforms": ["bigquery", "tip"],
         "description": "Grant rates for diagnostic imaging patents (A61B 6/) by patent office",
         "parameters": {
             "year_range": {
@@ -1379,6 +1393,7 @@ Helps inform international filing strategy by showing office-specific grant succ
         "title": "Which German states lead in medical tech patents?",
         "tags": ["PATLIB"],
         "category": "Regional",
+        "platforms": ["bigquery", "tip"],
         "description": "German Federal states patent activity in A61B (Diagnosis/Surgery)",
         "parameters": {
             "year_range": {
@@ -1463,6 +1478,7 @@ Uses main class A61B% - covers all medical diagnosis/surgery subclasses.""",
         "title": "How do German states compare per capita in medical tech?",
         "tags": ["PATLIB"],
         "category": "Regional",
+        "platforms": ["bigquery", "tip"],
         "description": "A61B patent activity by German federal state with per-capita comparison",
         "parameters": {
             "year_range": {
@@ -1616,6 +1632,7 @@ states of different sizes.""",
         "title": "How do German regions compare by technology sector?",
         "tags": ["PATLIB"],
         "category": "Regional",
+        "platforms": ["bigquery", "tip"],
         "description": "Compare German regions patent activity by WIPO technology sectors",
         "parameters": {
             "year_range": {
@@ -1742,6 +1759,7 @@ technology categorization across all patents.""",
         "title": "Which applicants have the largest patent families?",
         "tags": ["BUSINESS", "PATLIB"],
         "category": "Competitors",
+        "platforms": ["bigquery", "tip"],
         "description": "Applicants with the largest average patent family sizes, indicating global filing strategies",
         "parameters": {
             "year_range": {
@@ -1825,6 +1843,7 @@ Minimum 10 families ensures statistical relevance.""",
         "title": "Who are the most prolific inventors?",
         "tags": ["UNIVERSITY", "BUSINESS"],
         "category": "Competitors",
+        "platforms": ["bigquery", "tip"],
         "description": "Inventors with the highest number of patent applications",
         "parameters": {
             "year_range": {
@@ -1907,6 +1926,7 @@ The person_name field contains the inventor's name as filed.""",
         "title": "Which companies collaborate internationally on patents?",
         "tags": ["BUSINESS", "UNIVERSITY"],
         "category": "Competitors",
+        "platforms": ["bigquery", "tip"],
         "description": "Applicants who co-file patents with partners from other countries",
         "parameters": {
             "year_range": {
@@ -1994,6 +2014,7 @@ Based on EPO training query 2.3 - finding applicants with international co-appli
         "title": "What are the most cited patent families?",
         "tags": ["UNIVERSITY", "BUSINESS"],
         "category": "Trends",
+        "platforms": ["bigquery", "tip"],
         "description": "Patent families receiving the most citations from other patent families",
         "parameters": {
             "year_range": {
@@ -2062,6 +2083,7 @@ Based on EPO training query 2.1 - most cited applications.""",
         "title": "Where do individual inventors file their patents?",
         "tags": ["PATLIB"],
         "category": "Regional",
+        "platforms": ["bigquery", "tip"],
         "description": "Filing patterns of inventor-applicants (individuals who are both inventor and applicant)",
         "parameters": {
             "year_range": {
@@ -2129,6 +2151,7 @@ Based on EPO training query 2.4.""",
         "title": "Which universities are most active in patenting?",
         "tags": ["UNIVERSITY"],
         "category": "Competitors",
+        "platforms": ["bigquery", "tip"],
         "description": "University and research institution patent activity rankings",
         "parameters": {
             "year_range": {
@@ -2211,6 +2234,7 @@ This helps identify:
         "title": "What is the average patent family size by applicant country?",
         "tags": ["PATLIB", "BUSINESS"],
         "category": "Regional",
+        "platforms": ["bigquery", "tip"],
         "description": "Average number of jurisdictions where applicants from each country file their patents",
         "parameters": {
             "year_range": {
@@ -2285,6 +2309,7 @@ Based on analysis patterns from EPO training materials.""",
         "title": "How long does it take to get a patent granted?",
         "tags": ["PATLIB", "BUSINESS"],
         "category": "Trends",
+        "platforms": ["bigquery", "tip"],
         "description": "Average time from filing to grant publication by patent office",
         "parameters": {
             "year_range": {
@@ -2366,6 +2391,7 @@ Uses the first grant publication date from tls211_pat_publn.""",
         "title": "Which technology fields have the highest grant rates?",
         "tags": ["BUSINESS", "UNIVERSITY"],
         "category": "Technology",
+        "platforms": ["bigquery", "tip"],
         "description": "Grant success rates by WIPO technology field classification",
         "parameters": {
             "year_range": {
@@ -2439,6 +2465,7 @@ Uses the tls230_appln_techn_field and tls901_techn_field_ipc tables.""",
         "title": "Which patents have dual IPC classifications?",
         "tags": ["BUSINESS", "UNIVERSITY"],
         "category": "Technology",
+        "platforms": ["bigquery", "tip"],
         "description": "Applications classified in multiple technology areas (cross-domain innovations)",
         "parameters": {
             "year_range": {
@@ -2511,6 +2538,7 @@ Based on EPO training query 2.7 - applications with multiple IPC classes.""",
         "title": "What are the fastest-growing IT management subclasses?",
         "tags": ["BUSINESS", "UNIVERSITY"],
         "category": "Trends",
+        "platforms": ["bigquery", "tip"],
         "description": "Fastest-growing sub-classes within G06Q (IT methods for management)",
         "parameters": {
             "year_range": {
@@ -2680,6 +2708,7 @@ Uses SUBSTR to extract subclass - handles variable whitespace correctly.""",
         "title": "Which patents are the most cited?",
         "tags": ["PATLIB", "BUSINESS"],
         "category": "Competitors",
+        "platforms": ["bigquery", "tip"],
         "description": "Most cited patent applications by citation count",
         "parameters": {
             "year_range": {
@@ -2751,6 +2780,7 @@ the basis for subsequent innovation.""",
         "title": "Who are the most active applicants by country?",
         "tags": ["PATLIB", "BUSINESS"],
         "category": "Competitors",
+        "platforms": ["bigquery", "tip"],
         "description": "Top patent applicants ranked by filing volume within a country",
         "parameters": {
             "year_range": {
@@ -2824,6 +2854,7 @@ results.""",
         "title": "Which applicants collaborate internationally?",
         "tags": ["PATLIB", "BUSINESS", "UNIVERSITY"],
         "category": "Competitors",
+        "platforms": ["bigquery", "tip"],
         "description": "Applicants who co-file patents with partners from other countries",
         "parameters": {
             "year_range": {
@@ -2910,6 +2941,7 @@ Results are ranked by the number of joint applications.""",
         "title": "Where are inventors also the applicants?",
         "tags": ["PATLIB", "UNIVERSITY"],
         "category": "Regional",
+        "platforms": ["bigquery", "tip"],
         "description": "Applications where the same person is both inventor and applicant",
         "parameters": {
             "year_range": {
@@ -2982,6 +3014,7 @@ who are both applicant and inventor on the same application.""",
         "title": "What are first filings vs. subsequent filings?",
         "tags": ["PATLIB", "BUSINESS"],
         "category": "Trends",
+        "platforms": ["bigquery", "tip"],
         "description": "Analysis of first filings (priority applications) vs. subsequent filings",
         "parameters": {
             "year_range": {
@@ -3048,6 +3081,7 @@ This ratio helps understand innovation vs. globalization strategies.""",
         "title": "Which patents combine multiple technology areas?",
         "tags": ["BUSINESS", "UNIVERSITY"],
         "category": "Technology",
+        "platforms": ["bigquery", "tip"],
         "description": "Applications classified in multiple distinct IPC classes",
         "parameters": {
             "year_range": {
@@ -3145,6 +3179,7 @@ Uses EXISTS subqueries to find applications with both specified IPC classes.""",
         "title": "Which offices publish patents the fastest?",
         "tags": ["PATLIB"],
         "category": "Regional",
+        "platforms": ["bigquery", "tip"],
         "description": "Patent offices ranked by speed from filing to first publication",
         "parameters": {
             "year_range": {
@@ -3222,6 +3257,7 @@ Uses DATE_DIFF to calculate months between filing and earliest publication date.
         "title": "Who are the inventors for top research organizations?",
         "tags": ["UNIVERSITY", "BUSINESS"],
         "category": "Competitors",
+        "platforms": ["bigquery", "tip"],
         "description": "Inventors associated with major patent-filing organizations",
         "parameters": {
             "year_range": {
@@ -3344,6 +3380,7 @@ subsequent filing dates.""",
         "title": "What are the largest patent families?",
         "tags": ["PATLIB", "BUSINESS"],
         "category": "Technology",
+        "platforms": ["bigquery", "tip"],
         "description": "Largest DOCDB patent families by number of family members",
         "parameters": {
             "year_range": {
@@ -3433,6 +3470,7 @@ essentially the same invention across different jurisdictions.""",
         "title": "How do patent families spread geographically?",
         "tags": ["PATLIB", "BUSINESS"],
         "category": "Regional",
+        "platforms": ["bigquery", "tip"],
         "description": "Geographic distribution of patent family filings",
         "parameters": {
             "year_range": {
@@ -3505,6 +3543,7 @@ broader global protection.""",
         "title": "How have grant rates changed over time?",
         "tags": ["PATLIB", "UNIVERSITY"],
         "category": "Trends",
+        "platforms": ["bigquery", "tip"],
         "description": "Patent grant rate trends by year and filing authority",
         "parameters": {
             "year_range": {
@@ -3572,6 +3611,7 @@ Useful for understanding examination rigor and success rates across offices.""",
         "title": "How are PCT applications distributed globally?",
         "tags": ["PATLIB", "BUSINESS"],
         "category": "Regional",
+        "platforms": ["bigquery", "tip"],
         "description": "PCT international application distribution by receiving office",
         "parameters": {
             "year_range": {
@@ -3635,6 +3675,7 @@ indicates the geographic origin of innovations seeking global protection.""",
         "title": "How do universities compare to corporations in patenting?",
         "tags": ["UNIVERSITY", "BUSINESS"],
         "category": "Trends",
+        "platforms": ["bigquery", "tip"],
         "description": "Patent filing comparison between universities and companies",
         "parameters": {
             "year_range": {
@@ -3710,6 +3751,7 @@ The citation rate comparison indicates research vs. commercial focus.""",
         "title": "Which CPC subclasses are growing fastest?",
         "tags": ["BUSINESS", "UNIVERSITY"],
         "category": "Technology",
+        "platforms": ["bigquery", "tip"],
         "description": "Fastest-growing CPC technology subclasses by filing growth",
         "parameters": {
             "year_range": {
@@ -3790,6 +3832,473 @@ is calculated as percentage change from base year to recent year.""",
             LIMIT 25
         """
     },
+
+    # =========================================================================
+    # CLASSIFICATION QUERIES (Q54-Q58) - BigQuery only
+    # These queries use IPC/CPC hierarchy tables not available on EPO TIP.
+    # =========================================================================
+    "Q54": {
+        "title": "What does an IPC or CPC class mean?",
+        "tags": ["PATLIB"],
+        "category": "Classification",
+        "platforms": ["bigquery"],
+        "description": "Look up any IPC or CPC classification symbol to get its full title, hierarchy path, and definition",
+        "parameters": {
+            "classification_symbol": {
+                "type": "text",
+                "label": "Classification Symbol (e.g. A61B, G06N10/00, Y02E)",
+                "defaults": "A61B",
+                "placeholder": "e.g., A61B, H04L29/06, Y02E",
+                "required": True
+            },
+            "system": {
+                "type": "select",
+                "label": "Classification System",
+                "options": [
+                    {"label": "IPC", "value": "IPC"},
+                    {"label": "CPC", "value": "CPC"}
+                ],
+                "defaults": "IPC",
+                "required": True
+            }
+        },
+        "explanation": """Looks up a classification symbol in the IPC (International Patent Classification)
+or CPC (Cooperative Patent Classification) hierarchy and returns:
+- The symbol's title and full breadcrumb path through the hierarchy
+- Section, class, and subclass context
+- WIPO definition text (where available, ~2,148 IPC symbols have definitions)
+- Hierarchy level and parent symbol
+
+Supports lookup at any level: section (A), class (A61), subclass (A61B),
+main group (A61B6/00), or subgroup (A61B6/03). The symbol is matched
+flexibly against symbol_short.
+
+Note: This query uses classification tables only available on BigQuery,
+not on EPO TIP.""",
+        "key_outputs": [
+            "Symbol and short form",
+            "English title",
+            "Full breadcrumb path",
+            "Section/class/subclass titles",
+            "Definition text (if available)",
+            "Hierarchy level and kind"
+        ],
+        "estimated_seconds_first_run": 2,
+        "estimated_seconds_cached": 1,
+        "sql": """
+            SELECT
+                symbol_short,
+                kind,
+                level,
+                title_en,
+                title_full,
+                section_title,
+                class_title,
+                subclass_title,
+                additional_content AS definition,
+                parent_short,
+                symbol_patstat
+            FROM tls_ipc_hierarchy
+            WHERE UPPER(REPLACE(symbol_short, ' ', '')) LIKE UPPER(REPLACE('A61B', ' ', '')) || '%'
+            ORDER BY level, symbol_short
+            LIMIT 50
+        """,
+        "sql_template": """
+            SELECT
+                symbol_short,
+                kind,
+                level,
+                title_en,
+                title_full,
+                section_title,
+                class_title,
+                subclass_title,
+                additional_content AS definition,
+                parent_short,
+                symbol_patstat
+            FROM tls_ipc_hierarchy
+            WHERE UPPER(REPLACE(symbol_short, ' ', '')) LIKE UPPER(REPLACE(@classification_symbol, ' ', '')) || '%'
+            ORDER BY level, symbol_short
+            LIMIT 50
+        """
+    },
+    "Q55": {
+        "title": "Find IPC classes by keyword",
+        "tags": ["PATLIB", "BUSINESS"],
+        "category": "Classification",
+        "platforms": ["bigquery"],
+        "description": "Search the WIPO catchword index to discover IPC symbols by technology keyword",
+        "parameters": {
+            "keyword": {
+                "type": "text",
+                "label": "Technology Keyword (e.g. laser, battery, robot)",
+                "defaults": "laser",
+                "placeholder": "e.g., laser, battery, robot, pharmaceutical",
+                "required": True
+            }
+        },
+        "explanation": """Searches the WIPO IPC Catchword Index (21,361 entries) to find IPC classification
+symbols related to a technology keyword. This is the official WIPO keyword-to-IPC mapping.
+
+The catchword index maps natural-language technology terms to their corresponding
+IPC symbols. For example, searching for 'laser' finds symbols like B23K26/00 (laser
+welding), H01S (laser devices), A61B18/20 (laser surgery), etc.
+
+Results include the full IPC title from the hierarchy table for immediate understanding.
+Use this when you know the technology but not the IPC code.
+
+Note: This query uses classification tables only available on BigQuery,
+not on EPO TIP.""",
+        "key_outputs": [
+            "Matching catchwords",
+            "IPC symbols with titles",
+            "Section and subclass context",
+            "Primary index term grouping"
+        ],
+        "estimated_seconds_first_run": 2,
+        "estimated_seconds_cached": 1,
+        "sql": """
+            SELECT
+                c.catchword,
+                c.symbol_short,
+                h.title_en,
+                h.section_title,
+                h.subclass_title,
+                c.parent_catchword
+            FROM tls_ipc_catchword c
+            LEFT JOIN tls_ipc_hierarchy h ON c.symbol = h.symbol
+            WHERE LOWER(c.catchword) LIKE '%laser%'
+            ORDER BY c.parent_catchword, c.catchword
+            LIMIT 50
+        """,
+        "sql_template": """
+            SELECT
+                c.catchword,
+                c.symbol_short,
+                h.title_en,
+                h.section_title,
+                h.subclass_title,
+                c.parent_catchword
+            FROM tls_ipc_catchword c
+            LEFT JOIN tls_ipc_hierarchy h ON c.symbol = h.symbol
+            WHERE LOWER(c.catchword) LIKE '%' || LOWER(@keyword) || '%'
+            ORDER BY c.parent_catchword, c.catchword
+            LIMIT 50
+        """
+    },
+    "Q56": {
+        "title": "What IPC codes changed in the latest revision?",
+        "tags": ["PATLIB"],
+        "category": "Classification",
+        "platforms": ["bigquery"],
+        "description": "Show created, deleted, and modified IPC symbols between versions 2025.01 and 2026.01",
+        "parameters": {
+            "modification_type": {
+                "type": "select",
+                "label": "Change Type",
+                "options": [
+                    {"label": "All changes", "value": "all"},
+                    {"label": "Created (new symbols)", "value": "c"},
+                    {"label": "Deleted (removed symbols)", "value": "d"},
+                    {"label": "Modified (scope changed)", "value": "m"}
+                ],
+                "defaults": "all",
+                "required": True
+            }
+        },
+        "explanation": """Shows changes between IPC editions 2025.01 and 2026.01 from the official
+WIPO concordance table (1,193 entries).
+
+Change types:
+- Created (c): New symbols added to the IPC
+- Deleted (d): Symbols removed from the IPC
+- Modified (m): Symbols whose scope or definition was changed
+
+The 2026.01 revision notably restructured semiconductor classifications, moving
+many codes from H01L to new H10H, H10K, H10W classes (projects C518/C519).
+
+Each change is linked to a WIPO revision project code and shows the
+default reclassification path where applicable.
+
+Note: This query uses classification tables only available on BigQuery,
+not on EPO TIP.""",
+        "key_outputs": [
+            "Source and target IPC symbols",
+            "Change type (created/deleted/modified)",
+            "New symbol title",
+            "WIPO revision project code",
+            "Default reclassification flag"
+        ],
+        "estimated_seconds_first_run": 2,
+        "estimated_seconds_cached": 1,
+        "sql": """
+            SELECT
+                con.modification,
+                CASE con.modification
+                    WHEN 'c' THEN 'Created'
+                    WHEN 'd' THEN 'Deleted'
+                    WHEN 'm' THEN 'Modified'
+                END AS change_type,
+                con.from_symbol_patstat AS from_code,
+                con.to_symbol_patstat AS to_code,
+                h_to.title_en AS new_title,
+                h_to.subclass_title,
+                con.default_reclassification,
+                con.revision_project
+            FROM tls_ipc_concordance con
+            LEFT JOIN tls_ipc_hierarchy h_to ON con.to_symbol = h_to.symbol
+            ORDER BY con.modification, con.revision_project, con.from_symbol_patstat
+        """,
+        "sql_template": """
+            SELECT
+                con.modification,
+                CASE con.modification
+                    WHEN 'c' THEN 'Created'
+                    WHEN 'd' THEN 'Deleted'
+                    WHEN 'm' THEN 'Modified'
+                END AS change_type,
+                con.from_symbol_patstat AS from_code,
+                con.to_symbol_patstat AS to_code,
+                h_to.title_en AS new_title,
+                h_to.subclass_title,
+                con.default_reclassification,
+                con.revision_project
+            FROM tls_ipc_concordance con
+            LEFT JOIN tls_ipc_hierarchy h_to ON con.to_symbol = h_to.symbol
+            WHERE @modification_type = 'all' OR con.modification = @modification_type
+            ORDER BY con.modification, con.revision_project, con.from_symbol_patstat
+        """
+    },
+    "Q57": {
+        "title": "How many patents use deprecated IPC codes?",
+        "tags": ["PATLIB"],
+        "category": "Classification",
+        "platforms": ["bigquery"],
+        "description": "Analyze active vs. deprecated IPC code usage in patent data to understand classification coverage",
+        "parameters": {
+            "year_range": {
+                "type": "year_range",
+                "label": "Filing Year Range",
+                "default_start": 2014,
+                "default_end": 2023,
+                "required": True
+            }
+        },
+        "explanation": """Analyzes how many IPC codes used in patent applications are still active
+versus deprecated in the current IPC 2026.01 edition.
+
+The tls_ipc_everused table contains 92,856 IPC symbols that have ever been used
+since 1968, including deprecated ones. This query cross-references patent
+application IPC codes against this inventory to show:
+- How many distinct codes are active vs. deprecated
+- How many patent applications use deprecated codes
+- The most-used deprecated codes (potential reclassification candidates)
+
+Useful for data quality assessment and understanding historical classification changes.
+
+Note: This query uses classification tables only available on BigQuery,
+not on EPO TIP.""",
+        "key_outputs": [
+            "Count of active vs deprecated IPC codes in use",
+            "Patent application counts per status",
+            "Top deprecated codes with usage counts",
+            "Coverage statistics"
+        ],
+        "estimated_seconds_first_run": 10,
+        "estimated_seconds_cached": 2,
+        "sql": """
+            WITH code_status AS (
+                SELECT
+                    CASE WHEN e.is_active IS TRUE THEN 'Active'
+                         WHEN e.is_active IS FALSE THEN 'Deprecated'
+                         ELSE 'Unknown (not in everused)'
+                    END AS ipc_status,
+                    COUNT(DISTINCT ipc.ipc_class_symbol) AS distinct_codes,
+                    COUNT(DISTINCT ipc.appln_id) AS patent_applications
+                FROM tls209_appln_ipc ipc
+                JOIN tls201_appln a ON ipc.appln_id = a.appln_id
+                LEFT JOIN tls_ipc_everused e ON ipc.ipc_class_symbol = e.symbol_patstat
+                WHERE a.appln_filing_year BETWEEN 2014 AND 2023
+                GROUP BY 1
+            ),
+            top_deprecated AS (
+                SELECT
+                    ipc.ipc_class_symbol,
+                    e.introduced_date,
+                    e.deprecated_date,
+                    COUNT(DISTINCT ipc.appln_id) AS patent_count
+                FROM tls209_appln_ipc ipc
+                JOIN tls201_appln a ON ipc.appln_id = a.appln_id
+                JOIN tls_ipc_everused e ON ipc.ipc_class_symbol = e.symbol_patstat
+                WHERE a.appln_filing_year BETWEEN 2014 AND 2023
+                  AND e.is_active IS FALSE
+                GROUP BY 1, 2, 3
+                ORDER BY patent_count DESC
+                LIMIT 20
+            )
+            SELECT 'Summary' AS result_type, ipc_status AS detail, CAST(distinct_codes AS STRING) AS codes, CAST(patent_applications AS STRING) AS applications, '' AS introduced, '' AS deprecated
+            FROM code_status
+            UNION ALL
+            SELECT 'Top Deprecated', ipc_class_symbol, CAST(patent_count AS STRING), '', introduced_date, deprecated_date
+            FROM top_deprecated
+        """,
+        "sql_template": """
+            WITH code_status AS (
+                SELECT
+                    CASE WHEN e.is_active IS TRUE THEN 'Active'
+                         WHEN e.is_active IS FALSE THEN 'Deprecated'
+                         ELSE 'Unknown (not in everused)'
+                    END AS ipc_status,
+                    COUNT(DISTINCT ipc.ipc_class_symbol) AS distinct_codes,
+                    COUNT(DISTINCT ipc.appln_id) AS patent_applications
+                FROM tls209_appln_ipc ipc
+                JOIN tls201_appln a ON ipc.appln_id = a.appln_id
+                LEFT JOIN tls_ipc_everused e ON ipc.ipc_class_symbol = e.symbol_patstat
+                WHERE a.appln_filing_year BETWEEN @year_start AND @year_end
+                GROUP BY 1
+            ),
+            top_deprecated AS (
+                SELECT
+                    ipc.ipc_class_symbol,
+                    e.introduced_date,
+                    e.deprecated_date,
+                    COUNT(DISTINCT ipc.appln_id) AS patent_count
+                FROM tls209_appln_ipc ipc
+                JOIN tls201_appln a ON ipc.appln_id = a.appln_id
+                JOIN tls_ipc_everused e ON ipc.ipc_class_symbol = e.symbol_patstat
+                WHERE a.appln_filing_year BETWEEN @year_start AND @year_end
+                  AND e.is_active IS FALSE
+                GROUP BY 1, 2, 3
+                ORDER BY patent_count DESC
+                LIMIT 20
+            )
+            SELECT 'Summary' AS result_type, ipc_status AS detail, CAST(distinct_codes AS STRING) AS codes, CAST(patent_applications AS STRING) AS applications, '' AS introduced, '' AS deprecated
+            FROM code_status
+            UNION ALL
+            SELECT 'Top Deprecated', ipc_class_symbol, CAST(patent_count AS STRING), '', introduced_date, deprecated_date
+            FROM top_deprecated
+        """
+    },
+    "Q58": {
+        "title": "What are all subclasses under an IPC or CPC class?",
+        "tags": ["PATLIB"],
+        "category": "Classification",
+        "platforms": ["bigquery"],
+        "description": "Browse the classification hierarchy tree - show all children of any IPC or CPC node",
+        "parameters": {
+            "parent_symbol": {
+                "type": "text",
+                "label": "Parent Symbol (e.g. A61B, H04L, Y02E)",
+                "defaults": "A61B",
+                "placeholder": "e.g., A61B, H04L, Y02E",
+                "required": True
+            },
+            "system": {
+                "type": "select",
+                "label": "Classification System",
+                "options": [
+                    {"label": "IPC", "value": "IPC"},
+                    {"label": "CPC", "value": "CPC"}
+                ],
+                "defaults": "IPC",
+                "required": True
+            }
+        },
+        "explanation": """Expands the classification hierarchy tree below a given parent node, showing
+all direct children and deeper descendants (up to 3 levels deep).
+
+Uses a recursive query to traverse the parent-child relationships in the
+IPC hierarchy (80,145 entries) or CPC hierarchy (254,249 entries).
+
+The result is indented by depth level, making it easy to understand the
+tree structure. Each entry shows the symbol, title, and hierarchy level.
+
+Start with a subclass (e.g., A61B) to see its main groups, or with a
+main group (e.g., A61B6/00) to see its subgroups.
+
+Note: This query uses classification tables only available on BigQuery,
+not on EPO TIP.""",
+        "key_outputs": [
+            "Classification symbols in tree order",
+            "English titles at each level",
+            "Depth relative to parent",
+            "Kind (main group, subgroup level)"
+        ],
+        "estimated_seconds_first_run": 2,
+        "estimated_seconds_cached": 1,
+        "sql": """
+            WITH RECURSIVE subtree AS (
+                SELECT
+                    symbol,
+                    symbol_short,
+                    title_en,
+                    kind,
+                    level,
+                    0 AS depth
+                FROM tls_ipc_hierarchy
+                WHERE UPPER(symbol_short) = UPPER('A61B')
+
+                UNION ALL
+
+                SELECT
+                    h.symbol,
+                    h.symbol_short,
+                    h.title_en,
+                    h.kind,
+                    h.level,
+                    s.depth + 1
+                FROM tls_ipc_hierarchy h
+                JOIN subtree s ON h.parent = s.symbol
+                WHERE s.depth < 3
+            )
+            SELECT
+                depth,
+                REPEAT('  ', depth) || symbol_short AS indented_symbol,
+                symbol_short,
+                title_en,
+                kind,
+                level
+            FROM subtree
+            ORDER BY symbol
+            LIMIT 200
+        """,
+        "sql_template": """
+            WITH RECURSIVE subtree AS (
+                SELECT
+                    symbol,
+                    symbol_short,
+                    title_en,
+                    kind,
+                    level,
+                    0 AS depth
+                FROM tls_ipc_hierarchy
+                WHERE UPPER(symbol_short) = UPPER(@parent_symbol)
+
+                UNION ALL
+
+                SELECT
+                    h.symbol,
+                    h.symbol_short,
+                    h.title_en,
+                    h.kind,
+                    h.level,
+                    s.depth + 1
+                FROM tls_ipc_hierarchy h
+                JOIN subtree s ON h.parent = s.symbol
+                WHERE s.depth < 3
+            )
+            SELECT
+                depth,
+                REPEAT('  ', depth) || symbol_short AS indented_symbol,
+                symbol_short,
+                title_en,
+                kind,
+                level
+            FROM subtree
+            ORDER BY symbol
+            LIMIT 200
+        """
+    },
 }
 
 # =============================================================================
@@ -3803,6 +4312,7 @@ DYNAMIC_QUERIES = {
         "title": "Technology Trend Analysis",
         "tags": ["PATLIB", "BUSINESS", "UNIVERSITY"],
         "category": "Technology",
+        "platforms": ["bigquery", "tip"],
         "description": "Analyze patent application trends by jurisdiction and technology field",
         "explanation": """Interactive analysis of patent filing trends over time.
 Filter by filing jurisdiction (patent office), WIPO technology field, and year range.

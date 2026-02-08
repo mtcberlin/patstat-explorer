@@ -25,7 +25,7 @@ YEAR_MAX = 2024
 # UI CONSTANTS
 # =============================================================================
 # Category definitions for landing page pills (AC #1)
-CATEGORIES = ["Competitors", "Trends", "Regional", "Technology"]
+CATEGORIES = ["Competitors", "Trends", "Regional", "Technology", "Classification"]
 
 # Stakeholder tags for filtering (Story 2.1)
 STAKEHOLDER_TAGS = ["PATLIB", "BUSINESS", "UNIVERSITY"]

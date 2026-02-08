@@ -824,7 +824,8 @@ def render_detail_page(query_id: str):
                         )
 
                 st.divider()
-                render_tip_panel(query_info, collected_params)
+                if "tip" in query_info.get("platforms", ["bigquery", "tip"]):
+                    render_tip_panel(query_info, collected_params)
 
             except Exception as e:
                 st.error(f"Error: {str(e)}")

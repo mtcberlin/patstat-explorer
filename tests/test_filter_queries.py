@@ -228,7 +228,7 @@ class TestCategories:
     def test_categories_defined(self):
         """CATEGORIES constant is defined."""
         assert CATEGORIES is not None
-        assert len(CATEGORIES) == 4
+        assert len(CATEGORIES) == 5
 
     def test_categories_values(self):
         """CATEGORIES contains expected values."""
@@ -236,6 +236,7 @@ class TestCategories:
         assert "Trends" in CATEGORIES
         assert "Regional" in CATEGORIES
         assert "Technology" in CATEGORIES
+        assert "Classification" in CATEGORIES
 
 
 if __name__ == "__main__":
