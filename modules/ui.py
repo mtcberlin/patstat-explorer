@@ -708,6 +708,17 @@ def render_detail_page(query_id: str):
                         params['competitors'] = collected_params.get('competitors')
                     if 'ipc_class' in params_config:
                         params['ipc_class'] = collected_params.get('ipc_class', '')
+                    # Classification query parameters (Q54-Q58)
+                    if 'classification_symbol' in params_config:
+                        params['classification_symbol'] = collected_params.get('classification_symbol', '')
+                    if 'keyword' in params_config:
+                        params['keyword'] = collected_params.get('keyword', '')
+                    if 'modification_type' in params_config:
+                        params['modification_type'] = collected_params.get('modification_type')
+                    if 'parent_symbol' in params_config:
+                        params['parent_symbol'] = collected_params.get('parent_symbol', '')
+                    if 'system' in params_config:
+                        params['system'] = collected_params.get('system')
                     df, execution_time = run_parameterized_query(client, query_info["sql_template"], params)
                 else:
                     df, execution_time = run_query(client, query_info["sql"])
