@@ -21,7 +21,7 @@
 | **Modules** | `modules/` (1,802 lines total) |
 | **Queries** | `queries_bq.py` (42 queries, 3,893 lines) |
 | **Tests** | `tests/` (5 test files) |
-| **Live Demo** | [patstat.streamlit.app](https://patstat.streamlit.app/) |
+| **Live Demo** | [patstatexplorer.depa.tech](https://patstatexplorer.depa.tech/) |
 
 ### TIP4PATLIB Alignment
 
@@ -50,7 +50,7 @@ This application serves as a **bridge to TIP** for 300 PATLIB centres, deliverin
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                    Streamlit Cloud                          │
+│                Coolify (patstatexplorer.depa.tech)           │
 │  ┌───────────────────────────────────────────────────────┐  │
 │  │                     app.py (72 lines)                 │  │
 │  │                    Entry Point + Router               │  │
@@ -165,7 +165,7 @@ pytest tests/ -v
 ## Getting Started
 
 ### For PATLIB Users
-1. Visit [patstat.streamlit.app](https://patstat.streamlit.app/)
+1. Visit [patstatexplorer.depa.tech](https://patstatexplorer.depa.tech/)
 2. Browse queries by category (Competitors, Trends, Regional, Technology)
 3. Filter by stakeholder tag (PATLIB, BUSINESS, UNIVERSITY)
 4. Run a query, adjust parameters, download results

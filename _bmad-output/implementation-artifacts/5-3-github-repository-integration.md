@@ -88,7 +88,7 @@ with col2:
 
 **Patent analysis made accessible** - A Streamlit app for querying EPO PATSTAT on BigQuery.
 
-[![Open in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://patstat.streamlit.app)
+[![PATSTAT Explorer](https://img.shields.io/badge/PATSTAT_Explorer-Live-blue)](https://patstatexplorer.depa.tech)
 
 ## Overview
 
@@ -97,7 +97,7 @@ researchers, and anyone interested in patent intelligence.
 
 ## Quick Start
 
-1. Visit [patstat.streamlit.app](https://patstat.streamlit.app)
+1. Visit [patstatexplorer.depa.tech](https://patstatexplorer.depa.tech)
 2. Choose a category (Competitors, Trends, Regional, Technology)
 3. Select a query
 4. Adjust parameters

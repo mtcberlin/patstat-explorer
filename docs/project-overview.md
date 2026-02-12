@@ -12,7 +12,7 @@ PATSTAT Explorer is a **Streamlit-based web application** that enables patent in
 4. **Export** queries to TIP's Jupyter environment for advanced analysis
 5. **Generate** custom queries using AI (natural language → SQL)
 
-**Live Demo:** [patstat.streamlit.app](https://patstat.streamlit.app/)
+**Live Demo:** [patstatexplorer.depa.tech](https://patstatexplorer.depa.tech/)
 
 ### TIP4PATLIB Alignment
 
@@ -34,7 +34,7 @@ This application directly addresses EPO's TIP4PATLIB requirements:
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                    Streamlit Cloud                          │
+│                Coolify (patstatexplorer.depa.tech)           │
 │  ┌───────────────────────────────────────────────────────┐  │
 │  │                     app.py (72 lines)                 │  │
 │  │                    Entry Point + Router               │  │

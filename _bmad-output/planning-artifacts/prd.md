@@ -163,7 +163,7 @@ PATSTAT Explorer operates as a **TIP adoption accelerator** - a free, accessible
 It's Tuesday morning. Maria's phone rings - a local SME owner who manufactures medical packaging wants to know: "Who are our main competitors filing patents in Europe, and what's their strategy?" Maria's heart sinks slightly. She knows she could spend a full day pulling individual patents from Espacenet, copying data into Excel, trying to make sense of it. Her client needs this by Thursday.
 
 **Rising Action:**
-Maria remembers the PATSTAT Explorer tool from last month's EPO Academy training. She opens patstat.streamlit.app and navigates to the "Competitor Filing Strategy" query. She selects:
+Maria remembers the PATSTAT Explorer tool from last month's EPO Academy training. She opens patstatexplorer.depa.tech and navigates to the "Competitor Filing Strategy" query. She selects:
 - Technology field: Medical devices
 - Jurisdictions: EP, US, CN
 - Year range: 2018-2024

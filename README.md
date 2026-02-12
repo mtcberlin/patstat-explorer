@@ -1,8 +1,9 @@
 # PATSTAT Explorer
 
-A Streamlit application for analyzing the EPO PATSTAT patent database on Google BigQuery.
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Live Demo](https://img.shields.io/badge/Live-patstatexplorer.depa.tech-blue)](https://patstatexplorer.depa.tech/)
 
-**Live Demo:** [patstat.streamlit.app](https://patstat.streamlit.app/)
+A Streamlit application for analyzing the EPO PATSTAT patent database on Google BigQuery. Built and maintained by [mtc.berlin](https://github.com/mtcberlin).
 
 ## Overview
 
@@ -90,26 +91,11 @@ The app will be available at `http://localhost:8501`
 python test_queries.py
 ```
 
-## Streamlit Cloud Deployment
-The app is automatically deployed on push to the `main` branch.
+## Deployment
+The app is self-hosted on Coolify (Hetzner) at [patstatexplorer.depa.tech](https://patstatexplorer.depa.tech/). Auto-deploys from the `main` branch.
 
-### Configure Secrets
-In Streamlit Cloud → App Settings → Secrets, add:
-
-```toml
-[gcp_service_account]
-type = "service_account"
-project_id = "YOUR PROJECT ID"
-private_key_id = "YOUR PRIVATE KEY"
-private_key = "-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n"
-client_email = "yourname@yourprojectid.iam.gserviceaccount.com"
-client_id = "..."
-auth_uri = "https://accounts.google.com/o/oauth2/auth"
-token_uri = "https://oauth2.googleapis.com/token"
-auth_provider_x509_cert_url = "https://www.googleapis.com/oauth2/v1/certs"
-client_x509_cert_url = "https://www.googleapis.com/robot/v1/metadata/x509/..."
-universe_domain = "googleapis.com"
-```
+### Configure Credentials
+GCP service account credentials are provided via `GOOGLE_APPLICATION_CREDENTIALS` environment variable pointing to a mounted JSON file, or via `GOOGLE_APPLICATION_CREDENTIALS_JSON` environment variable containing the full JSON string.
 
 ## BigQuery PATSTAT Database
 
